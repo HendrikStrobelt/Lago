@@ -1,6 +1,6 @@
 #include "QuadTree.hpp"
 #include <numeric>
-
+#include <algorithm>
 
 QuadTree::QuadTree(const vector<Node>* nodes) {
 
@@ -57,69 +57,35 @@ QuadTree::~QuadTree( void ) {
 
 //public methods
 
-/* MOVE
-int QuadTree::getJoinDepth(float desiredDistance) const{
-	float maxRectSide = max(_width, _height);
-	float depth;
 
-	if (desiredDistance == 0.0f) {
-		//take the real Points
-		depth = _maxDepth;
-	} else {
-		//select an appropriate level of the quad tree
-		depth = 0;
-		while (maxRectSide > desiredDistance) {
-			depth++;
-			maxRectSide /= 2.0f;
-		}
+NodeStructureInfoContainer* QuadTree::getNodeStructureInfoContainer( void ) {
+	vector<int> allNodes;
+	for (int i = 0; i < _nodeVectors.size(); i++) {
+		allNodes.push_back(_nodeVectors[i]->size());
 	}
-
-
-	if (depth > _maxDepth) {
-		return _maxDepth;
-	} else {
-		return depth;
-	}
+	return new NodeStructureInfoContainer(_maxDepth, _width, _height, _left, _bottom, _leafCount, allNodes);
 }
 
-		
-
-int QuadTree::getMaxDepth( void ) const {
-	return _maxDepth;
-}
-
-
-
-int QuadTree::getTreeLevel(vector<WPoint>* wPoints, int level) const {
-	int n = wPoints->size();
+PackedNode* QuadTree::getPackedTree(int* size) {
+	int arraySize = 0;
+	for (int i = 0; i < _nodeVectors.size(); i++) {
+		arraySize += _nodeVectors[i]->size();
+	}
+	PackedNode* pn = new PackedNode[arraySize];
 	
-	if (level < _pointVectors.size()) {
-		wPoints->insert(wPoints->end(), _pointVectors[level]->begin(), _pointVectors[level]->end());
+	int off = 0;
+	for (int i = 0; i < _nodeVectors.size(); i++) {
+		random_shuffle(_nodeVectors[i]->begin(), _nodeVectors[i]->end());
+		for (int j = 0; j < _nodeVectors[i]->size(); j++) {
+			pn[off + j] = _nodeVectors[i]->at(j);
+		}
+
+		off += _nodeVectors[i]->size();
 	}
 
-	return (wPoints->size() - n);
+	*size = arraySize;
+	return pn;
 }
-
-int QuadTree::getRenderPointCount(int depth) const {
-	int leafs = 0;
-	for (int i = 0; i < depth; i++) {
-		leafs += _leafCount[i];
-	}
-
-	return leafs + _pointVectors[depth]->size();
-}
-
-
-int QuadTree::getTreePointCount(int depth) const {
-	int nodes = 0;
-	for (int i = 0; i <= depth; i++) {
-		nodes += _pointVectors[i]->size();
-	}
-	return nodes;
-}
-
-*/
-
 
 
 void QuadTree::printTree(ofstream* dest) const {

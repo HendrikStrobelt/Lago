@@ -2,6 +2,7 @@
 #define QUAD_TREE_H
 
 #include "../Node.hpp"
+#include "NodeStructureInfoContainer.hpp"
 #include <vector>
 #include <fstream>
 
@@ -20,7 +21,7 @@ struct QuadTreeMetaNode {
 	int child4;
 	int parent;
 	int n_Count; //nr of nodes in the cluster (!= weight)
-	QuadTreeMetaNode() : child1(-1), child2(-1), child3(-1), child4(-1), parent(-1), n_Count(1) {};
+	QuadTreeMetaNode( void ) : child1(-1), child2(-1), child3(-1), child4(-1), parent(-1), n_Count(1) {};
 };
 
 struct TravelIndex { //everything one needs to travel down the three
@@ -43,8 +44,8 @@ class QuadTree {
         QuadTree(const vector<Node>* nodes);
 		~QuadTree( void );
         
-		//TODO get quadtree meta infos
-		//TODO get memory rep
+		NodeStructureInfoContainer* getNodeStructureInfoContainer( void );
+		PackedNode* getPackedTree(int* size);
 
 		//print method
 		void printTree(ofstream* dest) const;
@@ -58,10 +59,6 @@ class QuadTree {
 		void collectChild(QuadTreeMetaNode* m, QuadTreeMetaNode* child);
 		void finalizeNode(QuadTreeMetaNode* m, Node* n, bool isLeaf, int depth);	
 				
-		//info extraction
-		
-
-
 		//helpers
 		inline int travelSelect(float x, float y, const TravelIndex* tIndex) const;
 		inline int travelDown(int childMarker, TravelIndex* tIndex) const;
@@ -74,7 +71,6 @@ class QuadTree {
 		//print helper method
 		void printChilds(ofstream* dest, TravelIndex tIndex) const;
 			
-
 		float _bottom;
 		float _left;
 		float _width;
