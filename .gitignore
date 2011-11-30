@@ -1,0 +1,11 @@
+/Debug/
+/x64/
+/_Data/
+/_DataDump/
+/_Tex/
+/Release/
+/HGvis.vcxproj
+/HGvis.vcxproj.filters
+/HGvis.vcxproj.user
+/glew32.dll
+/*.exe
