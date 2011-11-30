@@ -6,7 +6,8 @@ struct Node {
 	float y;
 	short depth;
 	float weight;
-	Node( void ) : x(0) {};
+	Node( void ) : weight(1.0f) {};
+	Node(float px, float py, float pweight) : x(px), y(py), weight(pweight) {};
 };
 
 

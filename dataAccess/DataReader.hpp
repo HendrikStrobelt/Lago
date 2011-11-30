@@ -2,6 +2,7 @@
 #define DATA_READER_H
 
 #include <string>
+#include <vector>
 #include <iostream>
 
 #include "../Node.hpp"
@@ -21,8 +22,8 @@ class DataReader {
 		void setNodeFile(string filePath, int xCol=0, int yCol=1, int weightCol=2, int labelCol=3);
 		void setEdgeFile(string filePath, int x1Col=0, int y1Col=1, int x2Col=2, int y2Col=3, int weightCol=4);
 
-		Node* readNextNode( void );
-		Edge* readNextEdge( void );
+		bool readNextNode(vector<Node>* nodes);
+		bool readNextEdge(vector<Edge>* edges);
 
 	private:
 

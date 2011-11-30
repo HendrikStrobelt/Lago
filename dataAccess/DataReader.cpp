@@ -57,67 +57,71 @@ void DataReader::setEdgeFile(string filePath, int x1Col, int y1Col, int x2Col, i
 }
 
 
-Node* DataReader::readNextNode( void ) {
+bool DataReader::readNextNode(vector<Node>* nodes) {
 	if (_nodeFile != NULL && 
 		fgets(_line, sizeof(_line), _nodeFile) != NULL) {
 
-		Node* n = new Node();
+		Node n;
 		char* token = strtok(_line,",");
 
 		int i = 0;
 		while (token != NULL) {
 			if (i == _nodeCols[X]) {
-				n->x = (float)atof(token);
+				n.x = (float)atof(token);
 			} else
 			if (i == _nodeCols[Y]) {
-				n->y = (float)atof(token);
+				n.y = (float)atof(token);
 			} else
 			if (i == _nodeCols[N_WEIGHT]) {
-				n->weight = (float)atof(token);
+				n.weight = (float)atof(token);
 			} else 
 			if (i == _nodeCols[N_LABEL]) {
-				//NOT YET SUPPORTED
+				//TODO not yet supported node labels
 			}						
 		
 			i++;
 			token = strtok(NULL, ","); //next token
 		}
-		return n;
+		
+		nodes->push_back(n);
+		return true;
 	} else {
-		return NULL;
+		return false;
 	}
 }
 
-Edge* DataReader::readNextEdge( void ) {
+bool DataReader::readNextEdge(vector<Edge>* edges) {
 	if (_edgeFile != NULL && 
 		fgets(_line, sizeof(_line), _edgeFile) != NULL) {
 	
-		Edge* e = new Edge();
+		Edge e;
 		char* token = strtok(_line,",");
 
 		int i = 0;
 		while (token != NULL) {
 			if (i == _edgeCols[X1]) {
-				e->x1 = (float)atof(token);
+				e.x1 = (float)atof(token);
 			} else
 			if (i == _edgeCols[Y1]) {
-				e->y1 = (float)atof(token);
+				e.y1 = (float)atof(token);
 			} else
 			if (i == _edgeCols[X2]) {
-				e->x2 = (float)atof(token);
+				e.x2 = (float)atof(token);
 			} else
 			if (i == _edgeCols[Y2]) {
-				e->y2 = (float)atof(token);
+				e.y2 = (float)atof(token);
 			} else
 			if (i == _edgeCols[E_WEIGHT]) {
-				e->weight = atof(token);
+				e.weight = atof(token);
 			}						
 		
 			i++;
 			token = strtok(NULL, ","); //next token
 		}
-		return e;
+
+		edges->push_back(e);
+		return true;
 	} else {
-		return NULL;
+		return false;
 	}
 }
