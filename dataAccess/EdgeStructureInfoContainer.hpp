@@ -9,7 +9,7 @@ using namespace std;
 class EdgeStructureInfoContainer {
 
 	public:
-		EdgeStructureInfoContainer( void );
+		EdgeStructureInfoContainer(int maxDepth, vector<int> leafNodes, vector<int> allNodes);
 		~EdgeStructureInfoContainer( void );
 		
 		int getMaxDepth( void );

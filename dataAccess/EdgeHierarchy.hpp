@@ -2,6 +2,7 @@
 #define EDGE_HIERARCHY_H
 
 #include "QuadTree.hpp"
+#include "EdgeStructureInfoContainer.hpp"
 #include "..\Edge.hpp"
 
 #include <vector>
@@ -30,7 +31,7 @@ class EdgeHierarchy {
 
 		int _maxDepth;
 		vector<vector<Edge> *> _edgeVectors;
-		vector<int> _leafCount;
+		vector<int> _leafNodes;
 
 		//temporary pointer storage for recursive calls
 		const vector<Edge>* _edges;

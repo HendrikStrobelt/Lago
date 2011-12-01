@@ -1,4 +1,6 @@
 #include "EdgeHierarchy.hpp"
+#include <algorithm>
+
 
 EdgeHierarchy::EdgeHierarchy(const vector<Edge>* edges, const QuadTree* quadTree) {
 	//store them for a short time to save variables in the recursive calls
@@ -11,7 +13,42 @@ EdgeHierarchy::EdgeHierarchy(const vector<Edge>* edges, const QuadTree* quadTree
 }
 
 EdgeHierarchy::~EdgeHierarchy( void ) {
+	for (int i = 0; i < _edgeVectors.size(); i++) {
+		delete _edgeVectors[i];
+	}
+}
 
+
+//public
+
+EdgeStructureInfoContainer* EdgeHierarchy::getEdgeStructureInfoContainer( void ) {
+	vector<int> allNodes;
+	for (int i = 0; i < _edgeVectors.size(); i++) {
+		allNodes.push_back(_edgeVectors[i]->size());
+	}
+	return new EdgeStructureInfoContainer(_maxDepth, _leafNodes, allNodes);
+}
+
+
+PackedEdge* EdgeHierarchy::getPackedHierarchy(int* size) {
+	int arraySize = 0;
+	for (int i = 0; i < _edgeVectors.size(); i++) {
+		arraySize += _edgeVectors[i]->size();
+	}
+	PackedEdge* pe = new PackedEdge[arraySize];
+	
+	int off = 0;
+	for (int i = 0; i < _edgeVectors.size(); i++) {
+		random_shuffle(_edgeVectors[i]->begin(), _edgeVectors[i]->end());
+		for (int j = 0; j < _edgeVectors[i]->size(); j++) {
+			pe[off + j] = _edgeVectors[i]->at(j);
+		}
+
+		off += _edgeVectors[i]->size();
+	}
+
+	*size = arraySize;
+	return pe;
 }
 
 //private
@@ -20,11 +57,11 @@ void EdgeHierarchy::addEdge(Edge e, int level) {
 	//if necessary add levels
 	while (level > _maxDepth) {
 		_edgeVectors.push_back(new vector<Edge>);
-		_leafCount.push_back(0);
+		_leafNodes.push_back(0);
 		_maxDepth++;
 	}
 	if (e.depth > 0) { //leaf edge
-		_leafCount[level]++;
+		_leafNodes[level]++;
 	}
 
 	_edgeVectors[level]->push_back(e);
@@ -88,7 +125,7 @@ void EdgeHierarchy::divideEdges(TravelIndex t1, TravelIndex t2, vector<int>* ind
 					splitArray[i][j] = new vector<int>();
 				}
 				splitArray[i][j]->push_back(indices->at(index));
-				weightArray[i][j] += _edges->at(indices->at(index)).w;
+				weightArray[i][j] += _edges->at(indices->at(index)).weight;
 			}			
 		} else {
 			//different nodes => insert edges

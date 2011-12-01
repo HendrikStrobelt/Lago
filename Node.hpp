@@ -18,8 +18,6 @@ struct Node {
 		short depth;
 		float weight;
 		PackedNode( void ) : weight(1.0f) {};
-		PackedNode(float px, float py, float pweight) : x(px), y(py), weight(pweight) {};
-		
 		PackedNode(Node n) : x(n.x), y(n.y), depth(n.depth), weight(n.weight) {};
 	};
 #pragma pack(pop)
