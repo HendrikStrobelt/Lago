@@ -46,8 +46,9 @@ namespace dump {
 	}
 
 	template <class T>
-	inline void w(ofstream* dataStream, int size, T data[]) {
-		dataStream->write((const char*) &data[0], sizeof(T) * size);
+	inline void w(ofstream* dataStream, int size, T* data) {
+		w(dataStream, size);
+		dataStream->write((const char*) data, sizeof(T) * size);
 	}
 
 
@@ -87,8 +88,10 @@ namespace dump {
 	}
 
 	template <class T>
-	inline void r(ifstream* dataStream, int size, T data[]) {
-		dataStream->read((char*) &data[0], sizeof(T) * size);
+	inline void r(ifstream* dataStream, int* size, T** data) {
+		r(dataStream, size);
+		*data = new T[*size];
+		dataStream->read((char*) *data, sizeof(T) * (*size));
 	}
 
 }
