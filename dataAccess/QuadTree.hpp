@@ -38,7 +38,7 @@ struct TravelIndex { //everything one needs to travel down the three
 
 class QuadTree {
 
-	friend class EdgeHierarchyCreator;
+	friend class EdgeHierarchy;
 
     public:
         QuadTree(const vector<Node>* nodes);
