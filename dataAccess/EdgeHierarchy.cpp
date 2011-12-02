@@ -1,15 +1,27 @@
 #include "EdgeHierarchy.hpp"
+#include "../GlobalConstants.hpp"
 #include <algorithm>
 
 
 EdgeHierarchy::EdgeHierarchy(const vector<Edge>* edges, const QuadTree* quadTree) {
 	//store them for a short time to save variables in the recursive calls
-	_maxDepth = -1;
-	_quadTree = quadTree;
-	_edges = edges;
-		createHierarchy();
-	_edges = NULL;
-	_quadTree = NULL;
+	if (!EDGE_HIERARCHY_FLAT) {
+		_maxDepth = -1;
+		_quadTree = quadTree;
+		_edges = edges;
+			createHierarchy();
+		_edges = NULL;
+		_quadTree = NULL;
+	} else {
+		_maxDepth = 0;
+		_edgeVectors.push_back(new vector<Edge>);
+		for (int i = 0; i < edges->size(); i++) {
+			Edge e(edges->at(i));
+			e.depth = 0;
+			_edgeVectors[0]->push_back(e);
+		}
+		_leafNodes.push_back(edges->size());
+	}
 }
 
 EdgeHierarchy::~EdgeHierarchy( void ) {

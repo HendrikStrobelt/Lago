@@ -14,7 +14,7 @@ int main( int argc, const char* argv[] ) {
 
 	DataCache d;
 	
-	d.loadDataSet("_Data//Hierarchy3Node.out", "_Data//Hierarchy3Edge.out");
+	d.loadDataSet("_Data//Hierarchy2Node.out", "_Data//Hierarchy2Edge.out");
 
 
 	cout << "done";
