@@ -19,8 +19,8 @@ class DataReader {
 		DataReader( void );
 		~DataReader( void );
 
-		void setNodeFile(string filePath, int xCol=0, int yCol=1, int weightCol=2, int labelCol=3);
-		void setEdgeFile(string filePath, int x1Col=0, int y1Col=1, int x2Col=2, int y2Col=3, int weightCol=4);
+		void setNodeFile(string filePath, int xCol=0, int yCol=1, int weightCol=NO_WEIGHTS, int labelCol=NO_LABELS);
+		void setEdgeFile(string filePath, int x1Col=0, int y1Col=1, int x2Col=2, int y2Col=3, int weightCol=NO_WEIGHTS);
 
 		bool readNextNode(vector<Node>* nodes);
 		bool readNextEdge(vector<Edge>* edges);
@@ -31,6 +31,8 @@ class DataReader {
 		enum EDGE_COLS {X1, Y1, X2, Y2, E_WEIGHT};
 
 		char _line[1024];
+		bool _nodeFileSet;
+		bool _edgeFileSet;
 		FILE* _nodeFile;
 		FILE* _edgeFile;
 

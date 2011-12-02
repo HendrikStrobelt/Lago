@@ -4,7 +4,7 @@
 
 EdgeHierarchy::EdgeHierarchy(const vector<Edge>* edges, const QuadTree* quadTree) {
 	//store them for a short time to save variables in the recursive calls
-	int _maxDepht = 0;
+	_maxDepth = -1;
 	_quadTree = quadTree;
 	_edges = edges;
 		createHierarchy();

@@ -3,6 +3,8 @@
 DataReader::DataReader( void ) {
 	_nodeFile = NULL;
 	_edgeFile = NULL;
+	_nodeFileSet = false;
+	_edgeFileSet = false;
 }
 
 DataReader::~DataReader( void ) {
@@ -28,8 +30,9 @@ void DataReader::setNodeFile(string filePath, int xCol, int yCol, int weightCol,
 		_nodeCols[Y] = yCol;
 		_nodeCols[N_WEIGHT] = weightCol;
 		_nodeCols[N_LABEL] = labelCol;
+		_nodeFileSet = true;
 	} else {
-		fclose(_nodeFile);
+		_nodeFileSet = false;
 		_nodeFile = NULL;
 		cerr << "ERROR: file open failed on " << filePath << "\n";
 	}
@@ -49,8 +52,9 @@ void DataReader::setEdgeFile(string filePath, int x1Col, int y1Col, int x2Col, i
 		_edgeCols[X2] = x2Col;
 		_edgeCols[Y2] = y2Col;
 		_edgeCols[E_WEIGHT] = weightCol;
+		_edgeFileSet = true;
 	} else {
-		fclose(_edgeFile);
+		_edgeFileSet = false;
 		_edgeFile = NULL;
 		cerr << "ERROR: file open failed on " << filePath << "\n";
 	}
@@ -58,7 +62,7 @@ void DataReader::setEdgeFile(string filePath, int x1Col, int y1Col, int x2Col, i
 
 
 bool DataReader::readNextNode(vector<Node>* nodes) {
-	if (_nodeFile != NULL && 
+	if (_nodeFileSet && 
 		fgets(_line, sizeof(_line), _nodeFile) != NULL) {
 
 		Node n;
@@ -91,7 +95,7 @@ bool DataReader::readNextNode(vector<Node>* nodes) {
 }
 
 bool DataReader::readNextEdge(vector<Edge>* edges) {
-	if (_edgeFile != NULL && 
+	if (_edgeFileSet && 
 		fgets(_line, sizeof(_line), _edgeFile) != NULL) {
 	
 		Edge e;

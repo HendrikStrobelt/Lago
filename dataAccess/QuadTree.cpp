@@ -1,14 +1,14 @@
 #include "QuadTree.hpp"
-#include <numeric>
+#include "../GlobalConstants.hpp"
 #include <algorithm>
 
 QuadTree::QuadTree(const vector<Node>* nodes) {
 
 	//define borders
-	float minX = numeric_limits<float>::max();
-	float maxX = numeric_limits<float>::min();
-	float minY = numeric_limits<float>::max();
-	float maxY = numeric_limits<float>::min();
+	float minX = MAX_COORD;
+	float maxX = MIN_COORD;
+	float minY = MAX_COORD;
+	float maxY = MIN_COORD;
 
 	for (int i = 0; i < nodes->size(); i++) {
 		minX = min(nodes->at(i).x, minX);
@@ -91,9 +91,9 @@ PackedNode* QuadTree::getPackedTree(int* size) {
 void QuadTree::printTree(ofstream* dest) const {
 	TravelIndex tIndex(0, 0, _left, _bottom, (_width / 2.0f), (_height / 2.0f));
 
-	(*dest) << "<?xml version=\"1.0\" standalone=\"no\"?>"
+	(*dest) << "<?xml version=\"1.0\" standalone=\"no\"?>" << "\n"
 			<< "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" "
-			<< "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">"
+			<< "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">" << "\n"
 			<< "<svg width=\""
 			<< 1600 << "px"
 			<< "\" height=\""
@@ -107,7 +107,7 @@ void QuadTree::printTree(ofstream* dest) const {
 			<< " "
 			<< _height
 			<< "\" "
-			<< "xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">";
+			<< "xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">" << "\n";
 
 
 	printChilds(dest, tIndex);
@@ -132,7 +132,7 @@ void QuadTree::printChilds(ofstream* dest, TravelIndex tIndex) const {
 				<< (tIndex.width_half * 2.0f)
 				<< "\" height=\""
 				<< (tIndex.height_half * 2.0f)
-				<< "\" fill=\"none\" stroke=\"black\" stroke-width=\"1\"/>";
+				<< "\" fill=\"none\" stroke=\"black\" stroke-width=\"1\"/>" << "\n";
 
 		//recursive calls use travel down to construct correct borders
 

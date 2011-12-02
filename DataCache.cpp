@@ -12,7 +12,12 @@ using namespace boost::filesystem;
 
 
 DataCache::DataCache( void ) {
-	clearMembers();
+	_eCount = 0;
+	_nCount = 0;
+	_nodeStructureInfo = NULL;
+	_edgeStructureInfo = NULL;
+	_packedNodes = NULL;
+	_packedEdges = NULL;
 }
 
 DataCache::~DataCache( void ) {
@@ -83,17 +88,17 @@ string DataCache::getDumpName(string nodeFile, string edgeFile) {
 	string dumpName = "_DataDump//";
 	
 	path nodePath(nodeFile);
-	dumpName.append(nodePath.filename().string());
+	dumpName.append(nodePath.filename().stem().string());
+
 	if (!edgeFile.empty()) {
 		path edgePath(edgeFile);
-		dumpName.append(edgePath.filename().string());
+		dumpName.append(edgePath.filename().stem().string());
 	}
 	dumpName.append(".hgv");
 
 	return dumpName;
 }
 	
-
 
 void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 	DataReader dr;
@@ -110,12 +115,12 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 	}
 
 	cout << " (total of " << nodes.size() << " nodes)" << "\n";
-	cout << "   creating QuadTree";
+	cout << "     creating QuadTree";
 	QuadTree qt(&nodes);
 
 	_nodeStructureInfo = qt.getNodeStructureInfoContainer(); //fast
 	cout << " (tree height " << _nodeStructureInfo->getMaxDepth() << ")" << "\n";
-	cout << "   extracting needed informations" << "\n";
+	cout << "     extracting needed informations" << "\n";
 	_packedNodes = qt.getPackedTree(&_nCount);
 
 	bool writeEdges = false;
@@ -133,12 +138,12 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 		}
 
 		cout << " (total of " << edges.size() << " edges)" << "\n";
-		cout << "   creating EdgeHierarchy";
+		cout << "     creating EdgeHierarchy";
 		EdgeHierarchy eh(&edges, &qt);
 
 		_edgeStructureInfo = eh.getEdgeStructureInfoContainer(); //fast
 		cout << " (tree height " << _edgeStructureInfo->getMaxDepth() << ")" << "\n";
-		cout << "   extracting needed informations" << "\n";
+		cout << "     extracting needed informations" << "\n";
 		_packedEdges = eh.getPackedHierarchy(&_eCount);
 	}
 
@@ -148,6 +153,12 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 
 
 void DataCache::writeToDump(string dumpName, bool writeEdges) {
+	
+	path dir(dumpName);
+	if (!exists(dir)) {
+        create_directory(dir); 
+	}
+
 	//load nodes
 		string nodeFile = dumpName;
 		nodeFile.append("//packedNodes.bin");
@@ -176,7 +187,7 @@ void DataCache::writeToDump(string dumpName, bool writeEdges) {
 			edgeInfos.close();
 	}
 
-	cout << "done";
+	cout << "done" << "\n";
 }
 
 void DataCache::loadFromDump(string dumpName, bool loadEdges) {
