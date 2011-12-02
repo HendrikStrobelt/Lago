@@ -18,18 +18,56 @@ DataReader::~DataReader( void ) {
 
 
 
-void DataReader::setNodeFile(string filePath, int xCol, int yCol, int weightCol, int labelCol) {
+void DataReader::setNodeFile(string filePath) {
 	if (_nodeFile != NULL) {
 		fclose(_nodeFile);
 	}
 
+	_nodeCols[X] = 0;
+	_nodeCols[Y] = 1;
+	_nodeCols[N_WEIGHT] = NO_WEIGHTS;
+	_nodeCols[N_LABEL] = NO_LABELS;
+
 	fopen_s(&_nodeFile, filePath.c_str(), "r");
 	if (_nodeFile) {
 		fgets(_line, sizeof(_line), _nodeFile); //read first line
-		_nodeCols[X] = xCol;
-		_nodeCols[Y] = yCol;
-		_nodeCols[N_WEIGHT] = weightCol;
-		_nodeCols[N_LABEL] = labelCol;
+		bool foundX = false;
+		bool foundY = false;
+		
+		int i = 0;
+		char* token = strtok(_line,",");
+		while (token != NULL) {
+			if (strcmp(token, "X") == 0) {
+				_nodeCols[X] = i;
+				foundX = true;
+			} else 
+			if (strcmp(token, "Y") == 0) {
+				_nodeCols[Y] = i;
+				foundY = true;
+			} else 
+			if (strcmp(token, "N_WEIGHT") == 0) {
+				_nodeCols[Y] = i;
+			} else 
+			if (strcmp(token, "N_LABEL") == 0) {
+				_nodeCols[Y] = i;
+			};
+		
+			i++;
+			token = strtok(NULL, ","); //next token
+		}
+
+		if (foundX && foundY) {
+			cout << "header detection successfull: using X(" << _nodeCols[X] << "), Y(" << _nodeCols[Y] << ")";
+			if (_nodeCols[N_WEIGHT] != NO_WEIGHTS) {
+				cout << ", N_WEIGHT(" << _nodeCols[N_WEIGHT] << ")";
+			}
+			if (_nodeCols[N_LABEL] != NO_LABELS) {
+				cout << ", N_LABEL(" << _nodeCols[N_LABEL] << ")";
+			}
+			cout << "\n";
+		} else {
+			cout << "no header detected: skipping line1 using fallback X(0), Y(1)" << "\n";
+		}
 		_nodeFileSet = true;
 	} else {
 		_nodeFileSet = false;
@@ -39,19 +77,62 @@ void DataReader::setNodeFile(string filePath, int xCol, int yCol, int weightCol,
 }
 
 
-void DataReader::setEdgeFile(string filePath, int x1Col, int y1Col, int x2Col, int y2Col, int weightCol) {
+void DataReader::setEdgeFile(string filePath) {
 	if (_edgeFile != NULL) {
 		fclose(_edgeFile);
 	}
 
+	_edgeCols[X1] = 0;
+	_edgeCols[Y1] = 1;
+	_edgeCols[X2] = 2;
+	_edgeCols[Y2] = 3;
+	_edgeCols[E_WEIGHT] = NO_WEIGHTS;
+
 	fopen_s(&_edgeFile, filePath.c_str(), "r");
 	if (_edgeFile) {
 		fgets(_line, sizeof(_line), _edgeFile); //read first line
-		_edgeCols[X1] = x1Col;
-		_edgeCols[Y1] = y1Col;
-		_edgeCols[X2] = x2Col;
-		_edgeCols[Y2] = y2Col;
-		_edgeCols[E_WEIGHT] = weightCol;
+		bool foundX1 = false;
+		bool foundY1 = false;
+		bool foundX2 = false;
+		bool foundY2 = false;
+		
+		int i = 0;
+		char* token = strtok(_line,",");
+		while (token != NULL) {
+			if (strcmp(token, "X1") == 0) {
+				_edgeCols[X1] = i;
+				foundX1 = true;
+			} else 
+			if (strcmp(token, "Y1") == 0) {
+				_edgeCols[Y1] = i;
+				foundY1 = true;
+			} else 
+			if (strcmp(token, "X2") == 0) {
+				_edgeCols[X2] = i;
+				foundX2 = true;
+			} else 
+			if (strcmp(token, "Y2") == 0) {
+				_edgeCols[Y2] = i;
+				foundY2 = true;
+			} else 
+			if (strcmp(token, "E_WEIGHT") == 0) {
+				_edgeCols[E_WEIGHT] = i;
+			}
+
+			i++;
+			token = strtok(NULL, ","); //next token
+		}
+
+		if (foundX1 && foundY1 && foundX2 && foundY2) {
+			cout << "header detection successfull: using X1(" << _edgeCols[X1] << "), Y1(" << _edgeCols[Y1] << ")";
+			cout << ", X2(" << _edgeCols[X2] << "), Y2(" << _edgeCols[Y2] << ")";
+			if (_edgeCols[E_WEIGHT] != NO_WEIGHTS) {
+				cout << ", E_WEIGHT(" << _edgeCols[E_WEIGHT] << ")";
+			}
+			cout << "\n";
+		} else {
+			cout << "no header detected: skipping line1 using fallback X1(0), Y1(1), X2(2), Y2(3)" << "\n";
+		}
 		_edgeFileSet = true;
 	} else {
 		_edgeFileSet = false;
