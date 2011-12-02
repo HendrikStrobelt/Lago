@@ -142,7 +142,7 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 		EdgeHierarchy eh(&edges, &qt);
 
 		_edgeStructureInfo = eh.getEdgeStructureInfoContainer(); //fast
-		cout << " (tree height " << _edgeStructureInfo->getMaxDepth() << ")" << "\n";
+		cout << " (hierarchy height " << _edgeStructureInfo->getMaxDepth() << ")" << "\n";
 		cout << "     extracting needed informations" << "\n";
 		_packedEdges = eh.getPackedHierarchy(&_eCount);
 	}
@@ -204,7 +204,8 @@ void DataCache::loadFromDump(string dumpName, bool loadEdges) {
 		_nodeStructureInfo = new NodeStructureInfoContainer(&nodeInfos);
 		nodeInfos.close();
 
-	cout << "loaded " << _nodeStructureInfo->getAllPoints(_nodeStructureInfo->getMaxDepth()) << " nodes";
+	cout << "loaded " << _nodeStructureInfo->getRenderNodes(_nodeStructureInfo->getMaxDepth()) << "/";
+	cout << _nodeStructureInfo->getAllNodes(_nodeStructureInfo->getMaxDepth()) << " nodes";
 
 	if (loadEdges) {
 		//load edges
@@ -220,7 +221,8 @@ void DataCache::loadFromDump(string dumpName, bool loadEdges) {
 			_edgeStructureInfo = new EdgeStructureInfoContainer(&edgeInfos);
 			edgeInfos.close();
 
-			cout << " and " << _edgeStructureInfo->getAllPoints(_edgeStructureInfo->getMaxDepth()) << " edges";
+			cout << " and " << _edgeStructureInfo->getRenderEdges(_edgeStructureInfo->getMaxDepth()) << "/";
+			cout << _edgeStructureInfo->getAllEdges(_edgeStructureInfo->getMaxDepth()) << " edges";
 	}
 
 	cout << " from _DataDump" << "\n";

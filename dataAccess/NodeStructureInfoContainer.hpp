@@ -20,8 +20,8 @@ class NodeStructureInfoContainer {
 		float getBottomBorder( void );
 
 		int getJoinDepth(float desiredMinDistance);
-		int getRenderPoints(int depth);
-		int getAllPoints(int depth);
+		int getRenderNodes(int depth);
+		int getAllNodes(int depth);
 
 		//dump to disc
 		NodeStructureInfoContainer(ifstream* dataStream);

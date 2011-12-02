@@ -14,15 +14,7 @@ int main( int argc, const char* argv[] ) {
 
 	DataCache d;
 	
-	d.loadDataSet("_Data//JournalNode.out", "_Data//JournalEdge.out");
-
-/*	int size;
-	const PackedNode* pn = d.getPackedNodes(&size);
-	for (int i = 0; i < size; i++) {
-		cout << pn[i].x << " " << pn[i].y << " " << pn[i].weight << "\n";
-	}
-*/
-
+	d.loadDataSet("_Data//Hierarchy3Node.out", "_Data//Hierarchy3Edge.out");
 
 
 	cout << "done";

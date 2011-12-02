@@ -13,8 +13,8 @@ class EdgeStructureInfoContainer {
 		~EdgeStructureInfoContainer( void );
 		
 		int getMaxDepth( void );
-		int getRenderPoints(int depth);
-		int getAllPoints(int depth);
+		int getRenderEdges(int depth);
+		int getAllEdges(int depth);
 
 		//dump to disc
 		EdgeStructureInfoContainer(ifstream* dataStream);

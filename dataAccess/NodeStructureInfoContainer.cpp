@@ -59,7 +59,7 @@ int NodeStructureInfoContainer::getJoinDepth(float desiredMinDistance) {
 	return depth;
 }
 
-int NodeStructureInfoContainer::getRenderPoints(int depth) {
+int NodeStructureInfoContainer::getRenderNodes(int depth) {
 	int leafs = 0;
 	for (int i = 0; i < depth; i++) {
 		leafs += _leafNodes[i];
@@ -68,7 +68,7 @@ int NodeStructureInfoContainer::getRenderPoints(int depth) {
 	return leafs + _allNodes[depth];
 }
 
-int NodeStructureInfoContainer::getAllPoints(int depth) {
+int NodeStructureInfoContainer::getAllNodes(int depth) {
 	int nodes = 0;
 	for (int i = 0; i <= depth; i++) {
 		nodes += _allNodes[i];

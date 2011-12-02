@@ -18,7 +18,7 @@ int EdgeStructureInfoContainer::getMaxDepth( void ) {
 	return _maxDepth;
 }
 
-int EdgeStructureInfoContainer::getRenderPoints(int depth) {
+int EdgeStructureInfoContainer::getRenderEdges(int depth) {
 	int leafs = 0;
 	for (int i = 0; i < depth; i++) {
 		leafs += _leafNodes[i];
@@ -28,7 +28,7 @@ int EdgeStructureInfoContainer::getRenderPoints(int depth) {
 }
 
 
-int EdgeStructureInfoContainer::getAllPoints(int depth) {
+int EdgeStructureInfoContainer::getAllEdges(int depth) {
 	int edges = 0;
 	for (int i = 0; i <= depth; i++) {
 		edges += _allNodes[i];
