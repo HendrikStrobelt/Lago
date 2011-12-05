@@ -4,6 +4,11 @@
 #include <iostream>
 #include <sstream>
 
+//painters needed to free static shaders
+#include "../painter/ProgressbarPainter.hpp"
+#include "../painter/GaussPainter.hpp"
+#include "../painter/DisplayConvertPainter.hpp"
+
 #include "../context/Context.hpp"
 
 ////////////////////////Variables////////////////////////////
@@ -15,10 +20,11 @@ namespace envHelper {
 
 	//private methods
 	void resize(int width, int height);
-
+	void deleteStaticShaders( void );
 	//public
 
 	void cleanUp( void ) {
+		deleteStaticShaders();
 		glfwTerminate();
 	}
 
@@ -151,5 +157,11 @@ namespace envHelper {
 	//private
 	void resize(int width, int height) {
 		glViewport(0,0, (GLsizei) width, (GLsizei) height);
+	}
+
+	void deleteStaticShaders( void ) {
+		ProgressbarPainter::cleanUp();
+		GaussPainter::cleanUp();
+		DisplayConvertPainter::cleanUp();
 	}
 };

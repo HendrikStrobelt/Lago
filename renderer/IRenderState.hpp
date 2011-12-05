@@ -4,7 +4,7 @@
 class IRenderState {
 
 	public:
-		virtual ~IRenderState() {};
+		virtual ~IRenderState( void ) {};
 
 		virtual void render( void ) = 0;
 		virtual void renderGauss( void ) = 0;

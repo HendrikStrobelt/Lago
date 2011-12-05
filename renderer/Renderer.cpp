@@ -47,8 +47,8 @@ void Renderer::renderHUD(float progress) {
 	_progressBar.renderBar(progress);
 }
 
-void Renderer::renderTexture(GLuint tex) {
-
+void Renderer::renderTexture(GLuint tex, float rMax, float gMax, float bMax) {
+	_displayConvert.renderTexture(tex, rMax, gMax, bMax);
 }
 
 

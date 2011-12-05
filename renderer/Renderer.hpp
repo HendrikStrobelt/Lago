@@ -12,6 +12,7 @@
 #include "states\Working.hpp"
 
 #include "..\painter\ProgressbarPainter.hpp"
+#include "..\painter\DisplayConvertPainter.hpp"
 
 class Renderer : public IRenderState {
 
@@ -47,12 +48,13 @@ class Renderer : public IRenderState {
 
 		//Painter
 		ProgressbarPainter _progressBar;
+		DisplayConvertPainter _displayConvert;
 		//
 
 		void setNewData(string nodeFile, string edgeFile = "");
 		void renderGraph( void );
 		void renderHUD(float progress);
-		void renderTexture(GLuint tex);
+		void renderTexture(GLuint tex, float rMax=1.0f, float gMax=1.0f, float bMax=1.0f);
 };
 
 
