@@ -14,11 +14,11 @@ EdgeStructureInfoContainer::~EdgeStructureInfoContainer( void ) {
 //public
 
 
-int EdgeStructureInfoContainer::getMaxDepth( void ) {
+int EdgeStructureInfoContainer::getMaxDepth( void ) const {
 	return _maxDepth;
 }
 
-int EdgeStructureInfoContainer::getRenderEdges(int depth) {
+int EdgeStructureInfoContainer::getRenderEdges(int depth) const {
 	int leafs = 0;
 	for (int i = 0; i < depth; i++) {
 		leafs += _leafNodes[i];
@@ -28,7 +28,7 @@ int EdgeStructureInfoContainer::getRenderEdges(int depth) {
 }
 
 
-int EdgeStructureInfoContainer::getAllEdges(int depth) {
+int EdgeStructureInfoContainer::getAllEdges(int depth) const {
 	int edges = 0;
 	for (int i = 0; i <= depth; i++) {
 		edges += _allNodes[i];

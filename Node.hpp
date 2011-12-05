@@ -1,6 +1,9 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include <GL/glew.h>
+#include <GL/glfw.h>
+
 struct Node {
 	float x;
 	float y;

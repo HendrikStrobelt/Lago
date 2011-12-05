@@ -1,0 +1,65 @@
+#version 330
+#extension GL_EXT_geometry_shader4: enable
+
+layout(points) in;
+layout(triangle_strip, max_vertices = 4) out;
+
+uniform float sideFactor;
+uniform mat4 MVP;
+uniform int desiredDepth;
+
+in int gDepth[];
+in float gWeight[];
+
+in vec2 originalV[];
+
+flat out float fWeight;
+out vec2 vTexCoord;
+
+
+void main(void) 
+{
+	int i = 0;
+
+	float nodeWeight = 0.0f;
+
+	if ((abs(gDepth[i]) <= desiredDepth) &&  //leaf or inner node we wish to display
+	    (abs(gDepth[i]) == desiredDepth || gDepth[i] > 0)) { //joinDepth level or leaf node
+	        
+			nodeWeight = gWeight[i];
+	}
+
+
+	if (nodeWeight > 0) {  //draw nodes
+
+		vec4 sides = MVP * vec4(sideFactor, sideFactor, 0.0, 0.0);
+
+		//left upper
+		gl_Position = gl_PositionIn[i] + vec4(-sides.x, sides.y, 0.0, 0.0);
+		vTexCoord = vec2(0.0, 0.0);
+		fWeight = nodeWeight;
+		EmitVertex();
+
+		//left lower
+		gl_Position = gl_PositionIn[i] + vec4(-sides.x, -sides.y, 0.0, 0.0);
+		vTexCoord = vec2(0.0, 1.0);
+		fWeight = nodeWeight;
+		EmitVertex();
+
+		//right upper
+		gl_Position = gl_PositionIn[i] + vec4(sides.x, sides.y, 0.0, 0.0);
+		vTexCoord = vec2(1.0, 0.0);
+		fWeight = nodeWeight;
+		EmitVertex();
+
+		//right lower
+		gl_Position = gl_PositionIn[i] + vec4(sides.x, -sides.y, 0.0, 0.0);
+		vTexCoord = vec2(1.0, 1.0);
+		fWeight = nodeWeight;
+		EmitVertex();
+
+		//finish
+		EndPrimitive();
+
+	}
+}

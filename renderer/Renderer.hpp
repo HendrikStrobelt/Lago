@@ -35,6 +35,7 @@ class Renderer : public IRenderState {
 		void changeAspectRatio( void );
 
 	private:
+
 		DataCache dCache;
 
 		RenderData* _currentData;

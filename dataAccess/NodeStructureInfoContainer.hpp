@@ -13,15 +13,15 @@ class NodeStructureInfoContainer {
 		~NodeStructureInfoContainer( void );
 		
 		
-		int getMaxDepth( void );
-		float getWidth( void );
-		float getHeight( void );
-		float getLeftBorder( void );
-		float getBottomBorder( void );
+		int getMaxDepth( void ) const;
+		float getWidth( void ) const;
+		float getHeight( void ) const;
+		float getLeftBorder( void ) const;
+		float getBottomBorder( void ) const;
 
-		int getJoinDepth(float desiredMinDistance);
-		int getRenderNodes(int depth);
-		int getAllNodes(int depth);
+		int getJoinDepth(float desiredMinDistance) const;
+		int getRenderNodes(int depth) const;
+		int getAllNodes(int depth) const;
 
 		//dump to disc
 		NodeStructureInfoContainer(ifstream* dataStream);

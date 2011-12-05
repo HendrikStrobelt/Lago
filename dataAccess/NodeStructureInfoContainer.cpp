@@ -19,29 +19,29 @@ NodeStructureInfoContainer::~NodeStructureInfoContainer( void ) {
 
 //Public
 
-int NodeStructureInfoContainer::getMaxDepth( void ) {
+int NodeStructureInfoContainer::getMaxDepth( void ) const {
 	return _maxDepth;
 }
 
-float NodeStructureInfoContainer::getWidth( void ) {
+float NodeStructureInfoContainer::getWidth( void ) const {
 	return _width;
 }
 
-float NodeStructureInfoContainer::getHeight( void ) {
+float NodeStructureInfoContainer::getHeight( void ) const {
 	return _height;
 }
 
-float NodeStructureInfoContainer::getLeftBorder( void ) {
+float NodeStructureInfoContainer::getLeftBorder( void ) const {
 	return _left;
 }
 
-float NodeStructureInfoContainer::getBottomBorder( void ) {
+float NodeStructureInfoContainer::getBottomBorder( void ) const {
 	return _bottom;
 }
 
 //non simple
 
-int NodeStructureInfoContainer::getJoinDepth(float desiredMinDistance) {
+int NodeStructureInfoContainer::getJoinDepth(float desiredMinDistance) const {
 	float maxRectSide = std::max(_width, _height);
 	float depth;
 
@@ -59,7 +59,7 @@ int NodeStructureInfoContainer::getJoinDepth(float desiredMinDistance) {
 	return depth;
 }
 
-int NodeStructureInfoContainer::getRenderNodes(int depth) {
+int NodeStructureInfoContainer::getRenderNodes(int depth) const {
 	int leafs = 0;
 	for (int i = 0; i < depth; i++) {
 		leafs += _leafNodes[i];
@@ -68,7 +68,7 @@ int NodeStructureInfoContainer::getRenderNodes(int depth) {
 	return leafs + _allNodes[depth];
 }
 
-int NodeStructureInfoContainer::getAllNodes(int depth) {
+int NodeStructureInfoContainer::getAllNodes(int depth) const {
 	int nodes = 0;
 	for (int i = 0; i <= depth; i++) {
 		nodes += _allNodes[i];

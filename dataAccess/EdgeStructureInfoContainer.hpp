@@ -12,9 +12,9 @@ class EdgeStructureInfoContainer {
 		EdgeStructureInfoContainer(int maxDepth, vector<int> leafNodes, vector<int> allNodes);
 		~EdgeStructureInfoContainer( void );
 		
-		int getMaxDepth( void );
-		int getRenderEdges(int depth);
-		int getAllEdges(int depth);
+		int getMaxDepth( void ) const;
+		int getRenderEdges(int depth) const;
+		int getAllEdges(int depth) const;
 
 		//dump to disc
 		EdgeStructureInfoContainer(ifstream* dataStream);

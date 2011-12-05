@@ -80,8 +80,8 @@ void GaussPainter::createShader( void ) {
 		unis.push_back("gaussTexture");
 		unis.push_back("desiredDepth");
 	
-		_shader_ptr = new GLSLShader(attribs, unis, "shaders/pointRenderer/gauss/shader.vert",
-		"shaders/pointRenderer/gauss/shader.frag", "shaders/pointRenderer/gauss/shader.gem");
+		_shader_ptr = new GLSLShader(attribs, unis, "shaders/gaussRenderer/gaussShader.vert",
+		"shaders/gaussRenderer/gaussShader.frag", "shaders/gaussRenderer/gaussShader.gem");
 	}
 }
 

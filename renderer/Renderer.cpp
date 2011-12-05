@@ -6,15 +6,15 @@
 Renderer::Renderer( void ) {
 	_currentData = NULL;
 	_newData = NULL;
-	_idle = new Idle(this);
-	_initalWork = new InitialWork(this);
-	_working = new Working(this);
-	
+
 	glGenBuffers(1, &_nodeVBO);
 
 	//load data
 	setNewData("_Data/LineNode.out");
 	
+	_idle = new Idle(this);
+	_initalWork = new InitialWork(this);
+	_working = new Working(this);
 	_state = _initalWork;
 }
 
@@ -34,6 +34,7 @@ void Renderer::setNewData(string nodeFile, string edgeFile) {
 
 	int nodeCount;
 	const PackedNode* packedNodes = dCache.getPackedNodes(&nodeCount);
+
 	glBindBuffer(GL_ARRAY_BUFFER, _nodeVBO);
 		glBufferData(GL_ARRAY_BUFFER, nodeCount * sizeof(PackedNode), packedNodes, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

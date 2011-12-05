@@ -2,6 +2,9 @@
 #define INITIAL_WORK_H
 
 #include "../IRenderState.hpp"
+#include "../../helper/FrameBufferContainer.hpp"
+#include "../../painter/GaussPainter.hpp"
+
 class Renderer;
 
 class InitialWork : public IRenderState {
@@ -22,6 +25,9 @@ class InitialWork : public IRenderState {
 
 	private:
 		Renderer* _renderer;
+		GaussPainter* _gaussPainter;
+		FrameBufferContainer* _fbo;
+		
 
 };
 

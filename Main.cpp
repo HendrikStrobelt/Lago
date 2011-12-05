@@ -37,6 +37,7 @@ int main( int argc, const char* argv[] ) {
 
 
 	glfwSetTime(0);	
+	_renderer->work();
 	while (context::_run) {
 		render();
 	}
