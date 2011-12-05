@@ -1,5 +1,7 @@
 #include "Renderer.hpp"
 #include "../painter/ProgressbarPainter.hpp"
+#include "../Node.hpp"
+
 
 Renderer::Renderer( void ) {
 	_currentData = NULL;
@@ -8,6 +10,8 @@ Renderer::Renderer( void ) {
 	_initalWork = new InitialWork(this);
 	_working = new Working(this);
 	
+	glGenBuffers(1, &_nodeVBO);
+
 	//load data
 	setNewData("_Data/LineNode.out");
 	
@@ -27,6 +31,12 @@ Renderer::~Renderer( void ) {
 
 void Renderer::setNewData(string nodeFile, string edgeFile) {
 	dCache.loadDataSet(nodeFile, edgeFile);
+
+	int nodeCount;
+	const PackedNode* packedNodes = dCache.getPackedNodes(&nodeCount);
+	glBindBuffer(GL_ARRAY_BUFFER, _nodeVBO);
+		glBufferData(GL_ARRAY_BUFFER, nodeCount * sizeof(PackedNode), packedNodes, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }	
 
 void Renderer::renderGraph( void ) {

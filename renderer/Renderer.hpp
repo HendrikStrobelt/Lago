@@ -39,6 +39,7 @@ class Renderer : public IRenderState {
 		RenderData* _currentData;
 		RenderData* _newData;
 		IRenderState* _state;
+		GLuint _nodeVBO;
 
 		Idle* _idle;
 		InitialWork* _initalWork;
