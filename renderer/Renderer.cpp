@@ -1,12 +1,15 @@
 #include "Renderer.hpp"
+#include "../painter/ProgressbarPainter.hpp"
 
 Renderer::Renderer( void ) {
 	_currentData = NULL;
 	_newData = NULL;
-	_idle = new Idle();
-	_initalWork = new InitialWork();
-	_working = new Working();
+	_idle = new Idle(this);
+	_initalWork = new InitialWork(this);
+	_working = new Working(this);
 	
+	//load data
+	setNewData("_Data/LineNode.out");
 	
 	_state = _initalWork;
 }
@@ -22,15 +25,19 @@ Renderer::~Renderer( void ) {
 
 //private methods that can be used by the states
 
-void renderGraph( void ) {
+void Renderer::setNewData(string nodeFile, string edgeFile) {
+	dCache.loadDataSet(nodeFile, edgeFile);
+}	
+
+void Renderer::renderGraph( void ) {
 
 }
 
-void renderHUD(float progress) {
-
+void Renderer::renderHUD(float progress) {
+	_progressBar.renderBar(progress);
 }
 
-void renderTexture(GLuint tex) {
+void Renderer::renderTexture(GLuint tex) {
 
 }
 

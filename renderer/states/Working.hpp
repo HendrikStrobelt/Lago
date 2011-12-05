@@ -2,11 +2,12 @@
 #define WORKING_H
 
 #include "../IRenderState.hpp"
+class Renderer;
 
 class Working : public IRenderState {
 
 	public:
-		Working( void );
+		Working(Renderer* renderer);
 		~Working( void );
 
 		//Interface methods
@@ -20,7 +21,7 @@ class Working : public IRenderState {
 		void changeAspectRatio( void );
 
 	private:
-
+		Renderer* _renderer;
 
 };
 

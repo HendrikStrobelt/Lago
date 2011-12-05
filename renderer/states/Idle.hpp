@@ -2,11 +2,12 @@
 #define IDLE_H
 
 #include "../IRenderState.hpp"
+class Renderer;
 
 class Idle : public IRenderState {
 
 	public:
-		Idle( void );
+		Idle(Renderer* renderer);
 		~Idle( void );
 
 		//Interface methods
@@ -20,7 +21,7 @@ class Idle : public IRenderState {
 		void changeAspectRatio( void );
 
 	private:
-
+		Renderer* _renderer;
 
 };
 

@@ -1,33 +1,18 @@
 #include "ProgressbarPainter.hpp"		
 #include "../helper/EnvironmentHelper.hpp"
+#include "../context/Context.hpp"
 
-namespace ProgressbarPainter {
-
-//private members and vars
-enum DATA {VERTEX, TEX_COORDS};
-
-void createShader( void );
-void initVao( void );
-
-GLSLShader* _shader_ptr;
-GLuint _vao;
-GLuint _vbo[2];
-GLuint _texLoadedBar;
-GLuint _texBar;
-
-
-//public stuff
-
-void init( void ) {
+ProgressbarPainter::ProgressbarPainter( void ) {
 	_texBar = envHelper::loadRGBTexture("_Tex/LoadingBarBack.tga");
 	_texLoadedBar = envHelper::loadRGBTexture("_Tex/LoadingBarLoaded.tga");
 
+	context::addResizeListener(this);
 	createShader();
 	initVao();
 }
 
 
-void cleanUp( void) {
+ProgressbarPainter::~ProgressbarPainter( void) {
 	glDeleteBuffers(2, &_vbo[0]);
 	glDeleteVertexArrays(1, &_vao);
 	glDeleteTextures(1, &_texBar);
@@ -35,7 +20,7 @@ void cleanUp( void) {
 	delete _shader_ptr;
 }
 
-void renderBar(float loaded) {
+void ProgressbarPainter::renderBar(float loaded) {
 	glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, _texBar);
 	glActiveTexture(GL_TEXTURE1);
@@ -60,9 +45,27 @@ void renderBar(float loaded) {
 		glBindTexture(GL_TEXTURE_2D,  0);
 }
 
+void ProgressbarPainter::resizeEvent(int width, int height) {
+	updateBarData(width, height);
+}
+
 //private stuff
 
-void createShader( void ) {
+void ProgressbarPainter::updateBarData(int w, int h) {
+	float stepX = 2.0f / (float)w;
+	float stepY = 2.0f / (float)h;
+
+	float textureQuad[8] =   { (1.0f - 340.0f*stepX), (1.0f - 20.0f*stepY),
+							   (1.0f - 340.0f*stepX), (1.0f - 50.0f*stepY),
+							   (1.0f -  40.0f*stepX), (1.0f - 20.0f*stepY),
+							   (1.0f -  40.0f*stepX), (1.0f - 50.0f*stepY) };
+
+	glBindBuffer (GL_ARRAY_BUFFER, _vbo[VERTEX]);
+		glBufferData (GL_ARRAY_BUFFER, 8 * sizeof(float), &textureQuad[0], GL_STATIC_DRAW);
+	glBindBuffer (GL_ARRAY_BUFFER, 0);
+}
+
+void ProgressbarPainter::createShader( void ) {
 	vector<string> unis;
 	vector<string> attribs;
 
@@ -76,28 +79,29 @@ void createShader( void ) {
 }
 
 
-void initVao( void ) {
+void ProgressbarPainter::initVao( void ) {
 
-	float textureQuad[8] =   { 0.58f, 0.96f,    0.58f, 0.88f,		 0.98f, 0.96f, 	 0.98f, 0.88f};
 	float texture[8] = { 0.0f, 1.0f,     0.0f,  0.0f,      1.0f, 1.0f,     1.0f,  0.0f};
-
-	//allocate and assign vao and vbo objects to the handles
 
 	glGenVertexArrays(1, &_vao);
 	glGenBuffers (2, &_vbo[0]);
 
-	//bind vertex array = screen coordinates for the display pass
+
+	glBindBuffer(GL_ARRAY_BUFFER, _vbo[TEX_COORDS]);
+		glBufferData (GL_ARRAY_BUFFER, 8 * sizeof(float), &texture[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
 	glBindVertexArray(_vao);	 
 		glBindBuffer (GL_ARRAY_BUFFER, _vbo[VERTEX]);
-			glBufferData (GL_ARRAY_BUFFER, 8 * sizeof(float), &textureQuad[0], GL_STATIC_DRAW);
 			glEnableVertexAttribArray(_shader_ptr->getAttributeLocation("vVertex"));
-			glVertexAttribPointer (_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, 0, 0);
-		
+			glVertexAttribPointer (_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, 0, 0);	
 		glBindBuffer (GL_ARRAY_BUFFER, _vbo[TEX_COORDS]);
-			glBufferData (GL_ARRAY_BUFFER, 8 * sizeof(float), &texture[0], GL_STATIC_DRAW);
 			glEnableVertexAttribArray(_shader_ptr->getAttributeLocation("vTex"));
 			glVertexAttribPointer (_shader_ptr->getAttributeLocation("vTex"), 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glBindVertexArray(0);
-}
 
-};//namespace end
+	int w,h;
+	context::getWindowSize(&w, &h);
+	updateBarData(w,h);
+}

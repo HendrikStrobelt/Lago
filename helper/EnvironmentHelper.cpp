@@ -5,7 +5,6 @@
 #include <sstream>
 
 #include "../context/Context.hpp"
-#include "../painter/ProgressbarPainter.hpp"
 
 ////////////////////////Variables////////////////////////////
 
@@ -16,13 +15,10 @@ namespace envHelper {
 
 	//private methods
 	void resize(int width, int height);
-	void initStaticPainters( void );
-	void clearStaticPainters( void );
 
 	//public
 
 	void cleanUp( void ) {
-		clearStaticPainters();
 		glfwTerminate();
 	}
 
@@ -149,21 +145,11 @@ namespace envHelper {
 			glfwTerminate();
 			exit(EXIT_FAILURE);
 		}
-
-		initStaticPainters();
 	}
 
 
 	//private
 	void resize(int width, int height) {
 		glViewport(0,0, (GLsizei) width, (GLsizei) height);
-	}
-
-	void initStaticPainters( void ) {
-		ProgressbarPainter::init();
-	}
-
-	void clearStaticPainters( void ) {
-		ProgressbarPainter::cleanUp();
 	}
 };

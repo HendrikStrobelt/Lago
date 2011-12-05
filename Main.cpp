@@ -22,7 +22,7 @@ void cleanUp( void );
 
 //private vars
 context::DummyContextListener _contextListener;
-Renderer _renderer;
+Renderer* _renderer;
 
 int main( int argc, const char* argv[] ) {
 	//define an OpenGL context, open a window...
@@ -33,6 +33,8 @@ int main( int argc, const char* argv[] ) {
 	envHelper::initGL();
 
 	_contextListener.activate(0,0,0,keyEnv,0, 0,0);
+	_renderer = new Renderer();
+
 
 	glfwSetTime(0);	
 	while (context::_run) {
@@ -45,6 +47,7 @@ int main( int argc, const char* argv[] ) {
 }
 
 void cleanUp( void ) {
+	delete _renderer;
 	context::cleanUp();
 	envHelper::cleanUp();
 }
@@ -54,7 +57,7 @@ void render( void ) {
 	glClearColor(0.2, 0.2, 0.2, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	_renderer.render();
+	_renderer->render();
 	
 	glfwSwapBuffers();
 }

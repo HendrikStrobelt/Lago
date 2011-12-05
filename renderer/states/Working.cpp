@@ -1,7 +1,8 @@
 #include "Working.hpp"
+#include "../Renderer.hpp"
 
-Working::Working( void ) {
-
+Working::Working(Renderer* renderer) {
+	_renderer = renderer;
 }
 
 Working::~Working( void ) {

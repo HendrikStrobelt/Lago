@@ -1,8 +1,8 @@
 #include "InitialWork.hpp"
-#include "../../painter/ProgressbarPainter.hpp"
+#include "../Renderer.hpp"
 
-InitialWork::InitialWork( void ) {
-
+InitialWork::InitialWork(Renderer* renderer) {
+	_renderer = renderer;
 }
 
 InitialWork::~InitialWork( void ) {
@@ -10,7 +10,7 @@ InitialWork::~InitialWork( void ) {
 }
 
 void InitialWork::render( void ) {
-	ProgressbarPainter::renderBar(0.4f);
+	_renderer->renderHUD(0.4f);
 };
 void InitialWork::renderGauss( void ) {};
 void InitialWork::renderEvalField( void ) {};

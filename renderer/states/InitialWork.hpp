@@ -2,11 +2,12 @@
 #define INITIAL_WORK_H
 
 #include "../IRenderState.hpp"
+class Renderer;
 
 class InitialWork : public IRenderState {
 
 	public:
-		InitialWork( void );
+		InitialWork(Renderer* renderer);
 		~InitialWork( void );
 
 		//Interface methods
@@ -20,7 +21,7 @@ class InitialWork : public IRenderState {
 		void changeAspectRatio( void );
 
 	private:
-
+		Renderer* _renderer;
 
 };
 

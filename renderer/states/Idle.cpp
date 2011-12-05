@@ -1,7 +1,8 @@
 #include "Idle.hpp"
+#include "../Renderer.hpp"
 
-Idle::Idle( void ) {
-
+Idle::Idle(Renderer* renderer) {
+	_renderer = renderer;
 }
 
 Idle::~Idle( void ) {
