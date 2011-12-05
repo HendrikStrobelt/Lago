@@ -9,23 +9,23 @@ InitialWork::InitialWork(Renderer* renderer) {
 	_gaussPainter = new GaussPainter(_renderer->_nodeVBO, elementCount);
 	_gaussPainter->setBaseVars(glm::ortho<float>(-800, 800, -50, 850, -1, 1), 12.0f, 4);
 
-	_fbo = new FrameBufferContainer(1500, 750, GL_LINEAR);
+	_pc = new PainterCommander(_gaussPainter, 1500, 750, 1);
 }
 
 InitialWork::~InitialWork( void ) {
 	delete _gaussPainter;
-	delete _fbo;
+	delete _pc;
 }
 
 void InitialWork::render( void ) {
-	_renderer->renderTexture(_fbo->_fboOutTex, 1, 1, 70000);
+	_renderer->renderTexture(_pc->getWorkingTexture());
 }
 void InitialWork::renderGauss( void ) {};
 void InitialWork::renderEvalField( void ) {};
 void InitialWork::work( void ) {
-	glBindFramebuffer(GL_FRAMEBUFFER, _fbo->_fbo);
-		_gaussPainter->processElements(0,1000000);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	if (!_pc->isDone())  {
+		_pc->renderNextPart();
+	}
 }
 void InitialWork::changePanning( void ) {};
 void InitialWork::changeZoom( void ) {};

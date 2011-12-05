@@ -37,7 +37,6 @@ int main( int argc, const char* argv[] ) {
 
 
 	glfwSetTime(0);	
-	_renderer->work();
 	while (context::_run) {
 		render();
 	}
@@ -57,9 +56,11 @@ void render( void ) {
 	//prepare
 	glClearColor(0.2, 0.2, 0.2, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
-
+	
+	_renderer->work();
 	_renderer->render();
 	
+	glfwSleep(0.5);
 	glfwSwapBuffers();
 }
 
