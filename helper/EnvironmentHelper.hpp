@@ -18,7 +18,8 @@ namespace envHelper {
 	GLuint loadFloatGaussTextures(string filenamePrefix, int maxExp);
 	void prepareEnvironment(int width, int height);
 	void initGL( void );
+	void cleanUp( void );
 
-}
+};
 
 #endif

@@ -12,7 +12,7 @@
 #include "GlobalConstants.hpp"
 #include "helper\EnvironmentHelper.hpp"
 #include "context\Context.hpp"
-
+#include "renderer\Renderer.hpp"
 
 //private methods
 void render( void );
@@ -22,7 +22,7 @@ void cleanUp( void );
 
 //private vars
 context::DummyContextListener _contextListener;
-
+Renderer _renderer;
 
 int main( int argc, const char* argv[] ) {
 	//define an OpenGL context, open a window...
@@ -41,15 +41,21 @@ int main( int argc, const char* argv[] ) {
 
 	//Close program and terminate GLFW
 	cleanUp();
-	glfwTerminate();
 	exit(EXIT_SUCCESS);
 }
 
 void cleanUp( void ) {
 	context::cleanUp();
+	envHelper::cleanUp();
 }
 
 void render( void ) {
+	//prepare
+	glClearColor(0.2, 0.2, 0.2, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	_renderer.render();
+	
 	glfwSwapBuffers();
 }
 

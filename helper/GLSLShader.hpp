@@ -11,7 +11,7 @@ using namespace std;
 
 class GLSLShader {
 	public:
-		GLSLShader(vector<string> attributes, vector<string> uniforms, string vertShader, string fragShader, string gemShader);
+		GLSLShader(vector<string> attributes, vector<string> uniforms, string vertShader, string fragShader, string gemShader="");
 		~GLSLShader(void);	
 	
 		void use( void );
