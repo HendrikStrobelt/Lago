@@ -60,7 +60,6 @@ void render( void ) {
 	_renderer->work();
 	_renderer->render();
 	
-	glfwSleep(0.5);
 	glfwSwapBuffers();
 }
 

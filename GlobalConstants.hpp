@@ -18,5 +18,7 @@
 #define GAUSS_TEXTURE_PI 31415.926535897
 #define GAUSS_TEXTURE_VALUE_MULT 100000.0
 
+//painter commander
+#define POINT_INIT_STEP 500
 
 #endif

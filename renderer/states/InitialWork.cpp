@@ -1,5 +1,6 @@
 #include "InitialWork.hpp"
 #include "../Renderer.hpp"
+#include "../../GlobalConstants.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -7,9 +8,9 @@ InitialWork::InitialWork(Renderer* renderer) {
 	_renderer = renderer;
 	int elementCount = _renderer->dCache.getNodeStrucutreInfo()->getAllNodes(_renderer->dCache.getNodeStrucutreInfo()->getMaxDepth());
 	_gaussPainter = new GaussPainter(_renderer->_nodeVBO, elementCount);
-	_gaussPainter->setBaseVars(glm::ortho<float>(-800, 800, -50, 850, -1, 1), 12.0f, 4);
+	_gaussPainter->setBaseVars(glm::ortho<float>(0, 36335, -41125, 0, -1, 1), 614.0f, _renderer->dCache.getNodeStrucutreInfo()->getMaxDepth());
 
-	_pc = new PainterCommander(_gaussPainter, 1500, 750, 1);
+	_pc = new PainterCommander(_gaussPainter, 1500, 750, POINT_INIT_STEP);
 }
 
 InitialWork::~InitialWork( void ) {
@@ -18,7 +19,7 @@ InitialWork::~InitialWork( void ) {
 }
 
 void InitialWork::render( void ) {
-	_renderer->renderTexture(_pc->getWorkingTexture());
+	_renderer->renderTexture(_pc->getWorkingTexture(), 1.0, 1.0, 2400000.0);
 }
 void InitialWork::renderGauss( void ) {};
 void InitialWork::renderEvalField( void ) {};

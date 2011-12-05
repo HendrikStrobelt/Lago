@@ -7,7 +7,6 @@ PainterCommander::PainterCommander(ISplitablePainter* painter, int width, int he
 	_renderTime = 0.0;
 	_currentIndex = 0;
 	_currentStep = initStep;
-	_done = false;
 }
 
 PainterCommander::~PainterCommander( void ) {
@@ -17,7 +16,11 @@ PainterCommander::~PainterCommander( void ) {
 //public
 
 bool PainterCommander::isDone( void ) {
-	return _done;
+	if (_painter->getElementCount() <= _currentIndex) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 GLuint PainterCommander::getWorkingTexture( void ) {
@@ -38,6 +41,9 @@ double PainterCommander::getRenderTime( void ) {
 
 float PainterCommander::renderNextPart( void ) {
 	if (!isDone()) { 
+		if (_currentIndex == 0) {
+			_renderTime = 0.0;
+		}
 		glFinish();
 
 		double start = glfwGetTime();
@@ -49,9 +55,9 @@ float PainterCommander::renderNextPart( void ) {
 
 		_currentIndex += _currentStep;
 		_renderTime += (end - start);
-		double timePerPoint = (_renderTime / _currentIndex);
+		double timePerElement = (_renderTime / _currentIndex);
 			
-	//	_currentStep = (ceil((double)TARGET_RENDER_TIME / timePerPoint) * 1.2f);
+		_currentStep = (ceil((double)TARGET_RENDER_TIME / timePerElement) * 1.5f);
 			
 		if (_currentStep > _painter->getElementCount() / 2) {
 			_currentStep = (int)ceil((float)_painter->getElementCount() / 2.0f);  //show always a bar

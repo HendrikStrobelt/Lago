@@ -10,7 +10,7 @@ Renderer::Renderer( void ) {
 	glGenBuffers(1, &_nodeVBO);
 
 	//load data
-	setNewData("_Data/LineNode.out");
+	setNewData("_Data/WorkNode.out");
 	
 	_idle = new Idle(this);
 	_initalWork = new InitialWork(this);

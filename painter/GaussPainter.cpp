@@ -44,6 +44,7 @@ void GaussPainter::setBaseVars(glm::mat4 MVP, float quadSideLength, int nodeDept
 //private and static methods
 
 void GaussPainter::renderGauss(int start, int count) {
+	glBlendFunc(GL_ONE, GL_ONE);
 	if ((start + count) > _elementCount) {
 		count = _elementCount - start;
 	}
