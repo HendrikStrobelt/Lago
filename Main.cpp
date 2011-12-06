@@ -16,11 +16,13 @@
 //private methods
 void render( void );
 void keyEnv(int key, int action);
+void mouseWheelEvent(int pos);
 void cleanUp( void );
 
 
 //private vars
 context::DummyContextListener _contextListener;
+
 
 int main( int argc, const char* argv[] ) {
 	//define an OpenGL context, open a window...
@@ -30,9 +32,10 @@ int main( int argc, const char* argv[] ) {
 	//init context and environment (remember a context needs a valid glfw environment before beeing ready)
 	context::init();
 
-	_contextListener.activate(0,0,0,keyEnv,0);
+	_contextListener.activate(0,0,0,keyEnv, mouseWheelEvent);
 
 	glfwSetTime(0);	
+	glfwSetMouseWheel(0);
 	while (context::_run) {
 		render();
 	}
@@ -48,6 +51,8 @@ void cleanUp( void ) {
 }
 
 void render( void ) {
+	context::tick(); //process possible pending events
+
 	//prepare
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -81,4 +86,9 @@ void keyEnv(int key, int action) {
 			context::setSideRatio(context::_sideRatio - 0.01f);
 		}
 	}
+}
+
+void mouseWheelEvent(int pos) {
+	context::setUserZoom(context::_userZoomFactor + (pos * 0.25f));
+	glfwSetMouseWheel(0);
 }

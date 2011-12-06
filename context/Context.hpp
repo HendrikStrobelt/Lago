@@ -25,11 +25,13 @@ namespace context {
 		extern float _sideRatio;
 		extern float _userZoomFactor;
 
-	//push stuff changable via set methods register a listener or ask
-		
+		void tick( void );
+
 		//setters
 		void setSideRatio(float newSideRatio);
+		void setUserZoom(float newZoom);
 		void setDataSet(string nodeFile, string edgeFile="");
+		
 
 		//GLFW getters
 		void getWindowSize(int* width, int* height);

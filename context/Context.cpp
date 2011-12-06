@@ -17,7 +17,9 @@ namespace context {
 	float _userZoomFactor;
 	Renderer* _renderer;
 
-	//private methods
+	//private var & methods
+	double _pendingWheelEventTime;
+
 	void resizeEvent(int width, int height);
 	void mouseMovedEvent(int x, int y);
 	void mouseClickedEvent(int button, int action);
@@ -36,12 +38,25 @@ namespace context {
 		_run = true;
 		_userZoomFactor = 1.0f;
 		_sideRatio = 0.01f;
+		_pendingWheelEventTime = -1.0;
 		_renderer = new Renderer;
 	}
 
 	void cleanUp() {
 		delete _renderer;
 	}
+
+
+	void tick( void ) {
+		if (_pendingWheelEventTime > 0 && _pendingWheelEventTime < glfwGetTime()) {
+			int pos = glfwGetMouseWheel();
+			for (unsigned int i = 0; i < _mouseWheelListeners.size(); i++) {
+				_mouseWheelListeners[i]->mouseWheelEvent(pos);
+			}
+			_pendingWheelEventTime = -1.0;
+		}
+	}
+
 
 	void getWindowSize(int* width, int* height) {
 		glfwGetWindowSize(width, height);
@@ -60,6 +75,11 @@ namespace context {
 	void setSideRatio(float newSideRatio) {
 		_sideRatio = newSideRatio;
 		_renderer->changeSideRatio();
+	}
+
+	void setUserZoom(float newZoom) {
+		_userZoomFactor = newZoom;
+		_renderer->changeZoom();
 	}
 
 	void setDataSet(string nodeFile, string edgeFile) {
@@ -86,9 +106,7 @@ namespace context {
 	}
 
 	void mouseWheelEvent(int pos) {
-		for (unsigned int i = 0; i < _mouseWheelListeners.size(); i++) {
-			_mouseWheelListeners[i]->mouseWheelEvent(pos);
-		}
+		_pendingWheelEventTime = glfwGetTime() + 0.1; //100ms in the future
 	}
 
 	void keyEvent(int key, int action) {
