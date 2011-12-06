@@ -39,7 +39,10 @@ void Working::takeOver( void ) {
 }
 
 void Working::changePanning( void ) {};
-void Working::changeZoom( void ) {};
+
+void Working::changeZoom( void ) {
+	_r->takeOver();
+}
 
 void Working::changeData(string nodeFile, string edgeFile) {
 	_r->setState(_r->_initalWork);

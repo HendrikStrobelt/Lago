@@ -51,7 +51,7 @@ void InitialWork::changePanning( void ) {
 }
 
 void InitialWork::changeZoom( void ) {
-
+	takeOver();
 }
 
 void InitialWork::changeData(string nodeFile, string edgeFile) {

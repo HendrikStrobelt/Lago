@@ -89,6 +89,6 @@ void keyEnv(int key, int action) {
 }
 
 void mouseWheelEvent(int pos) {
-	context::setUserZoom(context::_userZoomFactor + (pos * 0.25f));
+	context::setZoomExponent(context::_zoomExponent + pos);
 	glfwSetMouseWheel(0);
 }

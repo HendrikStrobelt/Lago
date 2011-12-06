@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 
+#include "../GlobalConstants.hpp"
 
 namespace context {
 
@@ -15,6 +16,7 @@ namespace context {
 	//pull
 	float _sideRatio;
 	float _userZoomFactor;
+	int _zoomExponent;
 	Renderer* _renderer;
 
 	//private var & methods
@@ -37,6 +39,7 @@ namespace context {
 	void init() {
 		_run = true;
 		_userZoomFactor = 1.0f;
+		_zoomExponent = 0.0f;
 		_sideRatio = 0.01f;
 		_pendingWheelEventTime = -1.0;
 		_renderer = new Renderer;
@@ -74,15 +77,21 @@ namespace context {
 
 	void setSideRatio(float newSideRatio) {
 		_sideRatio = newSideRatio;
+		if (_sideRatio < 0.01f) { //no negative or 0
+			_sideRatio = 0.01f;
+		}
 		_renderer->changeSideRatio();
 	}
 
-	void setUserZoom(float newZoom) {
-		_userZoomFactor = newZoom;
+	void setZoomExponent(float newZoomExponent) {
+		_zoomExponent = newZoomExponent;
+		_userZoomFactor = pow(ZOOM_BASE, _zoomExponent);
 		_renderer->changeZoom();
 	}
 
 	void setDataSet(string nodeFile, string edgeFile) {
+		_zoomExponent = 0.0f;
+		_userZoomFactor = 1.0f;
 		_renderer->changeData(nodeFile, edgeFile);
 	}
 

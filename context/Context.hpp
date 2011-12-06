@@ -23,13 +23,14 @@ namespace context {
 	//pull
 		extern Renderer* _renderer;	
 		extern float _sideRatio;
+		extern int _zoomExponent;
 		extern float _userZoomFactor;
 
 		void tick( void );
 
 		//setters
 		void setSideRatio(float newSideRatio);
-		void setUserZoom(float newZoom);
+		void setZoomExponent(float newZoomExponent);
 		void setDataSet(string nodeFile, string edgeFile="");
 		
 

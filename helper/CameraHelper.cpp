@@ -26,8 +26,8 @@ glm::mat4 calculateProjection(const NodeStructureInfoContainer* nodeInfo, float 
 		stdHeight = stdWidth / ratio;
 	}
 
-	viewHeight = stdHeight * zoomFactor;
-	viewWidth = stdWidth * zoomFactor;
+	viewHeight = stdHeight / zoomFactor;
+	viewWidth = stdWidth / zoomFactor;
 
 	viewLeft = (minX + (width / 2.0f)) - (viewWidth/2.0f);
 	viewRight = viewLeft + viewWidth;

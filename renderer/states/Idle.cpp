@@ -18,7 +18,10 @@ void Idle::renderEvalField( void ) {};
 void Idle::work( void ) {};
 void Idle::takeOver( void ) {};
 void Idle::changePanning( void ) {};
-void Idle::changeZoom( void ) {};
+
+void Idle::changeZoom( void ) {
+	_r->setState(_r->_working);
+}
 
 void Idle::changeData(string nodeFile, string edgeFile) {
 	_r->setState(_r->_initalWork);

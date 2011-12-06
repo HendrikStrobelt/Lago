@@ -26,4 +26,7 @@
 #define TE_MAX_ITERATIONS 1
 
 
+//zooom
+#define ZOOM_BASE 1.5
+
 #endif
