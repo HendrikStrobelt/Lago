@@ -11,13 +11,10 @@ namespace context {
 	//push/pull read and write no notification
 	bool _run;
 	ScaleOptions _scaleOptions[2];
-	float _pixelSize;
 
 	//pull
-	double _renderTime;
-
-	//private vars
-	float _sigma;
+	float _sideRatio;
+	float _userZoomFactor;
 
 	//private methods
 	void dataChangedEvent( void );
@@ -40,14 +37,13 @@ namespace context {
 	//INIT
 
 	void init() {
-		_sigma = 1.0f; //tmp value overwritten by CaneraOrtho
 		_run = true;
+		_userZoomFactor = 1.0f;
+		_sideRatio = 0.01f;
 	}
 
 	void cleanUp() {
 	}
-
-	//GET
 
 	void getWindowSize(int* width, int* height) {
 		glfwGetWindowSize(width, height);
@@ -61,23 +57,6 @@ namespace context {
 		return glfwGetMouseWheel();
 	}
 
-	float getSigma( void ) {
-		return _sigma;
-	}
-
-
-	//SET
-
-	void setSigma(float sigma) {
-		if ((sigma*2) < context::_pixelSize) {
-			sigma = context::_pixelSize / 2.0f;
-		}
-		
-		_sigma = sigma;
-		for (unsigned int i = 0; i < _sigmaListeners.size(); i++) {
-			_sigmaListeners[i]->sigmaChanged();
-		}
-	}
 
 
 	//LISTENER WORKERS

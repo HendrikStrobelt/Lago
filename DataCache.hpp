@@ -19,8 +19,8 @@ class DataCache {
 
 		const PackedNode* getPackedNodes(int* size);
 		const PackedEdge* getPackedEdges(int* size);
-		const NodeStructureInfoContainer* getNodeStrucutreInfo( void );
-		const EdgeStructureInfoContainer* getEdgeStrucutreInfo( void );
+		const NodeStructureInfoContainer* getNodeStructureInfo( void );
+		const EdgeStructureInfoContainer* getEdgeStructureInfo( void );
 
 	private:
 		string getDumpName(string nodeFile, string edgeFile);

@@ -5,7 +5,6 @@
 #include "IContextListener.hpp"
 #include "ScaleOptions.hpp"
 
-
 //context can only be used after calling init and after
 //the glfw environment has been set up successfully
 namespace context {
@@ -16,10 +15,10 @@ namespace context {
 	//push/pull read and write no notification
 		extern bool _run;
 		extern ScaleOptions _scaleOptions[];
-		extern float _pixelSize;
 
 	//pull
-		extern double _renderTime;
+		extern float _sideRatio;
+		extern float _userZoomFactor;
 
 	//push stuff changable via set methods register a listener or ask
 		//GLFW getters
@@ -28,10 +27,8 @@ namespace context {
 		int getMouseWheelValue( void );
 
 		//program getters
-		float getSigma( void );
+		float getQuadSidelength(float aspectSide);
 
-		//program setters
-		void setSigma(float sigma);
 
 		//register listeners
 		void addResizeListener(IContextListener* listener);

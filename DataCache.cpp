@@ -65,7 +65,7 @@ const PackedEdge* DataCache::getPackedEdges(int* size) {
 	}
 }
 
-const NodeStructureInfoContainer* DataCache::getNodeStrucutreInfo( void ) {
+const NodeStructureInfoContainer* DataCache::getNodeStructureInfo( void ) {
 	if (_nCount > 0) {
 		return _nodeStructureInfo;
 	} else {
@@ -73,7 +73,7 @@ const NodeStructureInfoContainer* DataCache::getNodeStrucutreInfo( void ) {
 	}
 }
 	
-const EdgeStructureInfoContainer* DataCache::getEdgeStrucutreInfo( void ) {
+const EdgeStructureInfoContainer* DataCache::getEdgeStructureInfo( void ) {
 	if (_eCount > 0) {
 		return _edgeStructureInfo;
 	} else {

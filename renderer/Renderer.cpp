@@ -17,7 +17,7 @@ Renderer::Renderer( void ) {
 	_state = _initalWork;
 
 	//load initial data
-	setNewData("_Data/WorkNode.out");
+	setNewData("_Data/GridNode.out");
 }
 
 Renderer::~Renderer( void ) {

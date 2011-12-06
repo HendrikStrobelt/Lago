@@ -4,6 +4,7 @@
 #include "../helper/EnvironmentHelper.hpp"
 #include "../Node.hpp"
 
+
 GLuint GaussPainter::_gaussTex = -1;
 GLSLShader* GaussPainter::_shader_ptr = NULL;
 
@@ -21,6 +22,11 @@ GaussPainter::~GaussPainter( void ) {
 void  GaussPainter::cleanUp( void ) {
 	delete _shader_ptr;
 	glDeleteTextures(1, &_gaussTex);
+}
+
+//static calc
+float GaussPainter::getQuadSideLength(float dataWidth, float sideRatio) {
+	return dataWidth * sideRatio;
 }
 
 

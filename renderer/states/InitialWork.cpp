@@ -1,8 +1,10 @@
 #include "InitialWork.hpp"
 #include "../Renderer.hpp"
 #include "../../GlobalConstants.hpp"
+#include "../../helper/CameraHelper.hpp"
+#include "../../context/Context.hpp"
 
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm\glm.hpp>
 
 InitialWork::InitialWork(Renderer* renderer) {
 	_r = renderer;
@@ -52,11 +54,15 @@ void InitialWork::changeZoom( void ) {
 }
 
 void InitialWork::changeData( void ) {
-	int elementCount = _r->dCache.getNodeStrucutreInfo()->getAllNodes(_r->dCache.getNodeStrucutreInfo()->getMaxDepth());
+	int elementCount = _r->dCache.getNodeStructureInfo()->getAllNodes(_r->dCache.getNodeStructureInfo()->getMaxDepth());
    	
 	delete _gaussPainter[VIEW];
 	_gaussPainter[VIEW] = new GaussPainter(_r->_nodeVBO, elementCount);
-    _gaussPainter[VIEW]->setBaseVars(glm::ortho<float>(0, 36335, -41125, 0, -1, 1), 614.0f, _r->dCache.getNodeStrucutreInfo()->getMaxDepth());
+	
+	glm::mat4 P = cameraHelper::calculateProjection(_r->dCache.getNodeStructureInfo(), 1.0f);
+	float sideLength = GaussPainter::getQuadSideLength(_r->dCache.getNodeStructureInfo()->getWidth(), context::_sideRatio);
+    _gaussPainter[VIEW]->setBaseVars(P, sideLength, _r->dCache.getNodeStructureInfo()->getMaxDepth());
+	
 	delete _pc[GAUSS_VIEW];    
 	_pc[GAUSS_VIEW] = new PainterCommander(_gaussPainter[VIEW], _r->_windowWidth, _r->_windowHeight, POINT_INIT_STEP);
 }
