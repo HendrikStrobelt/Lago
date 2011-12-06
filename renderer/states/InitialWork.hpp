@@ -18,9 +18,10 @@ class InitialWork : public IRenderState {
 		void renderGauss( void );
 		void renderEvalField( void );
 		void work( void );
+		void takeOver( void );
 		void changePanning( void );
 		void changeZoom( void );
-		void changeData( void );
+		void changeData(string nodeFile, string edgeFile="");
 		void changeAspectRatio( void );
 
 	private:

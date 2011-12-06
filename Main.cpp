@@ -54,7 +54,7 @@ void cleanUp( void ) {
 
 void render( void ) {
 	//prepare
-	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	_renderer->work();
@@ -65,7 +65,19 @@ void render( void ) {
 
 
 void keyEnv(int key, int action) {
-	if (key == GLFW_KEY_ESC) {
-		context::_run = false;
+
+	if (action == GLFW_RELEASE) {
+		if (key == GLFW_KEY_ESC) {
+			context::_run = false;
+		} else 
+		if (key == '1') {
+			_renderer->changeData("_Data//LineNode.out");
+		} else 
+		if (key == '2') {
+			_renderer->changeData("_Data//GridNode.out");
+		} else 
+		if (key == '3') {
+			_renderer->changeData("_Data//GermanyNode.out");
+		}
 	}
 }

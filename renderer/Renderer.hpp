@@ -25,16 +25,17 @@ class Renderer : public IRenderState {
 		Renderer( void );
 		~Renderer( void );
 
-		void setNewData(string nodeFile, string edgeFile = "");
+
 
 		//State methods
 		void render( void );
 		void renderGauss( void );
 		void renderEvalField( void );
 		void work( void );
+		void takeOver( void );
 		void changePanning( void );
 		void changeZoom( void );
-		void changeData( void );
+		void changeData(string nodeFile, string edgeFile="");
 		void changeAspectRatio( void );
 
 	private:
@@ -58,7 +59,10 @@ class Renderer : public IRenderState {
 		DisplayConvertPainter _displayConvert;
 		TextureExaminer _textureExaminer;
 		//
-		
+
+		void setNewData(string nodeFile, string edgeFile="");
+
+		void setState(IRenderState* state);
 		void renderGraph( void );
 		void renderHUD(float progress);
 		void renderTexture(GLuint tex, float rMax=1.0f, float gMax=1.0f, float bMax=1.0f);

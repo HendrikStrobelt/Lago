@@ -16,7 +16,12 @@ void Idle::render( void ) {
 void Idle::renderGauss( void ) {};
 void Idle::renderEvalField( void ) {};
 void Idle::work( void ) {};
+void Idle::takeOver( void ) {};
 void Idle::changePanning( void ) {};
 void Idle::changeZoom( void ) {};
-void Idle::changeData( void ) {};
+
+void Idle::changeData(string nodeFile, string edgeFile) {
+	_r->setState(_r->_initalWork);
+}
+
 void Idle::changeAspectRatio( void ) {};

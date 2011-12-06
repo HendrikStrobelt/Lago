@@ -10,14 +10,14 @@ Renderer::Renderer( void ) {
 
 	glGenBuffers(1, &_nodeVBO);
 	context::getWindowSize(&_windowWidth, &_windowHeight);
-	
+
+	//load initial data
+	setNewData("_Data/LineNode.out");
+
 	_idle = new Idle(this);
 	_initalWork = new InitialWork(this);
 	_working = new Working(this);
-	_state = _initalWork;
-
-	//load initial data
-	setNewData("_Data/GridNode.out");
+	setState(_initalWork);
 }
 
 Renderer::~Renderer( void ) {
@@ -33,6 +33,14 @@ Renderer::~Renderer( void ) {
 
 //public
 
+
+//private methods that can be used by the states
+
+void Renderer::setState(IRenderState* state) {
+	_state = state;
+	_state->takeOver();
+}
+
 void Renderer::setNewData(string nodeFile, string edgeFile) {
 	dCache.loadDataSet(nodeFile, edgeFile);
 
@@ -42,11 +50,7 @@ void Renderer::setNewData(string nodeFile, string edgeFile) {
 	glBindBuffer(GL_ARRAY_BUFFER, _nodeVBO);
 		glBufferData(GL_ARRAY_BUFFER, nodeCount * sizeof(PackedNode), packedNodes, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	changeData();
 }	
-
-//private methods that can be used by the states
 
 void Renderer::renderGraph( void ) {
 
@@ -82,6 +86,10 @@ void Renderer::work( void ) {
 	_state->work();
 }
 
+void Renderer::takeOver( void ) {
+	//state only 
+}
+
 void Renderer::changePanning( void ) {
 	_state->changePanning();
 }
@@ -90,8 +98,9 @@ void Renderer::changeZoom( void ) {
 	_state->changeZoom();
 }
 
-void Renderer::changeData( void ) {
-	_state->changeData();
+void Renderer::changeData(string nodeFile, string edgeFile) {
+	setNewData(nodeFile, edgeFile);
+	_state->changeData(nodeFile, edgeFile);
 }
 
 void Renderer::changeAspectRatio( void ) {
