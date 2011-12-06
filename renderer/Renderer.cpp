@@ -103,6 +103,6 @@ void Renderer::changeData(string nodeFile, string edgeFile) {
 	_state->changeData(nodeFile, edgeFile);
 }
 
-void Renderer::changeAspectRatio( void ) {
-	_state->changeAspectRatio();
+void Renderer::changeSideRatio( void ) {
+	_state->changeSideRatio();
 }

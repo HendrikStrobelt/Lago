@@ -74,6 +74,6 @@ void InitialWork::changeData(string nodeFile, string edgeFile) {
 }
 
 
-void InitialWork::changeAspectRatio( void ) {
+void InitialWork::changeSideRatio( void ) {
 
 }

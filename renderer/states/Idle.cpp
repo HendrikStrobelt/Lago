@@ -24,4 +24,4 @@ void Idle::changeData(string nodeFile, string edgeFile) {
 	_r->setState(_r->_initalWork);
 }
 
-void Idle::changeAspectRatio( void ) {};
+void Idle::changeSideRatio( void ) {};

@@ -22,7 +22,7 @@ class InitialWork : public IRenderState {
 		void changePanning( void );
 		void changeZoom( void );
 		void changeData(string nodeFile, string edgeFile="");
-		void changeAspectRatio( void );
+		void changeSideRatio( void );
 
 	private:
 		enum GAUSS {VIEW};

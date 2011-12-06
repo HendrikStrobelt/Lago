@@ -21,7 +21,7 @@ class IRenderState {
 		virtual void changePanning( void ) = 0;
 		virtual void changeZoom( void ) = 0;
 		virtual void changeData(string nodeFile, string edgeFile="") = 0;
-		virtual void changeAspectRatio( void ) = 0;
+		virtual void changeSideRatio( void ) = 0;
 
 };
 

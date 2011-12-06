@@ -17,4 +17,4 @@ void Working::takeOver( void ) {};
 void Working::changePanning( void ) {};
 void Working::changeZoom( void ) {};
 void Working::changeData(string nodeFile, string edgeFile) {};
-void Working::changeAspectRatio( void ) {};
+void Working::changeSideRatio( void ) {};
