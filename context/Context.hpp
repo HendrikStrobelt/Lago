@@ -1,9 +1,13 @@
 #ifndef CONTEXT_H
 #define CONTEXT_H
 
-#include "GL\glfw.h"
 #include "IContextListener.hpp"
 #include "ScaleOptions.hpp"
+#include "../renderer/Renderer.hpp"
+
+#include <string>
+
+using namespace std;
 
 //context can only be used after calling init and after
 //the glfw environment has been set up successfully
@@ -17,10 +21,16 @@ namespace context {
 		extern ScaleOptions _scaleOptions[];
 
 	//pull
+		extern Renderer* _renderer;	
 		extern float _sideRatio;
 		extern float _userZoomFactor;
 
 	//push stuff changable via set methods register a listener or ask
+		
+		//setters
+		void setSideRatio(float newSideRatio);
+		void setDataSet(string nodeFile, string edgeFile="");
+
 		//GLFW getters
 		void getWindowSize(int* width, int* height);
 		void getMousePos(int* x, int* y);
@@ -37,7 +47,7 @@ namespace context {
 		void addMouseWheelListener(IContextListener* listener);
 		void addKeyEventListener(IContextListener* listener);
 
-		void addSigmaChangedListener(IContextListener* listener);
+		void addSideRatioChangedListener(IContextListener* listener);
 		void addDataChangedListener(IContextListener* listener);
 
 
@@ -51,8 +61,6 @@ namespace context {
 		typedef void (*mouseClickedFun)(int button, int action);
 		typedef void (*mouseWheelFun)(int pos);
 		typedef void (*keyEventFun)(int key, int action);
-		typedef void (*sigmaChangedFun)( void );
-		typedef void (*dataChangedFun)( void );
 
 	public:
 			DummyContextListener( void );
@@ -60,8 +68,7 @@ namespace context {
 			//remember there exists no unregister at the moment so registering events can be called only once
 			//multiple calls will cause undefined behaviour
 			void activate(resizedFun resize, mouseMovedFun mouseMove, mouseClickedFun mouseClick,
-								 keyEventFun keyEve, sigmaChangedFun sigmaChange, dataChangedFun dataChange,
-								 mouseWheelFun mouseWheel);
+								 keyEventFun keyEve, mouseWheelFun mouseWheel);
 
 		private:
 			//implement the interface
@@ -70,16 +77,12 @@ namespace context {
 			void mouseClickedEvent(int button, int action);
 			void mouseWheelEvent(int pos);
 			void keyEvent(int key, int action);
-			void sigmaChanged( void );
-			void dataChanged( void );
 
 			resizedFun _resize;
 			mouseMovedFun _mouseMove;
 			mouseClickedFun _mouseClick;
 			mouseWheelFun _mouseWheel;
 			keyEventFun _keyEve;
-			sigmaChangedFun _sigmaChange;
-			dataChangedFun _dataChange;
 	};
 };
 

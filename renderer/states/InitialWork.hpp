@@ -2,10 +2,9 @@
 #define INITIAL_WORK_H
 
 #include "../IRenderState.hpp"
-#include "../../painter/GaussPainter.hpp"
-#include "../PainterCommander.hpp"
 
 class Renderer;
+class WorkStateHelper;
 
 class InitialWork : public IRenderState {
 
@@ -25,16 +24,8 @@ class InitialWork : public IRenderState {
 		void changeSideRatio( void );
 
 	private:
-		enum GAUSS {VIEW};
-		enum COMMANDER {GAUSS_VIEW};
-
-		Renderer* _r;
-
-		float _progress;
-		GaussPainter* _gaussPainter[1];
-		PainterCommander* _pc[1];
-		
-
+		Renderer* _r;	
+		WorkStateHelper* _worker;
 };
 
 

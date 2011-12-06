@@ -1,5 +1,5 @@
 #ifndef TEXTURE_EXAMINER_H
-#define TEXTURE_EXAIMINER_H
+#define TEXTURE_EXAMINER_H
 
 #include <GL\glew.h>
 #include "../helper/GLSLShader.hpp"

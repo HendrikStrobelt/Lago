@@ -15,24 +15,20 @@ namespace context {
 	//pull
 	float _sideRatio;
 	float _userZoomFactor;
+	Renderer* _renderer;
 
 	//private methods
-	void dataChangedEvent( void );
 	void resizeEvent(int width, int height);
 	void mouseMovedEvent(int x, int y);
 	void mouseClickedEvent(int button, int action);
 	void mouseWheelEvent(int pos);
 	void keyEvent(int key, int action);
 
-
 	vector<IContextListener* > _resizeListeners;
 	vector<IContextListener* > _mouseMotionListeners;
 	vector<IContextListener* > _mouseClickListeners;
 	vector<IContextListener* > _mouseWheelListeners;
 	vector<IContextListener* > _keyEventListeners;
-	vector<IContextListener* > _sigmaListeners;
-	vector<IContextListener* > _dataListeners;
-	vector<IContextListener* > _joinDepthListeners;
 
 	//INIT
 
@@ -40,9 +36,11 @@ namespace context {
 		_run = true;
 		_userZoomFactor = 1.0f;
 		_sideRatio = 0.01f;
+		_renderer = new Renderer;
 	}
 
 	void cleanUp() {
+		delete _renderer;
 	}
 
 	void getWindowSize(int* width, int* height) {
@@ -57,7 +55,16 @@ namespace context {
 		return glfwGetMouseWheel();
 	}
 
+	//SETTER
 
+	void setSideRatio(float newSideRatio) {
+		_sideRatio = newSideRatio;
+		_renderer->changeSideRatio();
+	}
+
+	void setDataSet(string nodeFile, string edgeFile) {
+		_renderer->changeData(nodeFile, edgeFile);
+	}
 
 	//LISTENER WORKERS
 	void resizeEvent(int width, int height) {
@@ -89,13 +96,7 @@ namespace context {
 			_keyEventListeners[i]->keyEvent(key, action);
 		}
 	}
-		
 
-	void dataChangedEvent( void ) {
-		for (unsigned int i = 0; i < _dataListeners.size(); i++) {
-			_dataListeners[i]->dataChanged();
-		}
-	}
 	
 
 	//REGISTER LISTENERS
@@ -135,13 +136,6 @@ namespace context {
 		}
 	}
 
-	void addSigmaChangedListener(IContextListener* listener) {
-		_sigmaListeners.push_back(listener);
-	}
-
-	void addDataChangedListener(IContextListener* listener) {
-		_dataListeners.push_back(listener);
-	}
 
 	//CLASS DUMMY CONTEXT LISTENER
 
@@ -150,8 +144,7 @@ namespace context {
 	}
 
 	void DummyContextListener::activate(resizedFun resize, mouseMovedFun mouseMove, mouseClickedFun mouseClick,
-								 keyEventFun keyEve, sigmaChangedFun sigmaChange, dataChangedFun dataChange,
-								 mouseWheelFun mouseWheel) {
+								 keyEventFun keyEve, mouseWheelFun mouseWheel) {
 
 			//register the appropriate listeners
 			if (resize != 0) {
@@ -169,14 +162,6 @@ namespace context {
 			if (keyEve != 0) {
 				_keyEve = keyEve;
 				context::addKeyEventListener(this);
-			}
-			if (sigmaChange != 0) {
-				_sigmaChange = sigmaChange;
-				context::addSigmaChangedListener(this);
-			}
-			if (dataChange != 0) {
-				_dataChange = dataChange;
-				context::addDataChangedListener(this);
 			}
 			if (mouseWheel != 0) {
 				_mouseWheel = mouseWheel;
@@ -203,14 +188,6 @@ namespace context {
 
 	void DummyContextListener::keyEvent(int key, int action) {
 		_keyEve(key, action);
-	}
-
-	void DummyContextListener::sigmaChanged( void ) {
-		_sigmaChange();
-	}
-
-	void DummyContextListener::dataChanged( void ) {
-		_dataChange();
 	}
 
 };

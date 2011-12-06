@@ -16,10 +16,6 @@ class IContextListener
 		virtual void mouseClickedEvent(int button, int action) {};
 		virtual void mouseWheelEvent(int pos) {};
 		virtual void keyEvent(int key, int action) {};
-
-		//program handlers
-		virtual void sigmaChanged( void ) {};
-		virtual void dataChanged( void ) {};
 };
 
 

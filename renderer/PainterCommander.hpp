@@ -1,5 +1,5 @@
 #ifndef PAINTER_COMMANDER_H
-#define PAINTER_COMMANCER_
+#define PAINTER_COMMANDER_H
 
 #include "../helper/FrameBufferContainer.hpp"
 #include "../painter/ISplitablePainter.hpp"

@@ -20,12 +20,11 @@ class Renderer : public IRenderState {
 	friend class Idle;
 	friend class InitialWork;
 	friend class Working;
+	friend class WorkStateHelper;
 
 	public:
 		Renderer( void );
 		~Renderer( void );
-
-
 
 		//State methods
 		void render( void );

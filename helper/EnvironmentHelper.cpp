@@ -141,7 +141,7 @@ namespace envHelper {
 
 		//program context is ready now (init call in main and glfw context creation above)
 		//register resize listener
-		_contextListener.activate(resize,0,0,0,0,0,0);
+		_contextListener.activate(resize,0,0,0,0);
 
 		//Initialize GLEW
 		glewExperimental = GL_TRUE;

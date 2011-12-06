@@ -1,4 +1,3 @@
-
 #ifndef GAUSS_PAINTER_H
 #define GAUSS_PAINTER_H
 
