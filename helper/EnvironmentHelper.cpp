@@ -61,27 +61,17 @@ namespace envHelper {
 			filename += ss.str();
 			filename += ".ftd";
 
-			float* data = new float[size*size];
-			float* texData = new float[size*size*4];
+			float* textData = new float[size*size];
 
 			if( (fopen_s(&file_ptr, filename.data(), "rb")) != 0) {
 				cout << "file opening failed" << "\n";	
 			} else {
-				fread(data,  sizeof(float), (size*size), file_ptr);
+				fread(textData,  sizeof(float), (size*size), file_ptr);
 				fclose(file_ptr); // Closes the file stream
 			}
 
-			//copy data
-			for (int j = 0; j < (size*size); j++) {
-				texData[j*4 + 0] = 0.0f;
-				texData[j*4 + 1] = 0.0f;
-				texData[j*4 + 2] = data[j];
-				texData[j*4 + 3] = 0.0f;
-			}
 
-			dataVec.push_back(texData);
-
-			delete[] data;
+			dataVec.push_back(textData);
 		}
 
 		GLuint tex;
@@ -96,7 +86,7 @@ namespace envHelper {
 
 			for (int i = maxExp; i >= 0; i--) {
 				int size = (int) pow(2.0f,i);
-				glTexImage2D(GL_TEXTURE_2D, maxExp-i , GL_RGBA32F, size, size, 0, GL_RGBA, GL_FLOAT, dataVec[i]);
+				glTexImage2D(GL_TEXTURE_2D, maxExp-i , GL_RGBA32F, size, size, 0, GL_RED, GL_FLOAT, dataVec[i]);
 			}
 		glBindTexture(GL_TEXTURE_2D, 0);
 		
