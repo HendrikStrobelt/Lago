@@ -35,7 +35,8 @@ class Renderer : public IRenderState {
 		void changePanning( void );
 		void changeZoom( void );
 		void changeData(string nodeFile, string edgeFile="");
-		void changeSideRatio( void );
+		void changeSideLength( void );
+		void changeWindow( void );
 
 	private:
 

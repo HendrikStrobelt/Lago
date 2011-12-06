@@ -37,4 +37,33 @@ glm::mat4 calculateProjection(const NodeStructureInfoContainer* nodeInfo, float 
 	return glm::ortho<float>(viewLeft, viewRight, viewBottom, viewTop, -1, 1);
 }
 
+
+float getPixelSize(const NodeStructureInfoContainer* nodeInfo, float zoomFactor) {
+	float minX = nodeInfo->getLeftBorder();
+	float minY = nodeInfo->getBottomBorder();
+	float width = nodeInfo->getWidth();
+	float height = nodeInfo->getHeight();
+	int w,h;
+	context::getWindowSize(&w, &h);
+	float ratio = (float)w / (float)h;
+	
+	float stdWidth, stdHeight, viewWidth, viewHeight, viewLeft, viewRight, viewBottom, viewTop;
+	float result;
+
+	if (height * ratio > width) {
+		//y dominates
+		stdHeight = height * BORDER_FACTOR ;
+		viewHeight = stdHeight / zoomFactor;
+
+		result = viewHeight / (float)h;
+	} else {
+		//x dominates
+		stdWidth = width * BORDER_FACTOR;
+		viewWidth = stdWidth / zoomFactor;
+
+		result = viewWidth / (float)w;
+	}
+	return result;
+}
+
 };

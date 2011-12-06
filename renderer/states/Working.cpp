@@ -33,21 +33,24 @@ void Working::work( void ) {
 }
 
 void Working::takeOver( void ) {
-	_r->_newData->clear();
-	
+	_r->_newData->clear();	
 	_worker->takeOver();
 }
 
 void Working::changePanning( void ) {};
 
 void Working::changeZoom( void ) {
-	_r->takeOver();
+	takeOver();
 }
 
 void Working::changeData(string nodeFile, string edgeFile) {
 	_r->setState(_r->_initalWork);
 }
 
-void Working::changeSideRatio( void ) {
+void Working::changeSideLength( void ) {
 	takeOver();
+}
+
+void Working::changeWindow( void ) {
+	_r->setState(_r->_initalWork);
 }

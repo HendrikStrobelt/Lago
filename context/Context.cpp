@@ -11,12 +11,13 @@ namespace context {
 
 	//push/pull read and write no notification
 	bool _run;
+	float _pixelSize;
 	ScaleOptions _scaleOptions[2];
 
 	//pull
-	float _sideRatio;
-	float _userZoomFactor;
+	float _zoomFactor;
 	int _zoomExponent;
+	int _sideExponent;
 	Renderer* _renderer;
 
 	//private var & methods
@@ -37,10 +38,9 @@ namespace context {
 	//INIT
 
 	void init() {
-		_run = true;
-		_userZoomFactor = 1.0f;
+		_zoomFactor = 1.0f;
 		_zoomExponent = 0.0f;
-		_sideRatio = 0.01f;
+		_sideExponent = 8;
 		_pendingWheelEventTime = -1.0;
 		_renderer = new Renderer;
 	}
@@ -75,52 +75,64 @@ namespace context {
 
 	//SETTER
 
-	void setSideRatio(float newSideRatio) {
-		_sideRatio = newSideRatio;
-		if (_sideRatio < 0.01f) { //no negative or 0
-			_sideRatio = 0.01f;
+	void setSideExponent(int newSideExponent) {
+		_sideExponent = newSideExponent;
+		if (_sideExponent < 0) {
+			_sideExponent = 0;
 		}
-		_renderer->changeSideRatio();
+		_renderer->changeSideLength();
 	}
 
-	void setZoomExponent(float newZoomExponent) {
+	void setZoomExponent(int newZoomExponent) {
 		_zoomExponent = newZoomExponent;
-		_userZoomFactor = pow(ZOOM_BASE, _zoomExponent);
+		_zoomFactor = pow(ZOOM_BASE, _zoomExponent);
 		_renderer->changeZoom();
 	}
 
 	void setDataSet(string nodeFile, string edgeFile) {
-		_zoomExponent = 0.0f;
-		_userZoomFactor = 1.0f;
+		_zoomFactor = 1.0f;
+		_zoomExponent = 0;
+		_sideExponent = 8;
 		_renderer->changeData(nodeFile, edgeFile);
 	}
 
 	//LISTENER WORKERS
 	void resizeEvent(int width, int height) {
-		for (unsigned int i = 0; i < _resizeListeners.size(); i++) {
-			_resizeListeners[i]->resizeEvent(width, height);
+		if (_run) {
+			for (unsigned int i = 0; i < _resizeListeners.size(); i++) {
+				_resizeListeners[i]->resizeEvent(width, height);
+			}
+			_renderer->changeWindow();
 		}
 	}
 
 	void mouseMovedEvent(int x, int y) {
-		for (unsigned int i = 0; i < _mouseMotionListeners.size(); i++) {
-			_mouseMotionListeners[i]->mouseMovedEvent(x, y);
+		if (_run) {
+			for (unsigned int i = 0; i < _mouseMotionListeners.size(); i++) {
+				_mouseMotionListeners[i]->mouseMovedEvent(x, y);
+			}
 		}
 	}
 
 	void mouseClickedEvent(int button, int action) {
-		for (unsigned int i = 0; i < _mouseClickListeners.size(); i++) {
-			_mouseClickListeners[i]->mouseClickedEvent(button, action);
+		if (_run) {
+			for (unsigned int i = 0; i < _mouseClickListeners.size(); i++) {
+				_mouseClickListeners[i]->mouseClickedEvent(button, action);
+			}
 		}
 	}
 
 	void mouseWheelEvent(int pos) {
-		_pendingWheelEventTime = glfwGetTime() + 0.1; //100ms in the future
+		if (_run) {
+			_pendingWheelEventTime = glfwGetTime() + 0.1; //100ms in the future
+		}
 	}
 
 	void keyEvent(int key, int action) {
-		for (unsigned int i = 0; i < _keyEventListeners.size(); i++) {
-			_keyEventListeners[i]->keyEvent(key, action);
+		if (_run) {
+			for (unsigned int i = 0; i < _keyEventListeners.size(); i++) {
+				_keyEventListeners[i]->keyEvent(key, action);
+			}
 		}
 	}
 

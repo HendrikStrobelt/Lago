@@ -31,8 +31,8 @@ void WorkStateHelper::takeOver( void ) {
 	int elementCount = _r->dCache.getNodeStructureInfo()->getAllNodes(_r->dCache.getNodeStructureInfo()->getMaxDepth());
    	_gaussPainter[VIEW] = new GaussPainter(_r->_nodeVBO, elementCount);
 	
-	glm::mat4 P = cameraHelper::calculateProjection(_r->dCache.getNodeStructureInfo(), context::_userZoomFactor);
-	float sideLength = GaussPainter::getQuadSideLength(_r->dCache.getNodeStructureInfo()->getWidth(), context::_sideRatio);
+	glm::mat4 P = cameraHelper::calculateProjection(_r->dCache.getNodeStructureInfo(), context::_zoomFactor);
+	float sideLength = context::_pixelSize * pow(SIDE_BASE, context::_sideExponent);
     _gaussPainter[VIEW]->setBaseVars(P, sideLength, _r->dCache.getNodeStructureInfo()->getMaxDepth());
 	
 	_pc[GAUSS_VIEW] = new PainterCommander(_gaussPainter[VIEW], _r->_windowWidth, _r->_windowHeight, POINT_INIT_STEP);

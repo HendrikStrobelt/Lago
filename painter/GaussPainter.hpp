@@ -19,8 +19,6 @@ class GaussPainter : public ISplitablePainter {
 		int getElementCount( void );
 		void processElements(int start, int count);
 
-		static float getQuadSideLength(float dataWidth, float sideRatio);
-
 		//static clean up
 		static void cleanUp( void );
 

@@ -24,12 +24,6 @@ void  GaussPainter::cleanUp( void ) {
 	glDeleteTextures(1, &_gaussTex);
 }
 
-//static calc
-float GaussPainter::getQuadSideLength(float dataWidth, float sideRatio) {
-	return dataWidth * sideRatio;
-}
-
-
 //interface methods
 int GaussPainter::getElementCount( void ) {
 	return _elementCount;

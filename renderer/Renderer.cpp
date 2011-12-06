@@ -1,6 +1,7 @@
 #include "Renderer.hpp"
 #include "../GlobalConstants.hpp"
 #include "../context/Context.hpp"
+#include "../helper/CameraHelper.hpp"
 #include "../Node.hpp"
 
 
@@ -13,6 +14,7 @@ Renderer::Renderer( void ) {
 
 	//load initial data
 	setNewData("_Data/LineNode.out");
+	context::_pixelSize = cameraHelper::getPixelSize(dCache.getNodeStructureInfo(), context::_zoomFactor);
 
 	_idle = new Idle(this);
 	_initalWork = new InitialWork(this);
@@ -95,14 +97,22 @@ void Renderer::changePanning( void ) {
 }
 
 void Renderer::changeZoom( void ) {
+ 	context::_pixelSize = cameraHelper::getPixelSize(dCache.getNodeStructureInfo(), context::_zoomFactor);
 	_state->changeZoom();
 }
 
 void Renderer::changeData(string nodeFile, string edgeFile) {
 	setNewData(nodeFile, edgeFile);
+	context::_pixelSize = cameraHelper::getPixelSize(dCache.getNodeStructureInfo(), context::_zoomFactor);
 	_state->changeData(nodeFile, edgeFile);
 }
 
-void Renderer::changeSideRatio( void ) {
-	_state->changeSideRatio();
+void Renderer::changeSideLength( void ) {
+	_state->changeSideLength();
+}
+
+void Renderer::changeWindow( void ) {
+	context::getWindowSize(&_windowWidth, &_windowHeight);
+	context::_pixelSize = cameraHelper::getPixelSize(dCache.getNodeStructureInfo(), context::_zoomFactor);
+	_state->changeWindow();
 }

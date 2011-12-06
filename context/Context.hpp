@@ -18,19 +18,21 @@ namespace context {
 
 	//push/pull read and write no notification
 		extern bool _run;
+		extern float _pixelSize;
 		extern ScaleOptions _scaleOptions[];
 
 	//pull
 		extern Renderer* _renderer;	
 		extern float _sideRatio;
 		extern int _zoomExponent;
-		extern float _userZoomFactor;
+		extern int _sideExponent;
+		extern float _zoomFactor;
 
 		void tick( void );
 
 		//setters
-		void setSideRatio(float newSideRatio);
-		void setZoomExponent(float newZoomExponent);
+		void setSideExponent(int newSideExponent);
+		void setZoomExponent(int newZoomExponent);
 		void setDataSet(string nodeFile, string edgeFile="");
 		
 

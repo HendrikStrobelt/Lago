@@ -36,6 +36,8 @@ int main( int argc, const char* argv[] ) {
 
 	glfwSetTime(0);	
 	glfwSetMouseWheel(0);
+	context::_run = true;
+
 	while (context::_run) {
 		render();
 	}
@@ -80,10 +82,10 @@ void keyEnv(int key, int action) {
 			context::setDataSet("_Data//GermanyNode.out");
 		} else 
 		if (key == GLFW_KEY_KP_ADD) {
-			context::setSideRatio(context::_sideRatio + 0.01f);
+			context::setSideExponent(context::_sideExponent + 1);
 		} else 
 		if (key == GLFW_KEY_KP_SUBTRACT) {
-			context::setSideRatio(context::_sideRatio - 0.01f);
+			context::setSideExponent(context::_sideExponent - 1);
 		}
 	}
 }

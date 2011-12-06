@@ -9,6 +9,7 @@ namespace cameraHelper {
 	#define BORDER_FACTOR 1.4f
 
 	glm::mat4 calculateProjection(const NodeStructureInfoContainer* nodeInfo, float zoomFactor);
+	float getPixelSize(const NodeStructureInfoContainer* nodeInfo, float zoomFactor);
 
 };
 

@@ -27,6 +27,10 @@ void Idle::changeData(string nodeFile, string edgeFile) {
 	_r->setState(_r->_initalWork);
 }
 
-void Idle::changeSideRatio( void ) {
+void Idle::changeSideLength( void ) {
 	_r->setState(_r->_working);
-};
+}
+
+void Idle::changeWindow( void ) {
+	_r->setState(_r->_initalWork);
+}

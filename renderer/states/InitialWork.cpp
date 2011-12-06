@@ -55,10 +55,13 @@ void InitialWork::changeZoom( void ) {
 }
 
 void InitialWork::changeData(string nodeFile, string edgeFile) {
-	_r->setState(_r->_initalWork);
+	takeOver();
 }
 
+void InitialWork::changeSideLength( void ) {
+	takeOver();
+}
 
-void InitialWork::changeSideRatio( void ) {
-	takeOver(); //data loading unnecessary but start from the beginning
+void InitialWork::changeWindow( void ) {
+	takeOver();
 }
