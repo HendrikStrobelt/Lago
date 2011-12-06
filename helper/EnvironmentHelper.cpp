@@ -8,6 +8,7 @@
 #include "../painter/ProgressbarPainter.hpp"
 #include "../painter/GaussPainter.hpp"
 #include "../painter/DisplayConvertPainter.hpp"
+#include "../renderer/TextureExaminer.hpp"
 
 #include "../context/Context.hpp"
 
@@ -163,5 +164,6 @@ namespace envHelper {
 		ProgressbarPainter::cleanUp();
 		GaussPainter::cleanUp();
 		DisplayConvertPainter::cleanUp();
+		TextureExaminer::cleanUp();
 	}
 };

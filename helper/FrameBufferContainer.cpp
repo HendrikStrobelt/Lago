@@ -84,6 +84,7 @@ void FrameBufferContainer::prepareFBO( void ) {
 
 	// clear FBO
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
+		glClearColor(0,0,0,1);
 		glClear(GL_COLOR_BUFFER_BIT);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

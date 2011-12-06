@@ -11,6 +11,8 @@ class RenderData {
 		RenderData( void );
 		~RenderData( void );
 
+		void clear( void );
+
 		GLuint _gaussTex;
 		GLuint _evalField;
 		GLuint _lineField;
@@ -20,7 +22,8 @@ class RenderData {
 
 		float _aspectRatio;
 		int _dataID;
-		float _maxValues[3];
+		float _maxValuesN[3];
+		float _maxValuesE[3];
 
 	private:
 

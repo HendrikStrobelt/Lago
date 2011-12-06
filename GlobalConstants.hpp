@@ -21,4 +21,9 @@
 //painter commander
 #define POINT_INIT_STEP 500
 
+//texture examiner
+#define TE_KERNEL_SIZE 16
+#define TE_MAX_ITERATIONS 1
+
+
 #endif

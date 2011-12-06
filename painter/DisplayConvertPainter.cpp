@@ -19,6 +19,7 @@ void DisplayConvertPainter::cleanUp( void ) {
 }
 
 void DisplayConvertPainter::renderTexture(GLuint texture, float rMax, float gMax, float bMax) {
+	glBlendFunc(GL_ONE, GL_ZERO);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glBindVertexArray(_vao);
 		_shader_ptr->use();			

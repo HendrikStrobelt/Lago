@@ -13,6 +13,7 @@
 
 #include "..\painter\ProgressbarPainter.hpp"
 #include "..\painter\DisplayConvertPainter.hpp"
+#include "TextureExaminer.hpp"
 
 class Renderer : public IRenderState {
 
@@ -23,6 +24,8 @@ class Renderer : public IRenderState {
 	public:
 		Renderer( void );
 		~Renderer( void );
+
+		void setNewData(string nodeFile, string edgeFile = "");
 
 		//State methods
 		void render( void );
@@ -43,6 +46,9 @@ class Renderer : public IRenderState {
 		IRenderState* _state;
 		GLuint _nodeVBO;
 
+		int _windowWidth;
+		int _windowHeight;
+
 		Idle* _idle;
 		InitialWork* _initalWork;
 		Working* _working;
@@ -50,12 +56,13 @@ class Renderer : public IRenderState {
 		//Painter
 		ProgressbarPainter _progressBar;
 		DisplayConvertPainter _displayConvert;
+		TextureExaminer _textureExaminer;
 		//
-
-		void setNewData(string nodeFile, string edgeFile = "");
+		
 		void renderGraph( void );
 		void renderHUD(float progress);
 		void renderTexture(GLuint tex, float rMax=1.0f, float gMax=1.0f, float bMax=1.0f);
+		void calculateMaxValues(float result[], GLuint texture, int textureWidth, int textureHeight);
 };
 
 

@@ -21,7 +21,7 @@ class Idle : public IRenderState {
 		void changeAspectRatio( void );
 
 	private:
-		Renderer* _renderer;
+		Renderer* _r;
 
 };
 

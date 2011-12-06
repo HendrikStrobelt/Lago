@@ -2,7 +2,7 @@
 #include "../Renderer.hpp"
 
 Working::Working(Renderer* renderer) {
-	_renderer = renderer;
+	_r = renderer;
 }
 
 Working::~Working( void ) {

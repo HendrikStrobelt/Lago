@@ -5,30 +5,63 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 InitialWork::InitialWork(Renderer* renderer) {
-	_renderer = renderer;
-	int elementCount = _renderer->dCache.getNodeStrucutreInfo()->getAllNodes(_renderer->dCache.getNodeStrucutreInfo()->getMaxDepth());
-	_gaussPainter = new GaussPainter(_renderer->_nodeVBO, elementCount);
-	_gaussPainter->setBaseVars(glm::ortho<float>(0, 36335, -41125, 0, -1, 1), 614.0f, _renderer->dCache.getNodeStrucutreInfo()->getMaxDepth());
-
-	_pc = new PainterCommander(_gaussPainter, 1500, 750, POINT_INIT_STEP);
+	_r = renderer;
+	_gaussPainter[VIEW] = NULL;
+	_pc[GAUSS_VIEW] = NULL;
+	_progress = 0.0f;
 }
 
 InitialWork::~InitialWork( void ) {
-	delete _gaussPainter;
-	delete _pc;
+	delete _gaussPainter[VIEW];
+	delete _pc[GAUSS_VIEW];
 }
 
 void InitialWork::render( void ) {
-	_renderer->renderTexture(_pc->getWorkingTexture(), 1.0, 1.0, 2400000.0);
+	_r->renderHUD(_progress);
 }
-void InitialWork::renderGauss( void ) {};
-void InitialWork::renderEvalField( void ) {};
+
+void InitialWork::renderGauss( void ) {
+	
+}
+
+void InitialWork::renderEvalField( void ) {
+
+}
+
+
 void InitialWork::work( void ) {
-	if (!_pc->isDone())  {
-		_pc->renderNextPart();
+	if (!_pc[GAUSS_VIEW]->isDone())  {
+		_progress = _pc[GAUSS_VIEW]->renderNextPart();
+	} else {
+		//done change state
+		_r->_currentData->clear();
+		_r->_currentData->_gaussTex = _pc[GAUSS_VIEW]->detachResult();
+		_r->calculateMaxValues(_r->_currentData->_maxValuesN, _r->_currentData->_gaussTex, _r->_windowWidth, _r->_windowHeight);
+
+		_r->_state = _r->_idle;
 	}
 }
-void InitialWork::changePanning( void ) {};
-void InitialWork::changeZoom( void ) {};
-void InitialWork::changeData( void ) {};
-void InitialWork::changeAspectRatio( void ) {};
+
+
+void InitialWork::changePanning( void ) {
+
+}
+
+void InitialWork::changeZoom( void ) {
+
+}
+
+void InitialWork::changeData( void ) {
+	int elementCount = _r->dCache.getNodeStrucutreInfo()->getAllNodes(_r->dCache.getNodeStrucutreInfo()->getMaxDepth());
+   	
+	delete _gaussPainter[VIEW];
+	_gaussPainter[VIEW] = new GaussPainter(_r->_nodeVBO, elementCount);
+    _gaussPainter[VIEW]->setBaseVars(glm::ortho<float>(0, 36335, -41125, 0, -1, 1), 614.0f, _r->dCache.getNodeStrucutreInfo()->getMaxDepth());
+	delete _pc[GAUSS_VIEW];    
+	_pc[GAUSS_VIEW] = new PainterCommander(_gaussPainter[VIEW], _r->_windowWidth, _r->_windowHeight, POINT_INIT_STEP);
+}
+
+
+void InitialWork::changeAspectRatio( void ) {
+
+}

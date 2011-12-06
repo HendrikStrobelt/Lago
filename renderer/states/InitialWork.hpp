@@ -24,9 +24,14 @@ class InitialWork : public IRenderState {
 		void changeAspectRatio( void );
 
 	private:
-		Renderer* _renderer;
-		GaussPainter* _gaussPainter;
-		PainterCommander* _pc;
+		enum GAUSS {VIEW};
+		enum COMMANDER {GAUSS_VIEW};
+
+		Renderer* _r;
+
+		float _progress;
+		GaussPainter* _gaussPainter[1];
+		PainterCommander* _pc[1];
 		
 
 };

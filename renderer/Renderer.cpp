@@ -1,24 +1,28 @@
 #include "Renderer.hpp"
-#include "../painter/ProgressbarPainter.hpp"
+#include "../GlobalConstants.hpp"
+#include "../context/Context.hpp"
 #include "../Node.hpp"
 
 
 Renderer::Renderer( void ) {
-	_currentData = NULL;
-	_newData = NULL;
+	_currentData = new RenderData;
+	_newData = new RenderData;
 
 	glGenBuffers(1, &_nodeVBO);
-
-	//load data
-	setNewData("_Data/WorkNode.out");
+	context::getWindowSize(&_windowWidth, &_windowHeight);
 	
 	_idle = new Idle(this);
 	_initalWork = new InitialWork(this);
 	_working = new Working(this);
 	_state = _initalWork;
+
+	//load initial data
+	setNewData("_Data/WorkNode.out");
 }
 
 Renderer::~Renderer( void ) {
+	glDeleteBuffers(1, &_nodeVBO);
+
 	delete _currentData;
 	delete _newData;
 	delete _idle;
@@ -27,7 +31,7 @@ Renderer::~Renderer( void ) {
 }
 
 
-//private methods that can be used by the states
+//public
 
 void Renderer::setNewData(string nodeFile, string edgeFile) {
 	dCache.loadDataSet(nodeFile, edgeFile);
@@ -38,7 +42,11 @@ void Renderer::setNewData(string nodeFile, string edgeFile) {
 	glBindBuffer(GL_ARRAY_BUFFER, _nodeVBO);
 		glBufferData(GL_ARRAY_BUFFER, nodeCount * sizeof(PackedNode), packedNodes, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	changeData();
 }	
+
+//private methods that can be used by the states
 
 void Renderer::renderGraph( void ) {
 
@@ -50,6 +58,10 @@ void Renderer::renderHUD(float progress) {
 
 void Renderer::renderTexture(GLuint tex, float rMax, float gMax, float bMax) {
 	_displayConvert.renderTexture(tex, rMax, gMax, bMax);
+}
+
+void Renderer::calculateMaxValues(float result[], GLuint texture, int textureWidth, int textureHeight) {
+	_textureExaminer.getMaxValues(result, texture, textureWidth, textureHeight, TE_KERNEL_SIZE, TE_MAX_ITERATIONS);
 }
 
 
