@@ -14,9 +14,8 @@
 #define MIN_COORD -10000000
 #define MAX_COORD  10000000
 
-//gauss textures consts (move to a broader area in the float rep)
-#define GAUSS_TEXTURE_PI 31415.926535897
-#define GAUSS_TEXTURE_VALUE_MULT 100000.0
+//gauss textures consts
+#define GAUSS_TEXTURE_PI 3.1415926535897
 
 //painter commander
 #define POINT_INIT_STEP 500
@@ -30,6 +29,6 @@
 #define ZOOM_BASE 1.5
 
 //Quads
-#define SIDE_BASE 1.2
+#define SIDE_BASE 1.3
 
 #endif
