@@ -22,9 +22,18 @@ void Idle::renderEvalField( void ) {
 
 }
 
-void Idle::work( void ) {};
-void Idle::takeOver( void ) {};
-void Idle::changePanning( void ) {};
+void Idle::work( void ) { /*nothing to do*/ }
+
+void Idle::takeOver( void ) {
+	_r->_mouseMoveX = 0;
+	_r->_mouseMoveY = 0;
+}
+
+void Idle::changePanning(int xMouseMove, int yMouseMove) {
+	_r->_mouseMoveX = xMouseMove;
+	_r->_mouseMoveY = yMouseMove;
+	_r->setState(_r->_working);
+}
 
 void Idle::changeZoom( void ) {
 	_r->setState(_r->_working);

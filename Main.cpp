@@ -58,7 +58,7 @@ void render( void ) {
 	context::tick(); //process possible pending events
 
 	//prepare
-	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	context::_renderer->work();

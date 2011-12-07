@@ -18,7 +18,7 @@ class IRenderState {
 		virtual void takeOver( void ) = 0;
 
 		//state transissions
-		virtual void changePanning( void ) = 0;
+		virtual void changePanning(int xMouseMove, int yMouseMove) = 0;
 		virtual void changeZoom( void ) = 0;
 		virtual void changeData(string nodeFile, string edgeFile="") = 0;
 		virtual void changeSideLength( void ) = 0;

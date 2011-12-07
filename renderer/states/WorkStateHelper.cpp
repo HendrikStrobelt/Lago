@@ -4,6 +4,8 @@
 #include "../../context/Context.hpp"
 #include "../../GlobalConstants.hpp"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 WorkStateHelper::WorkStateHelper(Renderer* renderer) {
 	_r = renderer;
 
@@ -33,8 +35,10 @@ void WorkStateHelper::takeOver( void ) {
    	_gaussPainter[VIEW] = new GaussPainter(_r->_nodeVBO, elementCount);
 	
 	glm::mat4 P = cameraHelper::calculateProjection(_r->dCache.getNodeStructureInfo(), context::_zoomFactor);
+	glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
+
 	float sideLength = context::_pixelSize * pow(SIDE_BASE, context::_sideExponent);
-	_gaussPainter[VIEW]->setBaseVars(P, sideLength, joinDepth);
+	_gaussPainter[VIEW]->setBaseVars(MVP, sideLength, joinDepth);
 	
 	_pc[GAUSS_VIEW] = new PainterCommander(_gaussPainter[VIEW], _r->_windowWidth, _r->_windowHeight, POINT_INIT_STEP);
 }

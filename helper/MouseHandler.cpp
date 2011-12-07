@@ -48,6 +48,12 @@ namespace mouseHandler {
 		if (action == GLFW_RELEASE) {
 			if (button == GLFW_MOUSE_BUTTON_LEFT) {
 				_leftDown = false;
+				int x,y;
+				glfwGetMousePos(&x, &y);
+
+				int xMove = x - _xPressStart;
+				int yMove = y - _yPressStart;
+				context::updateWorldTranslate(xMove, yMove);
 			}
 		}
 	}

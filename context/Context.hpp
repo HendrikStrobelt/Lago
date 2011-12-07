@@ -28,6 +28,9 @@ namespace context {
 		extern int _sideExponent;
 		extern float _zoomFactor;
 
+		extern float _worldTransX;
+		extern float _worldTransY;
+
 		void tick( void );
 
 		//setters
@@ -35,6 +38,7 @@ namespace context {
 		void setZoomExponent(int newZoomExponent);
 		void setDataSet(string nodeFile, string edgeFile="");
 		
+		void updateWorldTranslate(int xMouseMove, int yMouseMove);
 
 		//GLFW getters
 		void getWindowSize(int* width, int* height);

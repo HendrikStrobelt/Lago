@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "../GlobalConstants.hpp"
+#include "../helper/CameraHelper.hpp"
 
 namespace context {
 
@@ -18,10 +19,16 @@ namespace context {
 	float _zoomFactor;
 	int _zoomExponent;
 	int _sideExponent;
+
+	float _worldTransX;
+	float _worldTransY;
+
 	Renderer* _renderer;
 
 	//private var & methods
 	double _pendingWheelEventTime;
+	
+	void clearRenderVariables( void );
 
 	void resizeEvent(int width, int height);
 	void mouseMovedEvent(int x, int y);
@@ -38,10 +45,7 @@ namespace context {
 	//INIT
 
 	void init() {
-		_zoomFactor = 1.0f;
-		_zoomExponent = 0.0f;
-		_sideExponent = 8;
-		_pendingWheelEventTime = -1.0;
+		clearRenderVariables();
 		_renderer = new Renderer;
 	}
 
@@ -60,6 +64,14 @@ namespace context {
 		}
 	}
 
+	void clearRenderVariables( void ) {
+		_zoomFactor = 1.0f;
+		_zoomExponent = 0.0f;
+		_sideExponent = 8;
+		_worldTransX = 0.0f;
+		_worldTransY = 0.0f;
+		_pendingWheelEventTime = -1.0;
+	}
 
 	void getWindowSize(int* width, int* height) {
 		glfwGetWindowSize(width, height);
@@ -90,10 +102,18 @@ namespace context {
 	}
 
 	void setDataSet(string nodeFile, string edgeFile) {
-		_zoomFactor = 1.0f;
-		_zoomExponent = 0;
-		_sideExponent = 8;
+		clearRenderVariables();
 		_renderer->changeData(nodeFile, edgeFile);
+	}
+
+	void updateWorldTranslate(int xMouseMove, int yMouseMove) {
+		float worldMoveX, worldMoveY;
+		cameraHelper::mouseDist2WorldDist(&worldMoveX, &worldMoveY, xMouseMove, yMouseMove);
+
+		_worldTransX += worldMoveX;
+		_worldTransY += worldMoveY;
+
+		_renderer->changePanning(xMouseMove, yMouseMove);
 	}
 
 	//LISTENER WORKERS

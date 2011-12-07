@@ -16,7 +16,7 @@ class Idle : public IRenderState {
 		void renderEvalField( void );
 		void work( void );
 		void takeOver( void );
-		void changePanning( void );
+		void changePanning(int xMouseMove, int yMouseMove);
 		void changeZoom( void );
 		void changeData(string nodeFile, string edgeFile="");
 		void changeSideLength( void );

@@ -12,7 +12,7 @@ Working::~Working( void ) {
 }
 
 void Working::render( void ) {
-	_r->renderGraph(_r->_currentData);
+	_r->renderGraph(_r->_currentData, _r->_mouseMoveX, _r->_mouseMoveY);
 	_r->renderHUD(_worker->_progress);
 }
 
@@ -37,7 +37,11 @@ void Working::takeOver( void ) {
 	_worker->takeOver();
 }
 
-void Working::changePanning( void ) {};
+void Working::changePanning(int xMouseMove, int yMouseMove) {
+	_r->_mouseMoveX += xMouseMove;
+	_r->_mouseMoveY += yMouseMove;
+	takeOver();
+}
 
 void Working::changeZoom( void ) {
 	takeOver();

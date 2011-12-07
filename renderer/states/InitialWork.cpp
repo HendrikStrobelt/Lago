@@ -37,13 +37,15 @@ void InitialWork::work( void ) {
 void InitialWork::takeOver( void ) {
 	_r->_currentData->clear();
 	_r->_newData->clear();
+	_r->_mouseMoveX = 0;
+	_r->_mouseMoveY = 0;
 	
 	_worker->takeOver();
 }
 
 
-void InitialWork::changePanning( void ) {
-
+void InitialWork::changePanning(int xMouseMove, int yMouseMove) {
+	takeOver();
 }
 
 void InitialWork::changeZoom( void ) {

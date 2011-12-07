@@ -33,7 +33,7 @@ class Renderer : public IRenderState {
 		void renderEvalField( void );
 		void work( void );
 		void takeOver( void );
-		void changePanning( void );
+		void changePanning(int xMouseMove, int yMouseMove);
 		void changeZoom( void );
 		void changeData(string nodeFile, string edgeFile="");
 		void changeSideLength( void );
@@ -51,6 +51,9 @@ class Renderer : public IRenderState {
 		int _windowWidth;
 		int _windowHeight;
 
+		int _mouseMoveX; //relativ to last
+		int _mouseMoveY; //calculated result
+
 		Idle* _idle;
 		InitialWork* _initalWork;
 		Working* _working;
@@ -65,7 +68,7 @@ class Renderer : public IRenderState {
 		void setNewData(string nodeFile, string edgeFile="");
 
 		void setState(IRenderState* state);
-		void renderGraph(RenderData* rData);
+		void renderGraph(RenderData* rData, int xMove=0, int yMove=0);
 		void renderHUD(float progress);
 		void renderTexture(GLuint tex, float rMax=1.0f, float gMax=1.0f, float bMax=1.0f);
 		void calculateMaxValues(float result[], GLuint texture, int textureWidth, int textureHeight);

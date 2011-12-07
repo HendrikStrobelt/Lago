@@ -17,6 +17,9 @@ Renderer::Renderer( void ) {
 	setNewData("_Data/LineNode.out");
 	context::_pixelSize = cameraHelper::getPixelSize(dCache.getNodeStructureInfo(), context::_zoomFactor);
 
+	_mouseMoveX = 0;
+	_mouseMoveY = 0;
+
 	_idle = new Idle(this);
 	_initalWork = new InitialWork(this);
 	_working = new Working(this);
@@ -55,9 +58,12 @@ void Renderer::setNewData(string nodeFile, string edgeFile) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }	
 
-void Renderer::renderGraph(RenderData* rData) {
+void Renderer::renderGraph(RenderData* rData, int xMove, int yMove) {
 	int mouseMoveX, mouseMoveY;
 	mouseHandler::getPressMovement(&mouseMoveX, &mouseMoveY);
+
+	mouseMoveX = mouseMoveX + xMove;
+	mouseMoveY = mouseMoveY + yMove;
 
 	float moveX, moveY;
 	cameraHelper::mouseDist2StandardVolDist(&moveX, &moveY, mouseMoveX, mouseMoveY);
@@ -99,8 +105,8 @@ void Renderer::takeOver( void ) {
 	//state only 
 }
 
-void Renderer::changePanning( void ) {
-	_state->changePanning();
+void Renderer::changePanning(int xMouseMove, int yMouseMove) {
+	_state->changePanning(xMouseMove, yMouseMove);
 }
 
 void Renderer::changeZoom( void ) {

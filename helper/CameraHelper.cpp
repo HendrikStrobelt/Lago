@@ -47,7 +47,7 @@ float getPixelSize(const NodeStructureInfoContainer* nodeInfo, float zoomFactor)
 	context::getWindowSize(&w, &h);
 	float ratio = (float)w / (float)h;
 	
-	float stdWidth, stdHeight, viewWidth, viewHeight, viewLeft, viewRight, viewBottom, viewTop;
+	float stdWidth, stdHeight, viewWidth, viewHeight;
 	float result;
 
 	if (height * ratio > width) {
@@ -73,6 +73,15 @@ void mouseDist2StandardVolDist(float* distX, float* distY, int mouseDistX, int m
 	
 	*distX = (float)mouseDistX / (float) w * 2.0f;
 	*distY = (float)mouseDistY / (float) h * -2.0f; //invert y
+}
+
+
+void mouseDist2WorldDist(float* distX, float* distY, int mouseDistX, int mouseDistY) {
+	int w,h;
+	context::getWindowSize(&w, &h);
+	
+	*distX = (float)mouseDistX * context::_pixelSize;
+	*distY = (float)mouseDistY * context::_pixelSize * -1.0f; //invert y
 }
 
 };
