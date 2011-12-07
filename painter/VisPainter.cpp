@@ -20,7 +20,7 @@ void VisPainter::cleanUp( void ) {
 
 
 
-void VisPainter::renderVis(RenderData* rData) {
+void VisPainter::renderVis(RenderData* rData, float moveX, float moveY) {
 	glBlendFunc(GL_ONE, GL_ZERO);
 
 	int w,h;
@@ -36,6 +36,8 @@ void VisPainter::renderVis(RenderData* rData) {
 				glUniform1i(_shader_ptr->getUniformLocation("antiAlias"), true);
 				glUniform1i(_shader_ptr->getUniformLocation("width"), w);
 				glUniform1i(_shader_ptr->getUniformLocation("height"), h);
+
+				glUniform2f(_shader_ptr->getUniformLocation("move"), moveX, moveY);
 
 				float* cp = &(context::_scaleOptions[scaleMode]._controlPoints[0][0]);
 				glUniform1i(_shader_ptr->getUniformLocation("linearMode"), context::_scaleOptions[scaleMode]._linearMode);
@@ -66,6 +68,7 @@ void VisPainter::createShader( void ) {
 		unis.push_back("pointsX");
 		unis.push_back("pointsY");
 		unis.push_back("exponent");
+		unis.push_back("move");
 
 		_shader_ptr = new GLSLShader(attribs, unis, "shaders/vis/visShader.vert", "shaders/vis/visShader.frag");
 	}

@@ -9,7 +9,6 @@
 class PainterCommander {
 
 	#define TARGET_RENDER_TIME (1.0 / 20.0)
-	#define INIT_STEP 500
 
 	public:
 		PainterCommander(ISplitablePainter* painter, int width, int height, int initStep);

@@ -11,7 +11,7 @@ class VisPainter {
 		VisPainter( void );
 		~VisPainter( void );
 
-		void renderVis(RenderData* rData);
+		void renderVis(RenderData* rData, float moveX, float moveY);
 
 		//static clean up
 		static void cleanUp( void );

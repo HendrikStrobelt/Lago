@@ -12,11 +12,11 @@
 #include "GlobalConstants.hpp"
 #include "helper\EnvironmentHelper.hpp"
 #include "context\Context.hpp"
+#include "helper\MouseHandler.hpp"
 
 //private methods
 void render( void );
 void keyEnv(int key, int action);
-void mouseWheelEvent(int pos);
 void cleanUp( void );
 
 
@@ -31,8 +31,9 @@ int main( int argc, const char* argv[] ) {
 	envHelper::initGL();
 	//init context and environment (remember a context needs a valid glfw environment before beeing ready)
 	context::init();
+	mouseHandler::init();
 
-	_contextListener.activate(0,0,0,keyEnv, mouseWheelEvent);
+	_contextListener.activate(0,0,0,keyEnv, 0);
 
 	glfwSetTime(0);	
 	glfwSetMouseWheel(0);
@@ -48,6 +49,7 @@ int main( int argc, const char* argv[] ) {
 }
 
 void cleanUp( void ) {
+	mouseHandler::cleanUp();
 	context::cleanUp();
 	envHelper::cleanUp();
 }
@@ -91,9 +93,4 @@ void keyEnv(int key, int action) {
 			context::setSideExponent(context::_sideExponent - 1);
 		}
 	}
-}
-
-void mouseWheelEvent(int pos) {
-	context::setZoomExponent(context::_zoomExponent + pos);
-	glfwSetMouseWheel(0);
 }

@@ -2,6 +2,7 @@
 #include "../GlobalConstants.hpp"
 #include "../context/Context.hpp"
 #include "../helper/CameraHelper.hpp"
+#include "../helper/MouseHandler.hpp"
 #include "../Node.hpp"
 
 
@@ -55,7 +56,13 @@ void Renderer::setNewData(string nodeFile, string edgeFile) {
 }	
 
 void Renderer::renderGraph(RenderData* rData) {
-	_visPainter.renderVis(rData);
+	int mouseMoveX, mouseMoveY;
+	mouseHandler::getPressMovement(&mouseMoveX, &mouseMoveY);
+
+	float worldMoveX, worldMoveY;
+	cameraHelper::mouse2World(&worldMoveX, &worldMoveY, mouseMoveX, mouseMoveY);
+
+	_visPainter.renderVis(rData, worldMoveX, worldMoveY);
 }
 
 void Renderer::renderHUD(float progress) {
