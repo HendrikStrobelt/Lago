@@ -19,6 +19,7 @@ Renderer::Renderer( void ) {
 
 	_mouseMoveX = 0;
 	_mouseMoveY = 0;
+	_hasEdges = 0;
 
 	_idle = new Idle(this);
 	_initalWork = new InitialWork(this);
@@ -52,10 +53,20 @@ void Renderer::setNewData(string nodeFile, string edgeFile) {
 
 	int nodeCount;
 	const PackedNode* packedNodes = dCache.getPackedNodes(&nodeCount);
-
 	glBindBuffer(GL_ARRAY_BUFFER, _nodeVBO);
 		glBufferData(GL_ARRAY_BUFFER, nodeCount * sizeof(PackedNode), packedNodes, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	if (!edgeFile.empty()) {
+		_hasEdges = true;
+		int edgeCount;
+		const PackedEdge* packedEdges = dCache.getPackedEdges(&edgeCount);
+		glBindBuffer(GL_ARRAY_BUFFER, _edgeVBO);
+			glBufferData(GL_ARRAY_BUFFER, edgeCount * sizeof(PackedEdge), packedEdges, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	} else {
+		_hasEdges = false;
+	}
 }	
 
 void Renderer::renderGraph(RenderData* rData, int xMove, int yMove) {

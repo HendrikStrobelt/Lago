@@ -47,6 +47,9 @@ class Renderer : public IRenderState {
 		RenderData* _newData;
 		IRenderState* _state;
 		GLuint _nodeVBO;
+		GLuint _edgeVBO;
+
+		bool _hasEdges;
 
 		int _windowWidth;
 		int _windowHeight;

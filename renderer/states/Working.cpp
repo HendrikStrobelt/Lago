@@ -21,12 +21,16 @@ void Working::renderGauss( void ) { /*do nothing*/ };
 void Working::renderEvalField( void ) { /*do nothing*/ };
 
 void Working::work( void ) {
-	if (!_worker->_pc[GAUSS_VIEW]->isDone())  {
+	if (!_worker->isDone())  {
 		_worker->work();
 	} else {
 		//done change state
 		_r->_currentData->_gaussTex = _worker->_pc[GAUSS_VIEW]->detachResult();
 		_r->calculateMaxValues(_r->_currentData->_maxValuesN, _r->_currentData->_gaussTex, _r->_windowWidth, _r->_windowHeight);
+
+		if (_r->_hasEdges) {
+			_r->_currentData->_evalField = _worker->_fieldEvaluator->detachResultTexture();
+		}
 
 		_r->setState(_r->_idle);
 	}

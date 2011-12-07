@@ -81,7 +81,7 @@ void keyEnv(int key, int action) {
 			context::setDataSet("_Data//GridNode.out");
 		} else 
 		if (key == '3') {
-			context::setDataSet("_Data//WorkNode.out");
+			context::setDataSet("_Data//WorkNode.out", "_Data//WorkEdge.out");
 		} else 
 		if (key == '4') {
 			context::setDataSet("_Data//GermanyNode.out");

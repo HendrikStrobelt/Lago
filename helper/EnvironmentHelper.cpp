@@ -10,6 +10,7 @@
 #include "../painter/DisplayConvertPainter.hpp"
 #include "../painter/VisPainter.hpp"
 #include "../renderer/TextureExaminer.hpp"
+#include "../renderer/FieldEvaluation.hpp"
 
 #include "../context/Context.hpp"
 
@@ -155,7 +156,9 @@ namespace envHelper {
 		ProgressbarPainter::cleanUp();
 		GaussPainter::cleanUp();
 		DisplayConvertPainter::cleanUp();
-		TextureExaminer::cleanUp();
 		VisPainter::cleanUp();
+
+		TextureExaminer::cleanUp();
+		FieldEvaluation::cleanUp();
 	}
 };
