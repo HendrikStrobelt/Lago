@@ -25,6 +25,13 @@ void Working::work( void ) {
 		_worker->work();
 	} else {
 		//done change state
+		//TMP UNTIL RESULTS WILL GO TO NEW INSTEAD OF CURRENT
+			glDeleteTextures(1, &_r->_currentData->_gaussTex);
+			if (_r->_hasEdges) {
+				glDeleteTextures(1, &_r->_currentData->_evalField);
+			}
+		//END TMP
+
 		_r->_currentData->_gaussTex = _worker->_pc[GAUSS_VIEW]->detachResult();
 		_r->calculateMaxValues(_r->_currentData->_maxValuesN, _r->_currentData->_gaussTex, _r->_windowWidth, _r->_windowHeight);
 
