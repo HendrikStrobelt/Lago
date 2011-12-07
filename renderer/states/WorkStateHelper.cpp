@@ -56,7 +56,7 @@ void WorkStateHelper::takeOver( void ) {
 
 	int joinDepth = _r->dCache.getNodeStructureInfo()->getJoinDepth(context::_pixelSize);
 	int elementCount = _r->dCache.getNodeStructureInfo()->getAllNodes(joinDepth);
-   	_gaussPainter[VIEW] = new GaussPainter(_r->_nodeVBO, elementCount);
+   	_gaussPainter[VIEW] = new GaussPainter(_r->_nodeVBO, _r->_windowWidth, _r->_windowHeight, elementCount);
 	
 	glm::mat4 P = cameraHelper::calculateProjection(_r->dCache.getNodeStructureInfo(), context::_zoomFactor);
 	glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
@@ -64,7 +64,7 @@ void WorkStateHelper::takeOver( void ) {
 	float sideLength = context::_pixelSize * pow(SIDE_BASE, context::_sideExponent);
 	_gaussPainter[VIEW]->setBaseVars(MVP, sideLength, joinDepth);
 	
-	_pc[GAUSS_VIEW] = new PainterCommander(_gaussPainter[VIEW], _r->_windowWidth, _r->_windowHeight, POINT_INIT_STEP);
+	_pc[GAUSS_VIEW] = new PainterCommander(_gaussPainter[VIEW], POINT_INIT_STEP);
 
 	if (_r->_hasEdges) {
 		_fieldEvaluator = new FieldEvaluation(_r->_windowWidth, _r->_windowHeight);

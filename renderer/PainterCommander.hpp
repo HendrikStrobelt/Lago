@@ -1,7 +1,6 @@
 #ifndef PAINTER_COMMANDER_H
 #define PAINTER_COMMANDER_H
 
-#include "../helper/FrameBufferContainer.hpp"
 #include "../painter/ISplitablePainter.hpp"
 #include <GL\glfw.h>
 #include <GL\glew.h>
@@ -11,7 +10,7 @@ class PainterCommander {
 	#define TARGET_RENDER_TIME (1.0 / 20.0)
 
 	public:
-		PainterCommander(ISplitablePainter* painter, int width, int height, int initStep);
+		PainterCommander(ISplitablePainter* painter, int initStep);
 		~PainterCommander( void );
 
 		float renderNextPart( void ); //0..1 completion
@@ -22,7 +21,6 @@ class PainterCommander {
 		GLuint detachResult( void );
 
 	private:
-		FrameBufferContainer* _fbc;
 		ISplitablePainter* _painter;
 		double _renderTime;
 		int _currentIndex;

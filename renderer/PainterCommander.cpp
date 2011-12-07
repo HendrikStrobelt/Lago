@@ -1,23 +1,21 @@
 #include "PainterCommander.hpp"
 #include <math.h>
 
-PainterCommander::PainterCommander(ISplitablePainter* painter, int width, int height, int initStep) {
+PainterCommander::PainterCommander(ISplitablePainter* painter, int initStep) {
 	_painter = painter;
-	_fbc = new FrameBufferContainer(width, height, GL_LINEAR);
 	_renderTime = 0.0;
 	_currentIndex = 0;
 	_currentStep = initStep;
 }
 
 PainterCommander::~PainterCommander( void ) {
-	delete _fbc;
+
 }
 
 //public
 
 bool PainterCommander::isDone( void ) {
-	int a = _painter->getElementCount();
-	if (a <= _currentIndex) {
+	if (_painter->getElementCount() <= _currentIndex) {
 		return true;
 	} else {
 		return false;
@@ -25,12 +23,12 @@ bool PainterCommander::isDone( void ) {
 }
 
 GLuint PainterCommander::getWorkingTexture( void ) {
-	return _fbc->_fboOutTex;
+	return _painter->getWorkingTexture();
 }
 
 GLuint PainterCommander::detachResult( void ) {
 	if (isDone()) {
-		_fbc->detachTexture();
+		_painter->detachTexture();
 	} else {
 		return -1;
 	}
@@ -48,10 +46,8 @@ float PainterCommander::renderNextPart( void ) {
 		glFinish();
 
 		double start = glfwGetTime();
-		glBindFramebuffer(GL_FRAMEBUFFER, _fbc->_fbo);
 			_painter->processElements(_currentIndex, _currentStep);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glFinish();
+			glFinish();
 		double end = glfwGetTime();
 
 		_currentIndex += _currentStep;

@@ -6,11 +6,12 @@
 
 #include "../helper/GLSLShader.hpp"
 #include "ISplitablePainter.hpp"
+#include "../helper/FrameBufferContainer.hpp"
 
 class GaussPainter : public ISplitablePainter {
 
 	public:
-		GaussPainter(GLuint nodeVBO, int elementCount);
+		GaussPainter(GLuint nodeVBO, int width, int height, int elementCount);
 		~GaussPainter( void );
 	
 		void setBaseVars(glm::mat4 MVP, float quadSideLength, int nodeDepth);
@@ -18,6 +19,9 @@ class GaussPainter : public ISplitablePainter {
 		//interface methods
 		int getElementCount( void );
 		void processElements(int start, int count);
+
+		GLuint getWorkingTexture( void );
+		GLuint detachTexture( void );
 
 		//static clean up
 		static void cleanUp( void );
@@ -31,6 +35,8 @@ class GaussPainter : public ISplitablePainter {
 		void renderGauss(int start, int count);
 		void initVao(GLuint vbo);
 		int _elementCount;
+
+		FrameBufferContainer* _fbc;
 				
 		glm::mat4 _MVP;
 		float _quadSideLength;
