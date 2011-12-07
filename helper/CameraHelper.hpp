@@ -12,7 +12,7 @@ namespace cameraHelper {
 	
 	float getPixelSize(const NodeStructureInfoContainer* nodeInfo, float zoomFactor);
 
-	void mouse2World(float* worldX, float* worldY, int mouseX, int mouseY);
+	void mouseDist2StandardVolDist(float* distX, float* distY, int mouseDistX, int mouseDistY);
 };
 
 

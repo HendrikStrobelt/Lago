@@ -67,22 +67,12 @@ float getPixelSize(const NodeStructureInfoContainer* nodeInfo, float zoomFactor)
 }
 
 
-void mouse2World(float* worldX, float* worldY, int mouseX, int mouseY) {
+void mouseDist2StandardVolDist(float* distX, float* distY, int mouseDistX, int mouseDistY) {
 	int w,h;
 	context::getWindowSize(&w, &h);
-
-	float retX,retY;
-	retX = (float)mouseX / (float)w;
-	retY = (float)mouseY / (float)h;
 	
-	retX *=  2.0f;
-	retY *= -2.0f;
-
-	retX -= 1.0f;
-	retY += 1.0f;
-
-	*worldX = retX;
-	*worldY = retY;
+	*distX = (float)mouseDistX / (float) w * 2.0f;
+	*distY = (float)mouseDistY / (float) h * -2.0f; //invert y
 }
 
 };

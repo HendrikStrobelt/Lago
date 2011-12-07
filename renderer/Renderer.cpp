@@ -59,10 +59,10 @@ void Renderer::renderGraph(RenderData* rData) {
 	int mouseMoveX, mouseMoveY;
 	mouseHandler::getPressMovement(&mouseMoveX, &mouseMoveY);
 
-	float worldMoveX, worldMoveY;
-	cameraHelper::mouse2World(&worldMoveX, &worldMoveY, mouseMoveX, mouseMoveY);
+	float moveX, moveY;
+	cameraHelper::mouseDist2StandardVolDist(&moveX, &moveY, mouseMoveX, mouseMoveY);
 
-	_visPainter.renderVis(rData, worldMoveX, worldMoveY);
+	_visPainter.renderVis(rData, moveX, moveY);
 }
 
 void Renderer::renderHUD(float progress) {

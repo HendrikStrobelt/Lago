@@ -32,8 +32,8 @@ namespace mouseHandler {
 			int x,y;
 			glfwGetMousePos(&x, &y);
 			
-			*xMove = _xPressStart - x;
-			*yMove = _yPressStart - y;
+			*xMove = x - _xPressStart;
+			*yMove = y - _yPressStart;
 		}
 	}
 
