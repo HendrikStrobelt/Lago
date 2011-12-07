@@ -13,6 +13,7 @@ class IRenderState {
 		virtual void render( void ) = 0;
 		virtual void renderGauss( void ) = 0;
 		virtual void renderEvalField( void ) = 0;
+		virtual void renderLineField( void ) = 0;
 
 		virtual void work( void ) = 0;
 		virtual void takeOver( void ) = 0;

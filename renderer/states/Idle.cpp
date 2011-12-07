@@ -26,6 +26,8 @@ void Idle::renderEvalField( void ) {
 	}
 }
 
+void Idle::renderLineField( void ) {};
+
 void Idle::work( void ) { /*nothing to do*/ }
 
 void Idle::takeOver( void ) {

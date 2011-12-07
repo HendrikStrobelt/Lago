@@ -21,6 +21,7 @@ void InitialWork::renderGauss( void ) { /*do nothing*/ };
 
 void InitialWork::renderEvalField( void ) { /*do nothing*/ };
 
+void InitialWork::renderLineField( void ) { /*do nothing*/ };
 
 void InitialWork::work( void ) {
 	if (!_worker->isDone())  {

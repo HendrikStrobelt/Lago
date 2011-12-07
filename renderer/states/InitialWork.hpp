@@ -16,6 +16,7 @@ class InitialWork : public IRenderState {
 		void render( void );
 		void renderGauss( void );
 		void renderEvalField( void );
+		void renderLineField( void );
 		void work( void );
 		void takeOver( void );
 		void changePanning(int xMouseMove, int yMouseMove);

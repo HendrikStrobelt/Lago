@@ -20,6 +20,8 @@ void Working::renderGauss( void ) { /*do nothing*/ };
 
 void Working::renderEvalField( void ) { /*do nothing*/ };
 
+void Working::renderLineField( void ) { /*do nothing*/ };
+
 void Working::work( void ) {
 	if (!_worker->isDone())  {
 		_worker->work();

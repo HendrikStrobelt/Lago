@@ -22,12 +22,7 @@ void RenderData::clear( void ) {
 	 _gaussTex = -1;
 	 _evalField = -1;
 	 _lineField = -1;
-		
-	 _P = glm::mat4(1.0f);
-	 _T = glm::mat4(1.0f);
 
-	 _aspectRatio = -1;
-	 _dataID = -1;
 	 _maxValuesN[0] = -1;
 	 _maxValuesN[1] = -1;
 	 _maxValuesN[2] = -1;

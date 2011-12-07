@@ -16,12 +16,7 @@ class RenderData {
 		GLuint _gaussTex;
 		GLuint _evalField;
 		GLuint _lineField;
-		
-		glm::mat4 _P;
-		glm::mat4 _T;
 
-		float _aspectRatio;
-		int _dataID;
 		float _maxValuesN[3];
 		float _maxValuesE[3];
 

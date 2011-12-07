@@ -108,6 +108,10 @@ void Renderer::renderEvalField( void ) {
 	_state->renderEvalField();
 }
 
+void Renderer::renderLineField( void ) {
+	_state->renderLineField();
+}
+
 void Renderer::work( void ) {
 	_state->work();
 }
