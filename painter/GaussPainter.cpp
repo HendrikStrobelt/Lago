@@ -16,6 +16,7 @@ GaussPainter::GaussPainter(GLuint nodeVBO, int elementCount) {
 }
 
 GaussPainter::~GaussPainter( void ) {
+	glDeleteVertexArrays(1, &_vao);
 }
 
 //static clean up

@@ -77,7 +77,7 @@ void FieldEvaluation::initVao( void ) {
 	float texture[8] = { 0.0f, 1.0f,     0.0f,  0.0f,      1.0f, 1.0f,     1.0f,  0.0f};
 
 	glGenVertexArrays(1, &_vao);
-	glGenBuffers (2, &_vbo[0]);
+	glGenBuffers(2, &_vbo[0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, _vbo[VERTEX]);
 		glBufferData (GL_ARRAY_BUFFER, 8 * sizeof(float), &textureQuad[0], GL_DYNAMIC_DRAW);
