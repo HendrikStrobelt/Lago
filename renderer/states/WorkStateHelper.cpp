@@ -28,12 +28,13 @@ void WorkStateHelper::takeOver( void ) {
 	delete _gaussPainter[VIEW];
 	delete _pc[GAUSS_VIEW];
 
-	int elementCount = _r->dCache.getNodeStructureInfo()->getAllNodes(_r->dCache.getNodeStructureInfo()->getMaxDepth());
+	int joinDepth = _r->dCache.getNodeStructureInfo()->getJoinDepth(context::_pixelSize);
+	int elementCount = _r->dCache.getNodeStructureInfo()->getAllNodes(joinDepth);
    	_gaussPainter[VIEW] = new GaussPainter(_r->_nodeVBO, elementCount);
 	
 	glm::mat4 P = cameraHelper::calculateProjection(_r->dCache.getNodeStructureInfo(), context::_zoomFactor);
 	float sideLength = context::_pixelSize * pow(SIDE_BASE, context::_sideExponent);
-	_gaussPainter[VIEW]->setBaseVars(P, sideLength, _r->dCache.getNodeStructureInfo()->getJoinDepth(context::_pixelSize));
+	_gaussPainter[VIEW]->setBaseVars(P, sideLength, joinDepth);
 	
 	_pc[GAUSS_VIEW] = new PainterCommander(_gaussPainter[VIEW], _r->_windowWidth, _r->_windowHeight, POINT_INIT_STEP);
 }

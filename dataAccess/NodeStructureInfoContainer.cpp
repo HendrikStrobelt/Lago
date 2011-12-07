@@ -50,7 +50,7 @@ int NodeStructureInfoContainer::getJoinDepth(float desiredMinDistance) const {
 	} else {
 		//select an appropriate level of the quad tree
 		depth = 0;
-		while (maxRectSide > desiredMinDistance && depth <= _maxDepth) {
+		while (maxRectSide > desiredMinDistance && depth < _maxDepth) {
 			depth++;
 			maxRectSide /= 2.0f;
 		}

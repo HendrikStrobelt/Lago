@@ -16,7 +16,8 @@ PainterCommander::~PainterCommander( void ) {
 //public
 
 bool PainterCommander::isDone( void ) {
-	if (_painter->getElementCount() <= _currentIndex) {
+	int a = _painter->getElementCount();
+	if (a <= _currentIndex) {
 		return true;
 	} else {
 		return false;
@@ -55,14 +56,13 @@ float PainterCommander::renderNextPart( void ) {
 
 		_currentIndex += _currentStep;
 		_renderTime += (end - start);
-		double timePerElement = (_renderTime / _currentIndex);
-			
+		double timePerElement = (_renderTime / _currentIndex);		
 		_currentStep = (ceil((double)TARGET_RENDER_TIME / timePerElement) * 1.5f);
-			
+	
 		if (_currentStep > _painter->getElementCount() / 2) {
 			_currentStep = (int)ceil((float)_painter->getElementCount() / 2.0f);  //show always a bar
 		}
-
+		
 		return (float)_currentIndex / (float)_painter->getElementCount();
 	}
 	return 1.0f;

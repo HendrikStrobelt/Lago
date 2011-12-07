@@ -56,7 +56,7 @@ void render( void ) {
 	context::tick(); //process possible pending events
 
 	//prepare
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	context::_renderer->work();
@@ -79,6 +79,9 @@ void keyEnv(int key, int action) {
 			context::setDataSet("_Data//GridNode.out");
 		} else 
 		if (key == '3') {
+			context::setDataSet("_Data//WorkNode.out");
+		} else 
+		if (key == '4') {
 			context::setDataSet("_Data//GermanyNode.out");
 		} else 
 		if (key == GLFW_KEY_KP_ADD) {

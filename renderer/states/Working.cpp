@@ -12,13 +12,13 @@ Working::~Working( void ) {
 }
 
 void Working::render( void ) {
-	float* maxVals = _r->_currentData->_maxValuesN;
-	_r->renderTexture(_r->_currentData->_gaussTex, maxVals[0], maxVals[1], maxVals[2]);
+	_r->renderGraph(_r->_currentData);
 	_r->renderHUD(_worker->_progress);
 }
 
-void Working::renderGauss( void ) {};
-void Working::renderEvalField( void ) {};
+void Working::renderGauss( void ) { /*do nothing*/ };
+
+void Working::renderEvalField( void ) { /*do nothing*/ };
 
 void Working::work( void ) {
 	if (!_worker->_pc[GAUSS_VIEW]->isDone())  {

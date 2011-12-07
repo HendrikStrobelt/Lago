@@ -18,7 +18,7 @@
 #define GAUSS_TEXTURE_PI 3.1415926535897
 
 //painter commander
-#define POINT_INIT_STEP 500
+#define POINT_INIT_STEP 10000
 
 //texture examiner
 #define TE_KERNEL_SIZE 16

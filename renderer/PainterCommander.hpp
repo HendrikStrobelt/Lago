@@ -8,7 +8,7 @@
 
 class PainterCommander {
 
-	#define TARGET_RENDER_TIME (1.0 / 10.0)
+	#define TARGET_RENDER_TIME (1.0 / 20.0)
 	#define INIT_STEP 500
 
 	public:

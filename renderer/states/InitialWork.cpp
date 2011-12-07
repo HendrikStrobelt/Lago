@@ -17,13 +17,9 @@ void InitialWork::render( void ) {
 	_r->renderHUD(_worker->_progress);
 }
 
-void InitialWork::renderGauss( void ) {
-	
-}
+void InitialWork::renderGauss( void ) { /*do nothing*/ };
 
-void InitialWork::renderEvalField( void ) {
-
-}
+void InitialWork::renderEvalField( void ) { /*do nothing*/ };
 
 
 void InitialWork::work( void ) {

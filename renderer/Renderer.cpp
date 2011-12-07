@@ -54,8 +54,8 @@ void Renderer::setNewData(string nodeFile, string edgeFile) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }	
 
-void Renderer::renderGraph( void ) {
-
+void Renderer::renderGraph(RenderData* rData) {
+	_visPainter.renderVis(rData);
 }
 
 void Renderer::renderHUD(float progress) {
