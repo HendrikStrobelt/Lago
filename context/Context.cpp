@@ -98,6 +98,16 @@ namespace context {
 	void setZoomExponent(int newZoomExponent) {
 		_zoomExponent = newZoomExponent;
 		_zoomFactor = pow(ZOOM_BASE, _zoomExponent);
+
+		//zoom to mouse
+		if (glfwGetMouseButton(GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+			int w,h;
+			glfwGetWindowSize(&w, &h);
+			int x,y;
+			glfwGetMousePos(&x, &y);
+
+			updateWorldTranslate((w/2)-x, (h/2)-y); //triggers panning update
+		}
 		_renderer->changeZoom();
 	}
 
