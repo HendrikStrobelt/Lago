@@ -9,6 +9,7 @@
 #include "../painter/GaussPainter.hpp"
 #include "../painter/DisplayConvertPainter.hpp"
 #include "../painter/VisPainter.hpp"
+#include "../painter/DividedLinePainter.hpp"
 #include "../renderer/TextureExaminer.hpp"
 #include "../renderer/FieldEvaluation.hpp"
 
@@ -157,6 +158,7 @@ namespace envHelper {
 		GaussPainter::cleanUp();
 		DisplayConvertPainter::cleanUp();
 		VisPainter::cleanUp();
+		DividedLinePainter::cleanUp();
 
 		TextureExaminer::cleanUp();
 		FieldEvaluation::cleanUp();

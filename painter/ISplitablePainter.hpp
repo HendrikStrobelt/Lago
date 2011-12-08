@@ -15,6 +15,7 @@ class ISplitablePainter {
 		virtual GLuint getWorkingTexture( void ) = 0;
 		virtual GLuint detachTexture( void ) = 0;
 
+
 	private:
 
 };

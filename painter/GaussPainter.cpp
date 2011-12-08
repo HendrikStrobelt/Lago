@@ -10,7 +10,7 @@ GLSLShader* GaussPainter::_shader_ptr = NULL;
 
 GaussPainter::GaussPainter(GLuint nodeVBO, int width, int height, int elementCount) {	
 	_elementCount = elementCount;
-	_fbc = new FrameBufferContainer(width, height);
+	_fbc = new FrameBufferContainer(width, height, GL_LINEAR);
 	createShader();
 	loadTexturesOnce();
 	initVao(nodeVBO);

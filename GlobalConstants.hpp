@@ -31,4 +31,7 @@
 //Quads
 #define SIDE_BASE 1.3
 
+//dividedLines
+#define ANGLE_STEP 1 // 1..45 \in N
+
 #endif
