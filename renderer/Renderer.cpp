@@ -12,6 +12,7 @@ Renderer::Renderer( void ) {
 
 	glGenBuffers(1, &_nodeVBO);
 	context::getWindowSize(&_windowWidth, &_windowHeight);
+	_visPainter.resize(_windowWidth, _windowHeight);
 
 	//load initial data
 	setNewData("_Data/LineNode.out");
@@ -39,7 +40,6 @@ Renderer::~Renderer( void ) {
 
 
 //public
-
 
 //private methods that can be used by the states
 
@@ -79,7 +79,7 @@ void Renderer::renderGraph(RenderData* rData, int xMove, int yMove) {
 	float moveX, moveY;
 	cameraHelper::mouseDist2StandardVolDist(&moveX, &moveY, mouseMoveX, mouseMoveY);
 
-	_visPainter.renderVis(rData, moveX, moveY);
+	_visPainter.renderVis(rData, _hasEdges, moveX, moveY);
 }
 
 void Renderer::renderHUD(float progress) {
@@ -142,5 +142,6 @@ void Renderer::changeSideLength( void ) {
 void Renderer::changeWindow( void ) {
 	context::getWindowSize(&_windowWidth, &_windowHeight);
 	context::_pixelSize = cameraHelper::getPixelSize(dCache.getNodeStructureInfo(), context::_zoomFactor);
+	_visPainter.resize(_windowWidth, _windowHeight);
 	_state->changeWindow();
 }
