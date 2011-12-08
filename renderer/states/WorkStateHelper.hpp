@@ -23,7 +23,7 @@ class WorkStateHelper {
 		float _progress;
 		GaussPainter* _gaussPainter[2];
 		PainterCommander* _pc[3];
-		FieldEvaluation* _fieldEvaluator;
+		FieldEvaluation* _fieldEvaluator[2];
 		DividedLinePainter* _linePainter;
 
 	private:

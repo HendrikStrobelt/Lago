@@ -39,7 +39,7 @@ void Working::work( void ) {
 		_r->calculateMaxValues(_r->_currentData->_maxValuesN, _r->_currentData->_gaussTex, _r->_windowWidth, _r->_windowHeight);
 
 		if (_r->_hasEdges) {
-			_r->_currentData->_evalField = _worker->_fieldEvaluator->detachResultTexture();
+			_r->_currentData->_evalField = _worker->_fieldEvaluator[OFF]->detachResultTexture();
 			_r->_currentData->_lineField = _worker->_linePainter->detachTexture();
 			_r->calculateMaxValues(_r->_currentData->_maxValuesE, _r->_currentData->_lineField, _r->_windowWidth, _r->_windowHeight);
 		}
