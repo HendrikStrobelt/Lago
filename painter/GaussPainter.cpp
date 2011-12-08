@@ -64,7 +64,7 @@ void GaussPainter::renderGauss(int start, int count) {
 		glBindTexture(GL_TEXTURE_2D, _gaussTex);
 			glBindVertexArray(_vao);
 				_shader_ptr->use();			
-					  glUniform1i(_shader_ptr->getUniformLocation("desiredDepth"), _nodeDepth);
+					glUniform1i(_shader_ptr->getUniformLocation("desiredDepth"), _nodeDepth);
 					glUniform1i(_shader_ptr->getUniformLocation("gaussTexture"), 0);
  					glUniformMatrix4fv(_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(_MVP));
 					glUniform1f(_shader_ptr->getUniformLocation("sideFactor"), _quadSideLength); 

@@ -4,63 +4,81 @@
 layout(points) in;
 layout(line_strip, max_vertices = 2) out;
 
-
-uniform int desiredDepth;
-uniform sampler2D evalField;
-uniform sampler2D oldEvalField;
-
 in vec4 gVertex2[];
-in float gWeight[];
 in int gDepth[];
+in float gWeight[];
+
+uniform sampler2D evalField;
+uniform sampler2D offEvalField;
+uniform float offZoomFactor;
+uniform int desiredDepth;
+uniform float lowerBorder;
+uniform float stepWidth;
+uniform float sideFactor;
+uniform int width;
+uniform int height;
 
 flat out float fWeight;
 flat out int fPos;
 
-uniform float lowerBorder;
-uniform float stepWidth;
-uniform float sideFactor;
-uniform float old2NewZoom;
+
 
 vec2 getTexCoordinates(vec2 screenCoordinates) {
 	return ((screenCoordinates + 1.0) / 2.0);
 }
 
-vec2 getTexCoordinatesOld(vec2 screenCoordinates) {
-	return (((screenCoordinates / old2NewZoom) + 1.0) / 2.0);
+vec2 getTexCoordinatesOff(vec2 screenCoordinates) {
+	return (((screenCoordinates / offZoomFactor) + 1.0) / 2.0);
 }
 
-vec2 getCoords(vec2 pos) {
-	vec2 texCoords = getTexCoordinates(pos);
-
-	//cut at factor 2 for all (4x zoomed should be rendered smaller not have a higher radius)
-	if (pos.x > -2.0f && pos.x < 2.0f && pos.y > -2.0f && pos.y < 2.0f) {
-
-
-		if (texCoords.x > 0.98 || texCoords.x < 0.02 || texCoords.y > 0.98 || texCoords.y < 0.02) {
-			//no texture information available return the original value
-			if (old2NewZoom > 1.0f) {		
-				texCoords = getTexCoordinatesOld(pos);
-				if (texCoords.x > 1.0 || texCoords.x < 0.0 || texCoords.y > 1.0 || texCoords.y < 0.0) {
-					//no texture information available return the original value
-					return pos;
-				} else {
-					return texture(oldEvalField, texCoords).xy * old2NewZoom;
-				}
-			} else {
-				return pos;
-			}
-		} else {
-			//return the lookup bundling coordinates
-			return texture(evalField, texCoords).xy;
-		}
-
+bool borderTest(vec2 screenCoords) {
+	float stepX = 2.0f / width;
+	float stepY = 2.0f / height;
+	
+	if (screenCoords.x > (1.0f - stepX) || screenCoords.x < (-1.0f + stepX) || 
+		screenCoords.y > (1.0f - stepY) || screenCoords.y < (-1.0f + stepY)) {
+		//failed border pos
+		return false;
+	} else {
+		return true;
 	}
 }
 
+
+vec2 getCoords(vec2 pos) {
+
+	//cut at factor 2 for all (4x zoomed should be rendered smaller not have a higher radius)
+	if (!(pos.x < -2.0f || pos.x > 2.0f || pos.y < -2.0f || pos.y > 2.0f)) {
+
+		vec2 texCoords = getTexCoordinates(pos);
+		vec2 newPos = texture(evalField, texCoords).xy;
+
+		if (!borderTest(newPos) || texCoords.x > 1.0f || texCoords.x < 0.0f || texCoords.y > 1.0f || texCoords.y < 0.0f) {
+			//either border test failed or not inside try lookup in next texture
+
+			vec2 texCoordsOff = getTexCoordinatesOff(pos);
+			if (!(texCoordsOff.x > 1.0f || texCoordsOff.x < 0.0f || texCoordsOff.y > 1.0f || texCoordsOff.y < 0.0f)) {
+				//this time inside the texture fine
+				return texture(offEvalField, texCoordsOff).xy * offZoomFactor;
+			} else {
+				//to far away
+				return pos;
+			}
+
+		} else {
+			//in inner texture everything ok
+			return newPos;
+		}
+	} else {
+		return pos;
+	}
+}
+
+
 void main(void) 
 {
-
 	int i = 0;
+
 	float edgeWeight = 0.0f;
 
 	if ((abs(gDepth[i]) <= desiredDepth) &&  //leaf or inner node we wish to display
@@ -91,7 +109,6 @@ void main(void)
 		if (alpha == 180.0f) {
 			alpha = 0.0f;
 		}
-
 
 		if (alpha >= lowerBorder && alpha < (lowerBorder + 4 * stepWidth)) {
 

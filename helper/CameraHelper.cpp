@@ -12,8 +12,8 @@ glm::mat4 calculateProjection(const NodeStructureInfoContainer* nodeInfo, float 
 	float height = nodeInfo->getHeight();
 	int w,h;
 	context::getWindowSize(&w, &h);
-	float ratio = (float)w / (float)h;
-	
+
+	float ratio = (float)w / (float)h;	
 	float stdWidth, stdHeight, viewWidth, viewHeight, viewLeft, viewRight, viewBottom, viewTop;
 
 	if (height * ratio > width) {

@@ -35,4 +35,8 @@
 //dividedLines
 #define ANGLE_STEP 3 // 1..45 \in N
 
+//off rendering
+#define OFF_ZOOM 2  //2 times zoomed out
+#define OFF_SHRINK 2 //calculated in a x times smaller field
+
 #endif

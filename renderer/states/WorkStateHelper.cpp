@@ -45,12 +45,17 @@ void WorkStateHelper::work( void ) {
 			_progress = _pc[GAUSS_VIEW]->renderNextPart();
 		} else 
 		if (!_pc[GAUSS_OFF]->isDone()) {
-			_progress = _pc[GAUSS_OFF]->renderNextPart();
+			glViewport(0,0, (GLsizei) (_r->_windowWidth / OFF_SHRINK), (GLsizei) (_r->_windowHeight / OFF_SHRINK));
+				_progress = _pc[GAUSS_OFF]->renderNextPart();
+			glViewport(0,0, _r->_windowWidth, (GLsizei) _r->_windowHeight);
 		} else 
 		if (!(_fieldEvaluator[VIEW]->isDone() && _fieldEvaluator[OFF]->isDone())) {
 			_fieldEvaluator[VIEW]->evaluate(_pc[GAUSS_VIEW]->getWorkingTexture());
 			_progress = 0.5f;
-			_fieldEvaluator[OFF]->evaluate(_pc[GAUSS_OFF]->getWorkingTexture());
+
+			glViewport(0,0, (GLsizei) (_r->_windowWidth / OFF_SHRINK), (GLsizei) (_r->_windowHeight / OFF_SHRINK));
+				_fieldEvaluator[OFF]->evaluate(_pc[GAUSS_OFF]->getWorkingTexture());
+			glViewport(0,0, _r->_windowWidth, (GLsizei) _r->_windowHeight);
 			_progress = 1.0f;
 		} else 
 		if (!_pc[DIVIDED_LINES]->isDone()) {
@@ -82,21 +87,21 @@ void WorkStateHelper::takeOver( void ) {
 		int edgeElements = _r->dCache.getEdgeStructureInfo()->getAllEdges(joinDepth);
 		
 		//gauss off
-		glm::mat4 P2 = cameraHelper::calculateProjection(_r->dCache.getNodeStructureInfo(), (context::_zoomFactor * 4.0f));
-		glm::mat4 MVP2 = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
+		glm::mat4 P2 = cameraHelper::calculateProjection(_r->dCache.getNodeStructureInfo(), context::_zoomFactor / (OFF_ZOOM * OFF_SHRINK));
+		glm::mat4 MVP2 = glm::translate(P2, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
 
-		_gaussPainter[OFF] = new GaussPainter(_r->_nodeVBO, (_r->_windowWidth / 2), (_r->_windowHeight / 2), nodeElements);
-		_gaussPainter[OFF]->setBaseVars(MVP, sideLength, joinDepth);
+		_gaussPainter[OFF] = new GaussPainter(_r->_nodeVBO, (_r->_windowWidth / OFF_SHRINK), (_r->_windowHeight / OFF_SHRINK), nodeElements);
+		_gaussPainter[OFF]->setBaseVars(MVP2, sideLength, joinDepth);
 	
 		_pc[GAUSS_OFF] = new PainterCommander(_gaussPainter[OFF], POINT_INIT_STEP);
 
 		//field eval
 		_fieldEvaluator[VIEW] = new FieldEvaluation(_r->_windowWidth, _r->_windowHeight);
-		_fieldEvaluator[OFF] = new FieldEvaluation((_r->_windowWidth / 2), (_r->_windowHeight / 2));
+		_fieldEvaluator[OFF] = new FieldEvaluation((_r->_windowWidth / OFF_SHRINK), (_r->_windowHeight / OFF_SHRINK));
 
 		//line painter
 		_linePainter = new DividedLinePainter(_r->_edgeVBO, _r->_windowWidth, _r->_windowHeight, edgeElements);
-		_linePainter->setBaseVars(MVP, _fieldEvaluator[VIEW]->getWorkingTexture(), _fieldEvaluator[OFF]->getWorkingTexture(), 4.0f, joinDepth);
+		_linePainter->setBaseVars(MVP, _fieldEvaluator[VIEW]->getWorkingTexture(), _fieldEvaluator[OFF]->getWorkingTexture(), (OFF_ZOOM * OFF_SHRINK), joinDepth);
 
 		_pc[DIVIDED_LINES] = new PainterCommander(_linePainter, PARTS_INIT_STEP);
 	}

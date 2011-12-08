@@ -66,7 +66,7 @@ void render( void ) {
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	context::_renderer->work();
-	context::_renderer->renderEvalField();
+	context::_renderer->render();
 	
 	glfwSwapBuffers();
 }
