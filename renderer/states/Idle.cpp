@@ -26,7 +26,13 @@ void Idle::renderEvalField( void ) {
 	}
 }
 
-void Idle::renderLineField( void ) {};
+void Idle::renderLineField( void ) {
+	if (_r->_hasEdges) {
+		float maxVals[3];
+		_r->calculateMaxValues(maxVals, _r->_currentData->_lineField, _r->_windowWidth, _r->_windowHeight);
+		_r->renderTexture(_r->_currentData->_lineField, maxVals[0], maxVals[1], maxVals[2]);
+	}
+}
 
 void Idle::work( void ) { /*nothing to do*/ }
 

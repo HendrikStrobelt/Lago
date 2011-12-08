@@ -5,16 +5,43 @@
 GLSLShader* DividedLinePainter::_r_shader_ptr = NULL;
 GLSLShader* DividedLinePainter::_u_shader_ptr = NULL;
 
-DividedLinePainter::DividedLinePainter(GLuint edgeVBO, int width, int height) {
-	_fbc = new FrameBufferContainer(width, height);
+DividedLinePainter::DividedLinePainter(GLuint edgeVBO, int width, int height, int elementCount) {
 	_sideFactor = (float)width / (float)height;
+	_width = width;
+	_height = height;
+	_vboElements = elementCount;
+
+	_fbc = NULL;
 
 	createShader();
 	initVao(edgeVBO);
 }
 
+void DividedLinePainter::setBaseVars(glm::mat4 MVP, GLuint fieldTex, GLuint offFieldTex, int offZoomFactor, int edgeDepth) {
+	_uniteSwitch = 0;
+	_MVP = MVP;
+	_fieldTex = fieldTex;
+	_offFieldTex = offFieldTex;
+	_offZoomFactor = offZoomFactor;
+	_edgeDepth = edgeDepth;
+
+	if (_fbc != NULL) {
+		//reuse delete first 
+		delete _fbc;
+		glDeleteTextures(1, &_uniteTextures[(_uniteSwitch % 2)]);
+		glDeleteTextures(1, &_renderTexture);
+	} 
+	//generate three equal cleared textures
+	_fbc = new FrameBufferContainer(_width, _height);
+	_uniteTextures[0] = _fbc->detachTexture();
+	_renderTexture = _fbc->detachTexture();
+	_uniteTextures[1] = _fbc->_fboOutTex;
+}
+
 DividedLinePainter::~DividedLinePainter( void ) {
 	delete _fbc;
+	glDeleteTextures(1, &_uniteTextures[(_uniteSwitch % 2)]);
+	glDeleteTextures(1, &_renderTexture);
 	glDeleteVertexArrays(2, &_vao[0]);
 	glDeleteBuffers(2, &_vbo[0]);
 }
@@ -30,102 +57,83 @@ GLuint DividedLinePainter::getWorkingTexture( void ) {
 	return _fbc->_fboOutTex;
 }
 
-GLuint DividedLinePainter::detachResultTexture( void ) {
+GLuint DividedLinePainter::detachTexture( void ) {
 	return  _fbc->detachTexture();
 }
 
 int DividedLinePainter::getElementCount( void ) {
-	return (45 / ANGLE_STEP); //180 / 4
+	return 45 / ANGLE_STEP; //180 / 4
 }
 
 
 void DividedLinePainter::processElements(int start, int count) {
 
-	//ensure that no old results disturbe
-	GLuint _oldTex = _fb[UNITE]->detachTexture();
-	glDeleteTextures(1, &_oldTex);
+	glBindFramebuffer(GL_FRAMEBUFFER, _fbc->_fbo);	
+		for (int i = (start*4); i < ((start*4)+(count*4)); i+= 4) {
 
-	if (!glIsTexture(offFieldTex)) {
-		offZoomFactor = -1;
-	}
+			float lowerBorder = i * ANGLE_STEP;
+			float stepWidth = ANGLE_STEP;
+		
+			//switch textures
+			_fbc->setAttachment0NoDeleteNoBind(_renderTexture);
 
-	for (int j = 0; j < 2; j++) {
+			//render edges
+			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+			glBlendFunc(GL_ONE, GL_ONE);
 
-		bool outsideEdges =  (bool) j; //0-> false   1->true
-
-		//at the moment run with step with 3 in 4 channels => 15 runs
-		for (int i = 0; i < 180; i+=12) {
-			
-			float lowerBorder = i;
-			float stepWidth = 3;
-
-			//render some edges
-			glBindFramebuffer(GL_FRAMEBUFFER, _fb[RENDER]->_fbo);	
-				glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-				glClear(GL_COLOR_BUFFER_BIT);
-				glBlendFunc(GL_ONE, GL_ONE);
-
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, _fieldTex);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, _offFieldTex);
+					glBindVertexArray(_vao[RENDER]);
+						_r_shader_ptr->use();	
+							glUniform1f(_r_shader_ptr->getUniformLocation("sideFactor"), _sideFactor);
+							glUniform1f(_r_shader_ptr->getUniformLocation("stepWidth"), stepWidth);
+							glUniform1f(_r_shader_ptr->getUniformLocation("lowerBorder"), lowerBorder);
+							glUniform1i(_r_shader_ptr->getUniformLocation("desiredDepth"), _edgeDepth);
+							glUniform1f(_r_shader_ptr->getUniformLocation("offZoomFactor"), _offZoomFactor);
+							glUniform1i(_r_shader_ptr->getUniformLocation("width"), _width);
+							glUniform1i(_r_shader_ptr->getUniformLocation("height"), _height);
+							glUniform1i(_r_shader_ptr->getUniformLocation("evalField"), 0);
+							glUniform1i(_r_shader_ptr->getUniformLocation("offEvalField"), 1);
+							glUniformMatrix4fv(_r_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(_MVP));
+							glDrawArrays(GL_POINTS, 0, _vboElements);
+						_r_shader_ptr->unUse();
+					glBindVertexArray(0);
 				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, fieldTex);
-					glActiveTexture(GL_TEXTURE1);
-					glBindTexture(GL_TEXTURE_2D, offFieldTex);
-						glBindVertexArray(_vao[RENDER]);
-							_shader_ptr[RENDER]->Use();	
-								glUniform1f(_shader_ptr[RENDER]->getUniformLocation("sideFactor"), _sideFactor);
-								glUniform1f(_shader_ptr[RENDER]->getUniformLocation("stepWidth"), stepWidth);
-								glUniform1f(_shader_ptr[RENDER]->getUniformLocation("lowerBorder"), lowerBorder);
-								glUniform1i(_shader_ptr[RENDER]->getUniformLocation("desiredDepth"), desiredDepth);
-								glUniform1i(_shader_ptr[RENDER]->getUniformLocation("OFF_OUT"), offOut);
-								glUniform1f(_shader_ptr[RENDER]->getUniformLocation("offZoomFactor"), offZoomFactor);
-								glUniform1i(_shader_ptr[RENDER]->getUniformLocation("width"), width);
-								glUniform1i(_shader_ptr[RENDER]->getUniformLocation("height"), height);
-								glUniform1i(_shader_ptr[RENDER]->getUniformLocation("evalField"), 0);
-								glUniform1i(_shader_ptr[RENDER]->getUniformLocation("offEvalField"), 1);
-								glUniform1i(_shader_ptr[RENDER]->getUniformLocation("outsideEdges"), outsideEdges);
-								glUniformMatrix4fv(_shader_ptr[RENDER]->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
-								glDrawArrays(GL_POINTS, 0, _totalEdges);
-							_shader_ptr[RENDER]->UnUse();
-						glBindVertexArray(0);
-					glActiveTexture(GL_TEXTURE0);
-					glBindTexture(GL_TEXTURE_2D, 0);
+				glBindTexture(GL_TEXTURE_2D, 0);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		
+			//switch textures
+			_fbc->setAttachment0NoDeleteNoBind(_uniteTextures[(_uniteSwitch % 2)]);
+		
+			//add them up
+			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+			glBlendFunc(GL_ONE, GL_ZERO);
+	
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, _uniteTextures[((_uniteSwitch + 1) % 2)]);//0 -> assemble tex
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, _renderTexture); // 1 -> angle tex
+					glBindVertexArray(_vao[UNITE]);
+						_u_shader_ptr->use();	
+							glUniform1i(_u_shader_ptr->getUniformLocation("assembleTex"), 0);
+							glUniform1i(_u_shader_ptr->getUniformLocation("angleTex"), 1);
+							glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); 
+						_u_shader_ptr->unUse();
+					glBindVertexArray(0);
 				glActiveTexture(GL_TEXTURE1);
 				glBindTexture(GL_TEXTURE_2D, 0);
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, 0);
 
-
-			//add them up
-			GLuint assembleTex = _fb[UNITE]->detachTexture(); //get the last result and prepare a new texture
-
-			glBindFramebuffer(GL_FRAMEBUFFER, _fb[UNITE]->_fbo);	
-				glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-				glClear(GL_COLOR_BUFFER_BIT);
-				glBlendFunc(GL_ONE, GL_ZERO);
-
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, assembleTex);			//0 -> assemble tex
-					glActiveTexture(GL_TEXTURE1);
-					glBindTexture(GL_TEXTURE_2D, _fb[RENDER]->_fboOutTex); // 1 -> angle tex
-
-						glBindVertexArray(_vao[UNITE]);
-							_shader_ptr[UNITE]->Use();	
-									glUniform1i(_shader_ptr[UNITE]->getUniformLocation("assembleTex"), 0);
-									glUniform1i(_shader_ptr[UNITE]->getUniformLocation("angleTex"), 1);
-									glUniform1i(_shader_ptr[UNITE]->getUniformLocation("outsideEdges"), outsideEdges);
-									//draw a textured quad over the whole screen
-									glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); 
-							_shader_ptr[UNITE]->UnUse();
-						glBindVertexArray(0);
-
-					glActiveTexture(GL_TEXTURE1);
-					glBindTexture(GL_TEXTURE_2D, 0);
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, 0);
-			glBindFramebuffer(GL_FRAMEBUFFER, 0); 
-
-			glDeleteTextures(1, &assembleTex);
+			_uniteSwitch++;
 		}
 
-	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0); 
 }
 
 
@@ -147,11 +155,9 @@ void DividedLinePainter::createShader( void ) {
 		unis.push_back("sideFactor");
 		unis.push_back("width");
 		unis.push_back("height");
-		unis.push_back("OFF_OUT");
-		unis.push_back("outsideEdges");
 
-		_r_shader_ptr = new GLSLShader(attribs, unis, "shaders/lineRenderer/climbingEdges/climbingEdges.vert",
-			"shaders/lineRenderer/climbingEdges/climbingEdgesAngleLimit.frag", "shaders/lineRenderer/climbingEdges/climbingEdgesAngleLimit.gem");
+		_r_shader_ptr = new GLSLShader(attribs, unis, "shaders/climbingLines/dividedClimbing.vert",
+			"shaders/climbingLines/dividedClimbing.frag", "shaders/climbingLines/dividedClimbing.gem");
 
 		unis.clear();
 		attribs.clear();
@@ -160,10 +166,9 @@ void DividedLinePainter::createShader( void ) {
 		attribs.push_back("vTex");
 		unis.push_back("angleTex");
 		unis.push_back("assembleTex");
-		unis.push_back("outsideEdges");
 
-		_u_shader_ptr = new GLSLShader(attribs, unis, "shaders/lineRenderer/fieldEvaluation/uniteEdges.vert",
-			"shaders/lineRenderer/fieldEvaluation/uniteEdges.frag");
+		_u_shader_ptr = new GLSLShader(attribs, unis, "shaders/climbingLines/uniteEdges.vert",
+			"shaders/climbingLines/uniteEdges.frag");
 	}
 }
 

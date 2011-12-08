@@ -19,6 +19,7 @@
 
 //painter commander
 #define POINT_INIT_STEP 1000
+#define PARTS_INIT_STEP 1
 
 //texture examiner
 #define TE_KERNEL_SIZE 16
@@ -32,6 +33,6 @@
 #define SIDE_BASE 1.3
 
 //dividedLines
-#define ANGLE_STEP 1 // 1..45 \in N
+#define ANGLE_STEP 3 // 1..45 \in N
 
 #endif

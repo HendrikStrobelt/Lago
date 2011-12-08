@@ -36,6 +36,10 @@ FrameBufferContainer::~FrameBufferContainer( void ) {
 	glDeleteFramebuffers(1, &_fbo);
 }
 
+void FrameBufferContainer::setAttachment0NoDeleteNoBind(GLuint newAttachment) {
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, newAttachment, 0);
+	_fboOutTex = newAttachment;
+}
 
 GLuint FrameBufferContainer::detachTexture( void ) {
 	GLuint tmp = _fboOutTex;
@@ -51,7 +55,6 @@ GLuint FrameBufferContainer::detachTexture( void ) {
     glBindTexture(GL_TEXTURE_2D, 0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _fboOutTex, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

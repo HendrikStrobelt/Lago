@@ -6,7 +6,7 @@ FieldEvaluation::FieldEvaluation(int width, int height) {
 	createShader();
 	initVao();
 
-	_evalFBO = new FrameBufferContainer(width, height);
+	_evalFBC = new FrameBufferContainer(width, height);
 	_width = width;
 	_height = height;
 	_done = false;
@@ -16,7 +16,7 @@ FieldEvaluation::FieldEvaluation(int width, int height) {
 FieldEvaluation::~FieldEvaluation( void) {
 	glDeleteBuffers(2, &_vbo[0]);
 	glDeleteVertexArrays(1, &_vao);
-	delete _evalFBO;
+	delete _evalFBC;
 }
 
 void FieldEvaluation::cleanUp( void ) {
@@ -25,8 +25,12 @@ void FieldEvaluation::cleanUp( void ) {
 
 //public
 
+GLuint FieldEvaluation::getWorkingTexture( void ) {
+	return _evalFBC->_fboOutTex;
+}
+
 GLuint FieldEvaluation::detachResultTexture( void ) {
-	return _evalFBO->detachTexture();
+	return _evalFBC->detachTexture();
 }
 
 bool FieldEvaluation::isDone( void ) {
@@ -34,7 +38,7 @@ bool FieldEvaluation::isDone( void ) {
 }
 
 void FieldEvaluation::evaluate(GLuint texHandel) {
-	glBindFramebuffer(GL_FRAMEBUFFER, _evalFBO->_fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, _evalFBC->_fbo);
 		glClearColor(0, 0, 0, 0);
 		glClear(GL_COLOR_BUFFER_BIT);
 

@@ -13,6 +13,7 @@ class FieldEvaluation {
 		~FieldEvaluation();
 
 		void evaluate(GLuint texHandel);
+		GLuint getWorkingTexture( void );
 		GLuint detachResultTexture( void );
 
 		bool isDone( void );
@@ -32,7 +33,7 @@ class FieldEvaluation {
 
 		bool _done;
 
-		FrameBufferContainer* _evalFBO;
+		FrameBufferContainer* _evalFBC;
 
 		GLuint _vao;
 		GLuint _vbo[2];

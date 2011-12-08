@@ -33,6 +33,7 @@ void InitialWork::work( void ) {
 
 		if (_r->_hasEdges) {
 			_r->_currentData->_evalField = _worker->_fieldEvaluator->detachResultTexture();
+			_r->_currentData->_lineField = _worker->_linePainter->detachTexture();
 		}
 
 		_r->setState(_r->_idle);

@@ -12,6 +12,9 @@ class FrameBufferContainer {
 		FrameBufferContainer(int bufferWidth, int bufferHeight, GLenum textureFilter, GLenum internalFormat, GLenum type);
 		~FrameBufferContainer( void );
 
+		//fbo has to be bound
+		void setAttachment0NoDeleteNoBind(GLuint newAttachment); //replaces the 0 attachment and changes _fboOutTex does not delete the previous bound texture!!!
+
 		GLuint detachTexture( void );
 
 		//pull only!

@@ -3,11 +3,12 @@
 
 #include "../Renderer.hpp"
 #include "../../painter/GaussPainter.hpp"
+#include "../../painter/DividedLinePainter.hpp"
 #include "../PainterCommander.hpp"
 #include "../FieldEvaluation.hpp"
 
-enum GAUSS {VIEW};
-enum COMMANDER {GAUSS_VIEW};
+enum GAUSS {VIEW, OFF};
+enum COMMANDER {GAUSS_VIEW, GAUSS_OFF, DIVIDED_LINES};
 
 class WorkStateHelper {
 
@@ -20,12 +21,15 @@ class WorkStateHelper {
 		bool isDone( void );
 
 		float _progress;
-		GaussPainter* _gaussPainter[1];
-		PainterCommander* _pc[1];
+		GaussPainter* _gaussPainter[2];
+		PainterCommander* _pc[3];
 		FieldEvaluation* _fieldEvaluator;
+		DividedLinePainter* _linePainter;
 
 	private:
 		Renderer* _r;
+
+		void resetAll( void );
 
 };
 

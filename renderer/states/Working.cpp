@@ -31,6 +31,7 @@ void Working::work( void ) {
 			glDeleteTextures(1, &_r->_currentData->_gaussTex);
 			if (_r->_hasEdges) {
 				glDeleteTextures(1, &_r->_currentData->_evalField);
+				glDeleteTextures(1, &_r->_currentData->_lineField);
 			}
 		//END TMP
 
@@ -39,6 +40,7 @@ void Working::work( void ) {
 
 		if (_r->_hasEdges) {
 			_r->_currentData->_evalField = _worker->_fieldEvaluator->detachResultTexture();
+			_r->_currentData->_lineField = _worker->_linePainter->detachTexture();
 		}
 
 		_r->setState(_r->_idle);

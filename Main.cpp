@@ -5,6 +5,7 @@
 #include <GL/glfw.h>
 //end
 
+#include <iostream>
 
 #include <vld.h>
 
@@ -13,6 +14,9 @@
 #include "helper\EnvironmentHelper.hpp"
 #include "context\Context.hpp"
 #include "helper\MouseHandler.hpp"
+
+
+using namespace std;
 
 //private methods
 void render( void );
@@ -62,7 +66,7 @@ void render( void ) {
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	context::_renderer->work();
-	context::_renderer->render();
+	context::_renderer->renderLineField();
 	
 	glfwSwapBuffers();
 }
@@ -78,13 +82,25 @@ void keyEnv(int key, int action) {
 			context::setDataSet("_Data//LineNode.out");
 		} else 
 		if (key == '2') {
-			context::setDataSet("_Data//GridNode.out");
+			context::setDataSet("_Data//GridNode.out", "_Data//GridEdge.out");
 		} else 
 		if (key == '3') {
 			context::setDataSet("_Data//WorkNode.out", "_Data//WorkEdge.out");
 		} else 
 		if (key == '4') {
 			context::setDataSet("_Data//GermanyNode.out");
+		} else
+		if (key == '5') {
+			GLuint tex, vao, vbo, fbo;
+			glGenTextures(1, &tex);
+			glGenVertexArrays(1, &vao);
+			glGenBuffers(1, &vbo);
+			glGenFramebuffers(1, &fbo);
+				cout << "tex " << tex << " ,vao " << vao << " ,vbo " << vbo << " ,fbo " << fbo << "\n";
+			glDeleteTextures(1, &tex);
+			glDeleteVertexArrays(1, &vao);
+			glDeleteBuffers(1, &vbo);
+			glDeleteFramebuffers(1, &fbo);
 		} else 
 		if (key == GLFW_KEY_KP_ADD) {
 			context::setSideExponent(context::_sideExponent + 1);
