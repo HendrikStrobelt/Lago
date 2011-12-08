@@ -62,11 +62,15 @@ GLuint DividedLinePainter::detachTexture( void ) {
 }
 
 int DividedLinePainter::getElementCount( void ) {
-	return 45 / ANGLE_STEP; //180 / 4
+	return ceil(45.0f / (float)ANGLE_STEP); //180 / 4
 }
 
 
 void DividedLinePainter::processElements(int start, int count) {
+
+	if ((start + count) > getElementCount()) {
+		count = getElementCount() - start;
+	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbc->_fbo);	
 		for (int i = (start*4); i < ((start*4)+(count*4)); i+= 4) {
