@@ -53,7 +53,9 @@ namespace mouseHandler {
 
 				int xMove = x - _xPressStart;
 				int yMove = y - _yPressStart;
-				context::updateWorldTranslate(xMove, yMove);
+				if (xMove != 0 || yMove != 0) {
+					context::updateWorldTranslate(xMove, yMove);
+				}
 			}
 		}
 	}
