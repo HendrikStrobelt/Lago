@@ -28,6 +28,13 @@ FrameBufferContainer::FrameBufferContainer(int bufferWidth, int bufferHeight, GL
 }
 
 FrameBufferContainer::~FrameBufferContainer( void ) {
+	if (_hasStencilBuffer) {
+		glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glDeleteRenderbuffers(1, &_stencilBuffer);
+	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -59,6 +66,18 @@ GLuint FrameBufferContainer::detachTexture( void ) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	return tmp;
+}
+
+void FrameBufferContainer::addStencilBuffer( void ) {
+	glGenRenderbuffers(1, &_stencilBuffer);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, _stencilBuffer);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, _bufferWidth, _bufferHeight);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _stencilBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void FrameBufferContainer::prepareFBO( void ) {

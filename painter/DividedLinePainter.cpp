@@ -36,6 +36,9 @@ void DividedLinePainter::setBaseVars(glm::mat4 MVP, GLuint fieldTex, GLuint offF
 	_uniteTextures[0] = _fbc->detachTexture();
 	_renderTexture = _fbc->detachTexture();
 	_uniteTextures[1] = _fbc->_fboOutTex;
+
+	//stencil
+	_fbc->addStencilBuffer();
 }
 
 DividedLinePainter::~DividedLinePainter( void ) {
