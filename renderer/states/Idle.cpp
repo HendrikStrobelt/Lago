@@ -15,14 +15,14 @@ void Idle::render( void ) {
 
 void Idle::renderGauss( void ) {
 	float* maxVals = _r->_currentData->_maxValuesN;
-	_r->renderTexture(_r->_currentData->_gaussTex, maxVals[0], maxVals[1], maxVals[2]);
+	_r->renderTexture(_r->_currentData->_gaussTex, maxVals);
 }
 
 void Idle::renderEvalField( void ) {
 	if (_r->_hasEdges) {
 		float maxVals[3];
 		_r->calculateMaxValues(maxVals, _r->_currentData->_evalField, _r->_windowWidth, _r->_windowHeight);
-		_r->renderTexture(_r->_currentData->_evalField, maxVals[0], maxVals[1], maxVals[2]);
+		_r->renderTexture(_r->_currentData->_evalField, maxVals);
 	}
 }
 
@@ -30,7 +30,7 @@ void Idle::renderLineField( void ) {
 	if (_r->_hasEdges) {
 		float maxVals[3];
 		_r->calculateMaxValues(maxVals, _r->_currentData->_lineField, _r->_windowWidth, _r->_windowHeight);
-		_r->renderTexture(_r->_currentData->_lineField, maxVals[0], maxVals[1], maxVals[2]);
+		_r->renderTexture(_r->_currentData->_lineField, maxVals);
 	}
 }
 

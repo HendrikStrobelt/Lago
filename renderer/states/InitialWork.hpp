@@ -2,6 +2,7 @@
 #define INITIAL_WORK_H
 
 #include "../IRenderState.hpp"
+#include "../../painter/VisPainter.hpp"
 
 class Renderer;
 class WorkStateHelper;
@@ -28,6 +29,7 @@ class InitialWork : public IRenderState {
 	private:
 		Renderer* _r;	
 		WorkStateHelper* _worker;
+		VisPainter* _visPainter;
 };
 
 

@@ -9,7 +9,7 @@ class DisplayConvertPainter {
 		DisplayConvertPainter( void );
 		~DisplayConvertPainter( void );
 		
-		void renderTexture(GLuint texture, float rMax=1.0f, float gMax=1.0f, float bMax=1.0f);
+		void renderTexture(GLuint texture, float max[], float xMove=0.0f, float yMove=0.0f);
 
 		//static clean up
 		static void cleanUp( void );

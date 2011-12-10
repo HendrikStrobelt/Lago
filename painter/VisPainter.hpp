@@ -11,12 +11,14 @@
 class VisPainter {
 
 	public:
-		VisPainter( void );
+		VisPainter(int width, int height);
 		~VisPainter( void );
 
-		void renderVis(RenderData* rData, bool withEdges, float moveX, float moveY);
+		bool isDone( void );
+
+		GLuint detachResult( void );
+		void renderVis(RenderData* rData, bool withEdges);
 		
-		void resize(int width, int height);
 
 		//static clean up
 		static void cleanUp( void );
@@ -27,14 +29,17 @@ class VisPainter {
 		static GLSLShader* _n_shader_ptr;
 		static GLSLShader* _e_shader_ptr;
 
-		void renderNodes(RenderData* rData, float moveX, float moveY);
-		void renderEdges(RenderData* rData, GLuint nodeTex, float moveX, float moveY);
+		void renderNodes(RenderData* rData);
+		void renderEdges(RenderData* rData, GLuint nodeTex);
 		void initVao( void );
+
+		bool _done;
 
 		int _width;
 		int _height;
 
-		FrameBufferContainer* _fbc;
+		FrameBufferContainer* _fbcInter;
+		FrameBufferContainer* _fbcRes;
 
 		GLuint _vao;
 		GLuint _vbo[2];

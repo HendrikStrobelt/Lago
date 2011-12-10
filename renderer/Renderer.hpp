@@ -13,7 +13,6 @@
 
 #include "..\painter\ProgressbarPainter.hpp"
 #include "..\painter\DisplayConvertPainter.hpp"
-#include "..\painter\VisPainter.hpp"
 #include "TextureExaminer.hpp"
 
 class Renderer : public IRenderState {
@@ -65,7 +64,6 @@ class Renderer : public IRenderState {
 		//Painter
 		ProgressbarPainter _progressBar;
 		DisplayConvertPainter _displayConvert;
-		VisPainter _visPainter;
 		TextureExaminer _textureExaminer;
 		//
 
@@ -74,7 +72,7 @@ class Renderer : public IRenderState {
 		void setState(IRenderState* state);
 		void renderGraph(RenderData* rData, int xMove=0, int yMove=0);
 		void renderHUD(float progress);
-		void renderTexture(GLuint tex, float rMax=1.0f, float gMax=1.0f, float bMax=1.0f);
+		void renderTexture(GLuint tex, float max[], float xMove=0.0f, float yMove=0.0f);
 		void calculateMaxValues(float result[], GLuint texture, int textureWidth, int textureHeight);
 };
 

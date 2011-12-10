@@ -2,6 +2,7 @@
 #define WORKING_H
 
 #include "../IRenderState.hpp"
+#include "../../painter/VisPainter.hpp"
 
 class Renderer;
 class WorkStateHelper;
@@ -28,6 +29,7 @@ class Working : public IRenderState {
 	private:
 		Renderer* _r;
 		WorkStateHelper* _worker;
+		VisPainter* _visPainter;
 };
 
 

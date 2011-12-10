@@ -13,7 +13,6 @@ Renderer::Renderer( void ) {
 	glGenBuffers(1, &_nodeVBO);
 	glGenBuffers(1, &_edgeVBO);
 	context::getWindowSize(&_windowWidth, &_windowHeight);
-	_visPainter.resize(_windowWidth, _windowHeight);
 
 	//load initial data
 	setNewData("_Data/LineNode.out");
@@ -80,20 +79,21 @@ void Renderer::renderGraph(RenderData* rData, int xMove, int yMove) {
 
 	float moveX, moveY;
 	cameraHelper::mouseDist2StandardVolDist(&moveX, &moveY, mouseMoveX, mouseMoveY);
+	float maxValues[] = {1.0f, 1.0f, 1.0f}; //vis tex is already normalized
 
-	_visPainter.renderVis(rData, _hasEdges, moveX, moveY);
+	renderTexture(rData->_vis, maxValues, moveX, moveY);
 }
 
 void Renderer::renderHUD(float progress) {
 	if (_hasEdges) {
 		_progressBar.renderBar(progress, 3);
 	} else {
-	_progressBar.renderBar(progress, 1);
+		_progressBar.renderBar(progress, 1);
 	}
 }
 
-void Renderer::renderTexture(GLuint tex, float rMax, float gMax, float bMax) {
-	_displayConvert.renderTexture(tex, rMax, gMax, bMax);
+void Renderer::renderTexture(GLuint tex, float max[], float xMove, float yMove) {
+	_displayConvert.renderTexture(tex, max, xMove, yMove);
 }
 
 void Renderer::calculateMaxValues(float result[], GLuint texture, int textureWidth, int textureHeight) {
@@ -148,6 +148,5 @@ void Renderer::changeSideLength( void ) {
 void Renderer::changeWindow( void ) {
 	context::getWindowSize(&_windowWidth, &_windowHeight);
 	context::_pixelSize = cameraHelper::getPixelSize(dCache.getNodeStructureInfo(), context::_zoomFactor);
-	_visPainter.resize(_windowWidth, _windowHeight);
 	_state->changeWindow();
 }

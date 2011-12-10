@@ -16,6 +16,7 @@ class RenderData {
 		GLuint _gaussTex;
 		GLuint _evalField;
 		GLuint _lineField;
+		GLuint _vis;
 
 		float _maxValuesN[3];
 		float _maxValuesE[3];

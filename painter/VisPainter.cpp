@@ -4,15 +4,20 @@
 GLSLShader* VisPainter::_n_shader_ptr = NULL;
 GLSLShader* VisPainter::_e_shader_ptr = NULL;
 
-VisPainter::VisPainter( void ) {
-	_fbc = NULL;
+VisPainter::VisPainter(int width, int height ) {
+	_width = width;
+	_height = height;
+	_done = false;
+	_fbcRes = new FrameBufferContainer(width, height);
+	_fbcInter = new FrameBufferContainer(width, height);
 	createShader();
 	initVao();
 }
 
 
 VisPainter::~VisPainter( void) {
-	delete _fbc;
+	delete _fbcRes;
+	delete _fbcInter;
 	glDeleteBuffers(2, &_vbo[0]);
 	glDeleteVertexArrays(1, &_vao);
 }
@@ -23,31 +28,36 @@ void VisPainter::cleanUp( void ) {
 }
 
 //public
-void VisPainter::resize(int width, int height) {
-	delete _fbc;
-	_width = width;
-	_height = height;
-	_fbc = new FrameBufferContainer(width, height);
+
+bool VisPainter::isDone( void ) {
+	return _done;
 }
 
-void VisPainter::renderVis(RenderData* rData, bool withEdges, float moveX, float moveY) {
+GLuint VisPainter::detachResult( void ) {
+	return _fbcRes->detachTexture();
+}
+
+void VisPainter::renderVis(RenderData* rData, bool withEdges) {
 	if (!withEdges) {
-		renderNodes(rData, moveX, moveY);
+		glBindFramebuffer(GL_FRAMEBUFFER, _fbcRes->_fbo);
+			renderNodes(rData);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	} else {
-		glBindFramebuffer(GL_FRAMEBUFFER, _fbc->_fbo);	
-			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
-			
-			renderNodes(rData, 0, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, _fbcInter->_fbo);	
+			renderNodes(rData);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		renderEdges(rData, _fbc->_fboOutTex, moveX, moveY);
+		glBindFramebuffer(GL_FRAMEBUFFER, _fbcRes->_fbo);
+			renderEdges(rData, _fbcInter->_fboOutTex);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
+
+	_done = true;
 }
 
 //privat
 
-void VisPainter::renderNodes(RenderData* rData, float moveX, float moveY)  {
+void VisPainter::renderNodes(RenderData* rData)  {
 	glBlendFunc(GL_ONE, GL_ZERO);
 
 	int scaleMode = 0;
@@ -58,9 +68,6 @@ void VisPainter::renderNodes(RenderData* rData, float moveX, float moveY)  {
 				glUniform1i(_n_shader_ptr->getUniformLocation("antiAlias"), true);
 				glUniform1i(_n_shader_ptr->getUniformLocation("width"), _width);
 				glUniform1i(_n_shader_ptr->getUniformLocation("height"), _height);
-
-				glUniform2f(_n_shader_ptr->getUniformLocation("move"), moveX, moveY);
-
 				float* cp = &(context::_scaleOptions[scaleMode]._controlPoints[0][0]);
 				glUniform1i(_n_shader_ptr->getUniformLocation("linearMode"), context::_scaleOptions[scaleMode]._linearMode);
 				glUniform4f(_n_shader_ptr->getUniformLocation("pointsX"), cp[0], cp[2], cp[4], cp[6]);
@@ -73,7 +80,7 @@ void VisPainter::renderNodes(RenderData* rData, float moveX, float moveY)  {
 	glBindTexture(GL_TEXTURE_2D,  0);
 }
 
-void VisPainter::renderEdges(RenderData* rData, GLuint nodeTex, float moveX, float moveY) {
+void VisPainter::renderEdges(RenderData* rData, GLuint nodeTex) {
 	glBlendFunc(GL_ONE, GL_ZERO);
 
 	int scaleMode = 1;	
@@ -90,9 +97,6 @@ void VisPainter::renderEdges(RenderData* rData, GLuint nodeTex, float moveX, flo
 					glUniform1i(_e_shader_ptr->getUniformLocation("antiAlias"), true);
 					glUniform1i(_e_shader_ptr->getUniformLocation("width"), _width);
 					glUniform1i(_e_shader_ptr->getUniformLocation("height"), _height);
-
-					glUniform2f(_e_shader_ptr->getUniformLocation("move"), moveX, moveY);
-
 					float* cp = &(context::_scaleOptions[scaleMode]._controlPoints[0][0]);
 					glUniform1i(_e_shader_ptr->getUniformLocation("linearMode"), context::_scaleOptions[scaleMode]._linearMode);
 					glUniform4f(_e_shader_ptr->getUniformLocation("pointsX"), cp[0], cp[2], cp[4], cp[6]);
@@ -124,8 +128,6 @@ void VisPainter::createShader( void ) {
 		unis.push_back("pointsX");
 		unis.push_back("pointsY");
 		unis.push_back("exponent");
-		
-		unis.push_back("move");
 
 		_n_shader_ptr = new GLSLShader(attribs, unis, "shaders/vis/visShaderNode.vert", "shaders/vis/visShaderNode.frag");
 

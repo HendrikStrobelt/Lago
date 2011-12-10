@@ -18,13 +18,14 @@ void DisplayConvertPainter::cleanUp( void ) {
 	delete _shader_ptr;
 }
 
-void DisplayConvertPainter::renderTexture(GLuint texture, float rMax, float gMax, float bMax) {
+void DisplayConvertPainter::renderTexture(GLuint texture, float max[], float xMove, float yMove) {
 	glBlendFunc(GL_ONE, GL_ZERO);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glBindVertexArray(_vao);
 		_shader_ptr->use();			
 			glUniform1i(_shader_ptr->getUniformLocation("dispTexture"), 0);
-			glUniform3f(_shader_ptr->getUniformLocation("maxValues"), rMax, gMax, bMax);
+			glUniform3f(_shader_ptr->getUniformLocation("maxValues"), max[0], max[1], max[2]);
+			glUniform2f(_shader_ptr->getUniformLocation("move"), xMove, yMove);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); 
 		_shader_ptr->unUse();
 	glBindVertexArray(0);
@@ -43,6 +44,7 @@ void DisplayConvertPainter::createShader( void ) {
 		attribs.push_back("vVertex");
 		unis.push_back("dispTexture");
 		unis.push_back("maxValues");
+		unis.push_back("move");
 
 		_shader_ptr = new GLSLShader(attribs, unis, "shaders/displayConvert/ConvertShader.vert", "shaders/displayConvert/ConvertShader.frag");
 	}

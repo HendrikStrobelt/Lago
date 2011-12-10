@@ -18,10 +18,14 @@ void RenderData::clear( void ) {
 	if (_lineField != -1) {
 		glDeleteTextures(1, &_lineField);
 	}
+	if (_lineField != -1) {
+		glDeleteTextures(1, &_vis);
+	}
 
 	 _gaussTex = -1;
 	 _evalField = -1;
 	 _lineField = -1;
+	 _vis = -1;
 
 	 _maxValuesN[0] = -1;
 	 _maxValuesN[1] = -1;
