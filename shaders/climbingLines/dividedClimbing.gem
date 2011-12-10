@@ -35,8 +35,8 @@ bool borderTest(vec2 screenCoords) {
 	float stepX = 2.0f / width;
 	float stepY = 2.0f / height;
 	
-	if (screenCoords.x > (1.0f - stepX*2) || screenCoords.x < (-1.0f + stepX*2) || 
-		screenCoords.y > (1.0f - stepY*2) || screenCoords.y < (-1.0f + stepY*2)) {
+	if (screenCoords.x > (1.0f - stepX) || screenCoords.x < (-1.0f + stepX) || 
+		screenCoords.y > (1.0f - stepY) || screenCoords.y < (-1.0f + stepY)) {
 		//failed border pos
 		return false;
 	} else {
@@ -59,7 +59,16 @@ vec2 getCoords(vec2 pos) {
 			vec2 texCoordsOff = getTexCoordinatesOff(pos);
 			if (!(texCoordsOff.x > 1.0f || texCoordsOff.x < 0.0f || texCoordsOff.y > 1.0f || texCoordsOff.y < 0.0f)) {
 				//this time inside the texture fine
-				return texture(offEvalField, texCoordsOff).xy * offZoomFactor;
+				newPos = texture(offEvalField, texCoordsOff).xy * offZoomFactor;
+
+				if (newPos.x < -1.0f || newPos.x > 1.0f || newPos.y < -1.0f || newPos.y > 1.0f) {
+					//new pos not visible render
+					return newPos;
+				} else {
+					//newPos is in the visible area but can be slightly displaced because of the lower resolution
+					//therefore correct the value with a 2nd lookup
+					return texture(evalField, getTexCoordinates(newPos)).xy;
+				}
 			} else {
 				//to far away
 				return pos;
@@ -98,6 +107,7 @@ void main(void)
 
 		if ((abs(coords1.x-coords2.x) > stepX * 4) ||
 		    (abs(coords1.y-coords2.y) > stepY * 4)) {
+														
 
 			if (coords1.y > coords2.y) {
 				vec2 tmp = coords2;
