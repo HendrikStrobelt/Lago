@@ -19,7 +19,7 @@
 
 //painter commander
 #define POINT_INIT_STEP 1000
-#define PARTS_INIT_STEP 4
+#define PARTS_INIT_STEP 8
 
 //texture examiner
 #define TE_KERNEL_SIZE 16
@@ -33,7 +33,7 @@
 #define SIDE_BASE 1.3
 
 //dividedLines
-#define ANGLE_STEP 3 // 1..45 \in N
+#define ANGLE_STEP 1 // 1..45 \in N
 
 //off rendering
 #define OFF_ZOOM 2  //2 times zoomed out

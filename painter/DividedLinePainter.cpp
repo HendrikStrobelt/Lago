@@ -39,6 +39,11 @@ void DividedLinePainter::setBaseVars(glm::mat4 MVP, GLuint fieldTex, GLuint offF
 
 	//stencil
 	_fbc->addStencilBuffer();
+	glEnable(GL_STENCIL_TEST);
+	glBindFramebuffer(GL_FRAMEBUFFER, _fbc->_fbo);
+		glClear(GL_STENCIL_BUFFER_BIT);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDisable(GL_STENCIL_TEST);
 }
 
 DividedLinePainter::~DividedLinePainter( void ) {
@@ -75,7 +80,9 @@ void DividedLinePainter::processElements(int start, int count) {
 		count = getElementCount() - start;
 	}
 
+    glEnable(GL_STENCIL_TEST);
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbc->_fbo);	
+
 		for (int i = (start*4); i < ((start*4)+(count*4)); i+= 4) {
 
 			float lowerBorder = i * ANGLE_STEP;
@@ -88,6 +95,9 @@ void DividedLinePainter::processElements(int start, int count) {
 			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 			glBlendFunc(GL_ONE, GL_ONE);
+
+			glStencilFunc(GL_ALWAYS, 0x01, 0xFF);
+			glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, _fieldTex);
@@ -120,6 +130,9 @@ void DividedLinePainter::processElements(int start, int count) {
 			glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 			glBlendFunc(GL_ONE, GL_ZERO);
+
+			glStencilFunc(GL_EQUAL, 0x01, 0xFF);
+			glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 	
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, _uniteTextures[((_uniteSwitch + 1) % 2)]);//0 -> assemble tex
@@ -139,8 +152,10 @@ void DividedLinePainter::processElements(int start, int count) {
 
 			_uniteSwitch++;
 		}
-
+	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0); 
+	glDisable(GL_STENCIL_TEST);
+
 }
 
 
