@@ -10,7 +10,7 @@ class ProgressbarPainter : public IContextListener {
 		ProgressbarPainter( void );
 		~ProgressbarPainter( void );
 		
-		void renderBar(float loaded); //0..1
+		void renderBar(float loaded, int bars); //0..1
 
 		//interface method
 		void resizeEvent(int width, int height);

@@ -26,24 +26,45 @@ void ProgressbarPainter::cleanUp( void ) {
 	delete _shader_ptr;
 }
 
-void ProgressbarPainter::renderBar(float loaded) {
+void ProgressbarPainter::renderBar(float loaded, int bars) {
+
+	int w,h;
+	context::getWindowSize(&w, &h);
+	float stepY = 2.0f/(float)h;
+
 	glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, _texBar);
 	glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, _texLoadedBar);
 
-	loaded *= 286;
-	loaded += 7;
-	loaded /= 300;
+	float yOff = 15.0f * stepY * (bars-1);
 
-	glBindVertexArray(_vao);
-		_shader_ptr->use();			
-			glUniform1i(_shader_ptr->getUniformLocation("barTexture"), 0); //bound texture
-			glUniform1i(_shader_ptr->getUniformLocation("barLoadedTexture"), 1); //bound texture
-			glUniform1f(_shader_ptr->getUniformLocation("loaded"), loaded);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); 
-		_shader_ptr->unUse();
-	glBindVertexArray(0);
+	for (int i = 0; i < bars; i++) {
+
+		float loaded2 = loaded - (bars - 1 - i);
+
+		if (loaded2 > 1.0f) {
+			loaded2 = 1.0f;
+		} else if (loaded2 < 0.0f) {
+			loaded2 = 0.0f;
+		}
+
+		loaded2 *= 146;
+		loaded2 += 2;
+		loaded2 /= 150;
+
+		glBindVertexArray(_vao);
+			_shader_ptr->use();			
+				glUniform1i(_shader_ptr->getUniformLocation("barTexture"), 0); //bound texture
+				glUniform1i(_shader_ptr->getUniformLocation("barLoadedTexture"), 1); //bound texture
+				glUniform1f(_shader_ptr->getUniformLocation("loaded"), loaded2);
+				glUniform1f(_shader_ptr->getUniformLocation("yOffset"), yOff);
+				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); 
+			_shader_ptr->unUse();
+		glBindVertexArray(0);
+
+		yOff = yOff - (15.0f * stepY);
+	}
 
 	glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -61,10 +82,10 @@ void ProgressbarPainter::updateBarPosition(int w, int h) {
 	float stepX = 2.0f / (float)w;
 	float stepY = 2.0f / (float)h;
 
-	float textureQuad[8] =   { (1.0f - 340.0f*stepX), (1.0f - 20.0f*stepY),
-							   (1.0f - 340.0f*stepX), (1.0f - 50.0f*stepY),
-							   (1.0f -  40.0f*stepX), (1.0f - 20.0f*stepY),
-							   (1.0f -  40.0f*stepX), (1.0f - 50.0f*stepY) };
+	float textureQuad[8] =   { (1.0f - 160.0f*stepX), (1.0f - 08.0f*stepY),
+							   (1.0f - 160.0f*stepX), (1.0f - 18.0f*stepY),
+							   (1.0f -  10.0f*stepX), (1.0f - 08.0f*stepY),
+							   (1.0f -  10.0f*stepX), (1.0f - 18.0f*stepY) };
 
 	glBindBuffer (GL_ARRAY_BUFFER, _vbo[VERTEX]);
 		glBufferData (GL_ARRAY_BUFFER, 8 * sizeof(float), &textureQuad[0], GL_STATIC_DRAW);
@@ -82,6 +103,7 @@ void ProgressbarPainter::createShader( void ) {
 		unis.push_back("barTexture");
 		unis.push_back("loaded");
 		unis.push_back("barLoadedTexture");
+		unis.push_back("yOffset");
 
 		_shader_ptr = new GLSLShader(attribs, unis, "shaders/barShader/BarShader.vert", "shaders/barShader/BarShader.frag");
 	}

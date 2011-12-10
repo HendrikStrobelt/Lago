@@ -85,7 +85,11 @@ void Renderer::renderGraph(RenderData* rData, int xMove, int yMove) {
 }
 
 void Renderer::renderHUD(float progress) {
-	_progressBar.renderBar(progress);
+	if (_hasEdges) {
+		_progressBar.renderBar(progress, 3);
+	} else {
+	_progressBar.renderBar(progress, 1);
+	}
 }
 
 void Renderer::renderTexture(GLuint tex, float rMax, float gMax, float bMax) {

@@ -19,7 +19,7 @@
 
 //painter commander
 #define POINT_INIT_STEP 1000
-#define PARTS_INIT_STEP 1
+#define PARTS_INIT_STEP 4
 
 //texture examiner
 #define TE_KERNEL_SIZE 16

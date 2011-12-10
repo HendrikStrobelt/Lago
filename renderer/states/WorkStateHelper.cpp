@@ -46,22 +46,19 @@ void WorkStateHelper::work( void ) {
 		} else 
 		if (!_pc[GAUSS_OFF]->isDone()) {
 			glViewport(0,0, (GLsizei) (_r->_windowWidth / OFF_SHRINK), (GLsizei) (_r->_windowHeight / OFF_SHRINK));
-				_progress = _pc[GAUSS_OFF]->renderNextPart();
+				_progress = 1.0f + _pc[GAUSS_OFF]->renderNextPart();
 			glViewport(0,0, _r->_windowWidth, (GLsizei) _r->_windowHeight);
 		} else 
 		if (!(_fieldEvaluator[VIEW]->isDone() && _fieldEvaluator[OFF]->isDone())) {
 			_fieldEvaluator[VIEW]->evaluate(_pc[GAUSS_VIEW]->getWorkingTexture());
-			_progress = 0.5f;
-
 			glViewport(0,0, (GLsizei) (_r->_windowWidth / OFF_SHRINK), (GLsizei) (_r->_windowHeight / OFF_SHRINK));
 				_fieldEvaluator[OFF]->evaluate(_pc[GAUSS_OFF]->getWorkingTexture());
 			glViewport(0,0, _r->_windowWidth, (GLsizei) _r->_windowHeight);
-			_progress = 1.0f;
 		} else 
 		if (!_pc[DIVIDED_LINES]->isDone()) {
-			_progress = _pc[DIVIDED_LINES]->renderNextPart();
+			_progress = 2.0f + _pc[DIVIDED_LINES]->renderNextPart();
 		} else {
-			_progress = 1.0f;
+			_progress = 3.0f;
 		}
 	} else {
 		_progress = _pc[GAUSS_VIEW]->renderNextPart();

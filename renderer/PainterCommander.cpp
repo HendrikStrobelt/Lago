@@ -39,6 +39,7 @@ double PainterCommander::getRenderTime( void ) {
 }
 
 float PainterCommander::renderNextPart( void ) {
+	float ret = 1.0f;
 	if (!isDone()) { 
 		if (_currentIndex == 0) {
 			_renderTime = 0.0;
@@ -59,7 +60,13 @@ float PainterCommander::renderNextPart( void ) {
 			_currentStep = (int)ceil((float)_painter->getElementCount() / 2.0f);  //show always a bar
 		}
 		
-		return (float)_currentIndex / (float)_painter->getElementCount();
+		
+		ret = (float)_currentIndex / (float)_painter->getElementCount();
 	}
-	return 1.0f;
+	
+	if (ret > 1.0f) {
+		return 1.0f;
+	} else {
+		return ret;
+	}
 }
