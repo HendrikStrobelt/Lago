@@ -11,6 +11,7 @@ Renderer::Renderer( void ) {
 	_newData = new RenderData;
 
 	glGenBuffers(1, &_nodeVBO);
+	glGenBuffers(1, &_edgeVBO);
 	context::getWindowSize(&_windowWidth, &_windowHeight);
 	_visPainter.resize(_windowWidth, _windowHeight);
 
@@ -30,6 +31,7 @@ Renderer::Renderer( void ) {
 
 Renderer::~Renderer( void ) {
 	glDeleteBuffers(1, &_nodeVBO);
+	glDeleteBuffers(1, &_edgeVBO);
 
 	delete _currentData;
 	delete _newData;
