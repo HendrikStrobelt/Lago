@@ -117,10 +117,10 @@ void main(void)
 
 			//oe coords1.y <= coords2.y test angle
 
-			vec3 dir = vec3((coords2 - coords1), 0);
+			vec3 dir = normalize(vec3((coords2 - coords1), 0));
 			dir = dir * vec3(sideFactor, 1, 1); //strech it back
 
-			float alpha = floor(degrees(acos(dot(dir, vec3(1, 0, 0)) / length(dir))));
+			float alpha = round(degrees(acos(dot(dir, vec3(1, 0, 0)) / length(dir))));
 
 			if (alpha == 180.0f) {
 				alpha = 0.0f;
