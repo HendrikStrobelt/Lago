@@ -13,6 +13,7 @@ namespace context {
 	//push/pull read and write no notification
 	bool _run;
 	float _pixelSize;
+	Options _options;
 	ScaleOptions _scaleOptions[2];
 
 	//pull
@@ -46,6 +47,7 @@ namespace context {
 
 	void init() {
 		clearRenderVariables();
+		addKeyEventListener(&_options);
 		_renderer = new Renderer;
 	}
 

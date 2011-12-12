@@ -1,3 +1,7 @@
+#pragma comment(lib, "Ws2_32.lib")
+
+//INCLUDES
+
 //before all others
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -14,7 +18,7 @@
 #include "helper\EnvironmentHelper.hpp"
 #include "context\Context.hpp"
 #include "helper\MouseHandler.hpp"
-
+#include "connection\Connection.hpp"
 
 using namespace std;
 
@@ -26,7 +30,7 @@ void cleanUp( void );
 
 //private vars
 context::DummyContextListener _contextListener;
-
+Connection _syncConnection;
 
 int main( int argc, const char* argv[] ) {
 	//define an OpenGL context, open a window...
@@ -67,6 +71,12 @@ void render( void ) {
 	
 	context::_renderer->work();
 	context::_renderer->render();
+
+	static double lastSync;
+	if (glfwGetTime() > lastSync + 0.25) {
+		lastSync = glfwGetTime();
+		_syncConnection.sync();
+	}
 	
 	glfwSwapBuffers();
 }
@@ -78,18 +88,6 @@ void keyEnv(int key, int action) {
 		if (key == GLFW_KEY_ESC) {
 			context::_run = false;
 		} else 
-		if (key == '1') {
-			context::setDataSet("_Data//LineNode.out");
-		} else 
-		if (key == '2') {
-			context::setDataSet("_Data//GridNode.out", "_Data//GridEdge.out");
-		} else 
-		if (key == '3') {
-			context::setDataSet("_Data//WorkNode.out", "_Data//WorkEdge.out");
-		} else 
-		if (key == '4') {
-			context::setDataSet("_Data//EuropeNode.out");
-		} else
 		if (key == '5') {
 			GLuint tex, vao, vbo, fbo;
 			glGenTextures(1, &tex);
@@ -107,6 +105,11 @@ void keyEnv(int key, int action) {
 		} else 
 		if (key == GLFW_KEY_KP_SUBTRACT) {
 			context::setSideExponent(context::_sideExponent - 1);
+		} else
+		if (key == GLFW_KEY_F1) {
+			//reconnect to gui if necessary
+			_syncConnection.connect();
 		}
+
 	}
 }

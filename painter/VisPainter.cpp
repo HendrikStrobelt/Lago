@@ -65,7 +65,7 @@ void VisPainter::renderNodes(RenderData* rData)  {
 		glBindVertexArray(_vao);
 			_n_shader_ptr->use();			
 				glUniform1f(_n_shader_ptr->getUniformLocation("maxValue"), rData->_maxValuesN[2]);
-				glUniform1i(_n_shader_ptr->getUniformLocation("antiAlias"), true);
+				glUniform1i(_n_shader_ptr->getUniformLocation("antiAlias"), context::_options._antiAlias);
 				glUniform1i(_n_shader_ptr->getUniformLocation("width"), _width);
 				glUniform1i(_n_shader_ptr->getUniformLocation("height"), _height);
 				float* cp = &(context::_scaleOptions[scaleMode]._controlPoints[0][0]);
@@ -94,7 +94,7 @@ void VisPainter::renderEdges(RenderData* rData, GLuint nodeTex) {
 					glUniform1i(_e_shader_ptr->getUniformLocation("gaussTex"), 1);
 					glUniform1i(_e_shader_ptr->getUniformLocation("lineField"), 0);
 					glUniform1f(_e_shader_ptr->getUniformLocation("maxValue"), rData->_maxValuesE[1]);
-					glUniform1i(_e_shader_ptr->getUniformLocation("antiAlias"), true);
+					glUniform1i(_e_shader_ptr->getUniformLocation("antiAlias"), context::_options._antiAlias);
 					glUniform1i(_e_shader_ptr->getUniformLocation("width"), _width);
 					glUniform1i(_e_shader_ptr->getUniformLocation("height"), _height);
 					float* cp = &(context::_scaleOptions[scaleMode]._controlPoints[0][0]);

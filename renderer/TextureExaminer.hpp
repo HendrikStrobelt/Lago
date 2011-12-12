@@ -2,6 +2,7 @@
 #define TEXTURE_EXAMINER_H
 
 #include <GL\glew.h>
+#include <GL\glfw.h>
 #include "../helper/GLSLShader.hpp"
 #include "../helper/FrameBufferContainer.hpp"
 

@@ -4,6 +4,7 @@
 #include "IContextListener.hpp"
 #include "ScaleOptions.hpp"
 #include "../renderer/Renderer.hpp"
+#include "Options.hpp"
 
 #include <string>
 
@@ -19,6 +20,7 @@ namespace context {
 	//push/pull read and write no notification
 		extern bool _run;
 		extern float _pixelSize;
+		extern Options _options;
 		extern ScaleOptions _scaleOptions[];
 
 	//pull

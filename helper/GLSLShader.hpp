@@ -2,6 +2,7 @@
 #define GLSLShader_H
 
 #include <GL/glew.h>
+#include <GL/glfw.h>
 #include <map>
 #include <string>
 #include <vector>

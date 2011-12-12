@@ -1,9 +1,10 @@
 #ifndef PAINTER_COMMANDER_H
 #define PAINTER_COMMANDER_H
 
-#include "../painter/ISplitablePainter.hpp"
-#include <GL\glfw.h>
 #include <GL\glew.h>
+#include <GL\glfw.h>
+
+#include "../painter/ISplitablePainter.hpp"
 
 class PainterCommander {
 
