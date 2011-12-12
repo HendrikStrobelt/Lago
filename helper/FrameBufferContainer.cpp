@@ -31,6 +31,7 @@ FrameBufferContainer::~FrameBufferContainer( void ) {
 	if (_hasStencilBuffer) {
 		glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDeleteRenderbuffers(1, &_stencilBuffer);
 	}
@@ -77,6 +78,7 @@ void FrameBufferContainer::addStencilBuffer( void ) {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _stencilBuffer);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _stencilBuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
