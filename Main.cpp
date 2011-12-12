@@ -88,7 +88,7 @@ void keyEnv(int key, int action) {
 			context::setDataSet("_Data//WorkNode.out", "_Data//WorkEdge.out");
 		} else 
 		if (key == '4') {
-			context::setDataSet("_Data//GermanyNode.out");
+			context::setDataSet("_Data//EuropeNode.out");
 		} else
 		if (key == '5') {
 			GLuint tex, vao, vbo, fbo;
