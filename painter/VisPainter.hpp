@@ -25,7 +25,10 @@ class VisPainter {
 	private:
 		enum DATA {VERTEX, TEX_COORDS};
 		
+		static void loadTexturesOnce( void );
 		static void createShader( void );
+		
+		static GLuint _colorSchemesTex;
 		static GLSLShader* _n_shader_ptr;
 		static GLSLShader* _e_shader_ptr;
 

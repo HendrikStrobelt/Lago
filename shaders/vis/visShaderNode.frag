@@ -3,6 +3,7 @@
 in vec2 fTexCoord;
 uniform float maxValue;
 uniform sampler2D gaussTex;
+uniform sampler2D colorSchemesTex;
 
 uniform int width;
 uniform int height;
@@ -46,6 +47,7 @@ float scale(float normedVal) {
 
 
 
+/*
 vec3 getColor(vec2 texCoord) {
    
    float normalized = texture(gaussTex, texCoord).b / maxValue;
@@ -103,6 +105,19 @@ vec3 getColor(vec2 texCoord) {
 
    return fragColor_b;
 }
+*/
+
+vec3 getColor(vec2 texCoord) {
+   float normalized = texture(gaussTex, texCoord).b / maxValue;
+   float scaled = min(1.0, scale(normalized));
+
+   if (scaled < 0.0001) {
+		return vec3(0.9, 0.9, 0.9);															//background
+   } else {
+		vec4 col = texture(colorSchemesTex, vec2(scaled, 0.25f));
+		return mix(vec3(0.9, 0.9, 0.9), col.rgb, col.a);
+   }	
+}
 
 
 void main(void)
@@ -136,7 +151,7 @@ void main(void)
 
 		}
 
-		fragColor = vec4((color / vec3(4,4,4)), 1);
+		fragColor = vec4((color / vec3(4,4,4)), 1.0f);
 	} else {
 		texCoord = fTexCoord;
 		fragColor = vec4(getColor(texCoord), 1.0f);
