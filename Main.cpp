@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-#include <vld.h>
+//#include <vld.h>
 
 
 #include "GlobalConstants.hpp"

@@ -8,7 +8,7 @@
 
 //deactivate the cration of the EDGE_HIERARCHY
 //less storage consumption depending on data less speed
-#define EDGE_HIERARCHY_FLAT true
+#define EDGE_HIERARCHY_FLAT false
 
 //min and max values for coordinates
 #define MIN_COORD -10000000

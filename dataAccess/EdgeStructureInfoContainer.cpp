@@ -1,5 +1,6 @@
 #include "EdgeStructureInfoContainer.hpp"	
 #include "../helper/Dumping.hpp"
+#include "../GlobalConstants.hpp"
 
 EdgeStructureInfoContainer::EdgeStructureInfoContainer(int maxDepth, vector<int> leafNodes, vector<int> allNodes) {
 	_maxDepth = maxDepth;
@@ -19,21 +20,28 @@ int EdgeStructureInfoContainer::getMaxDepth( void ) const {
 }
 
 int EdgeStructureInfoContainer::getRenderEdges(int depth) const {
-	int leafs = 0;
-	for (int i = 0; i < depth; i++) {
-		leafs += _leafNodes[i];
+	if (EDGE_HIERARCHY_FLAT) {
+		return _allNodes[0];
+	} else {
+		int leafs = 0;
+		for (int i = 0; i < depth; i++) {
+			leafs += _leafNodes[i];
+		}
+		return leafs + _allNodes[depth];
 	}
-
-	return leafs + _allNodes[depth];
 }
 
 
 int EdgeStructureInfoContainer::getAllEdges(int depth) const {
-	int edges = 0;
-	for (int i = 0; i <= depth; i++) {
-		edges += _allNodes[i];
+	if (EDGE_HIERARCHY_FLAT) {
+		return _allNodes[0];
+	} else {
+		int edges = 0;
+		for (int i = 0; i <= depth; i++) {
+			edges += _allNodes[i];
+		}
+		return edges;
 	}
-	return edges;
 }
 
 
