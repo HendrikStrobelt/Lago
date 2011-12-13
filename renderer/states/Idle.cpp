@@ -36,10 +36,7 @@ void Idle::renderLineField( void ) {
 
 void Idle::work( void ) { /*nothing to do*/ }
 
-void Idle::takeOver( void ) {
-	_r->_mouseMoveX = 0;
-	_r->_mouseMoveY = 0;
-}
+void Idle::takeOver( void ) { /*nothing to do*/ }
 
 void Idle::changePanning(int xMouseMove, int yMouseMove) {
 	_r->_mouseMoveX = xMouseMove;
@@ -61,4 +58,8 @@ void Idle::changeSideLength( void ) {
 
 void Idle::changeWindow( void ) {
 	_r->setState(_r->_initalWork);
+}
+
+void Idle::changeVisParameter( void ) {
+	_r->setState(_r->_visAdjust);
 }

@@ -24,8 +24,11 @@ class VisAdjusting : public IRenderState {
 		void changeData(string nodeFile, string edgeFile="");
 		void changeSideLength( void );
 		void changeWindow( void );
+		void changeVisParameter( void );
 
 	private:
+		void swap( void );
+
 		Renderer* _r;
 		VisPainter* _visPainter;
 };

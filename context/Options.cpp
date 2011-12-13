@@ -27,16 +27,23 @@ void Options::update(map<string, string> dataMap) {
 	if (!_changedLocal) {
 		map<string, string>::iterator it;
 
+		//VIS PARAMETER
+		bool aa;
 		if ((it = dataMap.find("antiAlias")) != dataMap.end()) {
 			if (it->second.compare("true") == 0) {
-				_antiAlias = true;
+				aa = true;
 			} else {
-				_antiAlias = false;
+				aa = false;
 			}
 		}
 
-		string nFile, eFile;
+		if (aa != _antiAlias) {
+			_antiAlias = aa;
+			context::visParameterChange();
+		}
 
+		//DATA SET
+		string nFile, eFile;
 		if ((it = dataMap.find("nodeFile")) != dataMap.end()) {
 			nFile = it->second.substr(2);
 		}

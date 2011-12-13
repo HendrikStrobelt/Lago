@@ -43,9 +43,6 @@ void WorkStateHelper::work( void ) {
 	if (_r->_hasEdges) {
 		if (!_pc[GAUSS_VIEW]->isDone()) {
 			_progress = _pc[GAUSS_VIEW]->renderNextPart();
-			if (_pc[GAUSS_VIEW]->isDone()) {
-				_r->calculateMaxValues(_nodeMax, _pc[GAUSS_VIEW]->getWorkingTexture(), _r->_windowWidth, _r->_windowHeight);
-			}
 		} else 
 		if (!_pc[GAUSS_OFF]->isDone()) {
 			glViewport(0,0, (GLsizei) (_r->_windowWidth / OFF_SHRINK), (GLsizei) (_r->_windowHeight / OFF_SHRINK));
@@ -61,15 +58,9 @@ void WorkStateHelper::work( void ) {
 		} else 
 		if (!_pc[DIVIDED_LINES]->isDone()) {
 			_progress = 2.0f + _pc[DIVIDED_LINES]->renderNextPart();
-			if (_pc[DIVIDED_LINES]->isDone()) {
-				_r->calculateMaxValues(_edgeMax, _pc[DIVIDED_LINES]->getWorkingTexture(), _r->_windowWidth, _r->_windowHeight);
-			}
 		}
 	} else {
 		_progress = _pc[GAUSS_VIEW]->renderNextPart();
-		if (_pc[GAUSS_VIEW]->isDone()) {
-			_r->calculateMaxValues(_nodeMax, _pc[GAUSS_VIEW]->getWorkingTexture(), _r->_windowWidth, _r->_windowHeight);
-		}
 	}
 }
 

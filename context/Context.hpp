@@ -39,7 +39,8 @@ namespace context {
 		void setSideExponent(int newSideExponent);
 		void setZoomExponent(int newZoomExponent);
 		void setDataSet(string nodeFile, string edgeFile="");
-		
+		void visParameterChange( void );
+
 		void updateWorldTranslate(int xMouseMove, int yMouseMove);
 
 		//GLFW getters

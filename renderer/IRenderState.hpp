@@ -24,6 +24,7 @@ class IRenderState {
 		virtual void changeData(string nodeFile, string edgeFile="") = 0;
 		virtual void changeSideLength( void ) = 0;
 		virtual void changeWindow( void ) = 0;
+		virtual void changeVisParameter( void ) = 0;
 
 };
 

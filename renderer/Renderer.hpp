@@ -10,6 +10,7 @@
 #include "states\Idle.hpp"
 #include "states\InitialWork.hpp"
 #include "states\Working.hpp"
+#include "states\VisAdjusting.hpp"
 
 #include "..\painter\ProgressbarPainter.hpp"
 #include "..\painter\DisplayConvertPainter.hpp"
@@ -20,7 +21,9 @@ class Renderer : public IRenderState {
 	friend class Idle;
 	friend class InitialWork;
 	friend class Working;
+	friend class VisAdjusting;
 	friend class WorkStateHelper;
+
 
 	public:
 		Renderer( void );
@@ -38,6 +41,7 @@ class Renderer : public IRenderState {
 		void changeData(string nodeFile, string edgeFile="");
 		void changeSideLength( void );
 		void changeWindow( void );
+		void changeVisParameter( void );
 
 	private:
 
@@ -60,6 +64,7 @@ class Renderer : public IRenderState {
 		Idle* _idle;
 		InitialWork* _initalWork;
 		Working* _working;
+		VisAdjusting* _visAdjust;
 
 		//Painter
 		ProgressbarPainter _progressBar;

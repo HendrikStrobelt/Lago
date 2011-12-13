@@ -4,13 +4,11 @@
 
 Working::Working(Renderer* renderer) {
 	_r = renderer;
-	_visPainter = NULL;
 	_worker = new WorkStateHelper(_r);
 }
 
 Working::~Working( void ) {
 	delete _worker;
-	delete _visPainter;
 }
 
 void Working::render( void ) {
@@ -29,35 +27,14 @@ void Working::work( void ) {
 		_worker->work();
 	} else {
 		//done change state
-		//TMP UNTIL RESULTS WILL GO TO NEW INSTEAD OF CURRENT
-			glDeleteTextures(1, &_r->_currentData->_gaussTex);
-			if (_r->_hasEdges) {
-				glDeleteTextures(1, &_r->_currentData->_evalField);
-				glDeleteTextures(1, &_r->_currentData->_lineField);
-				glDeleteTextures(1, &_r->_currentData->_vis);
-			}
-		//END TMP
-
-		delete _visPainter;
-		_visPainter = new VisPainter(_r->_windowWidth, _r->_windowHeight);
-
-		_r->_currentData->_gaussTex = _worker->_pc[GAUSS_VIEW]->detachResult();
-		_r->_currentData->_maxValuesN[0] = _worker->_nodeMax[0];
-		_r->_currentData->_maxValuesN[1] = _worker->_nodeMax[1];
-		_r->_currentData->_maxValuesN[2] = _worker->_nodeMax[2];
+		_r->_newData->_gaussTex = _worker->_pc[GAUSS_VIEW]->detachResult();
 
 		if (_r->_hasEdges) {
-			_r->_currentData->_evalField = _worker->_fieldEvaluator[VIEW]->detachResultTexture();
-			_r->_currentData->_lineField = _worker->_linePainter->detachTexture();
-			_r->_currentData->_maxValuesE[0] = _worker->_edgeMax[0];
-			_r->_currentData->_maxValuesE[1] = _worker->_edgeMax[1];
-			_r->_currentData->_maxValuesE[2] = _worker->_edgeMax[2];
+			_r->_newData->_evalField = _worker->_fieldEvaluator[VIEW]->detachResultTexture();
+			_r->_newData->_lineField = _worker->_linePainter->detachTexture();
 		}
 
-		_visPainter->renderVis(_r->_currentData, _r->_hasEdges);
-		_r->_currentData->_vis = _visPainter->detachResult();
-
-		_r->setState(_r->_idle);
+		_r->setState(_r->_visAdjust);
 	}
 }
 
@@ -87,3 +64,5 @@ void Working::changeSideLength( void ) {
 void Working::changeWindow( void ) {
 	_r->setState(_r->_initalWork);
 }
+
+void Working::changeVisParameter( void ) { /* do nothing */ }

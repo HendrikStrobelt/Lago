@@ -20,9 +20,6 @@ class WorkStateHelper {
 		void takeOver( void );
 		bool isDone( void );
 
-		float _nodeMax[3];
-		float _edgeMax[3];
-
 		float _progress;
 		GaussPainter* _gaussPainter[2];
 		PainterCommander* _pc[3];

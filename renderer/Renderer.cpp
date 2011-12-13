@@ -25,6 +25,8 @@ Renderer::Renderer( void ) {
 	_idle = new Idle(this);
 	_initalWork = new InitialWork(this);
 	_working = new Working(this);
+	_visAdjust = new VisAdjusting(this);
+
 	setState(_initalWork);
 }
 
@@ -37,6 +39,7 @@ Renderer::~Renderer( void ) {
 	delete _idle;
 	delete _initalWork;
 	delete _working;
+	delete _visAdjust;
 }
 
 
@@ -149,4 +152,8 @@ void Renderer::changeWindow( void ) {
 	context::getWindowSize(&_windowWidth, &_windowHeight);
 	context::_pixelSize = cameraHelper::getPixelSize(dCache.getNodeStructureInfo(), context::_zoomFactor);
 	_state->changeWindow();
+}
+
+void Renderer::changeVisParameter( void ) {
+	_state->changeVisParameter();
 }

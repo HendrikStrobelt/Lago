@@ -118,6 +118,10 @@ namespace context {
 		_renderer->changeData(nodeFile, edgeFile);
 	}
 
+	void visParameterChange( void ) {
+		_renderer->changeVisParameter();
+	}
+
 	void updateWorldTranslate(int xMouseMove, int yMouseMove) {
 		float worldMoveX, worldMoveY;
 		cameraHelper::mouseDist2WorldDist(&worldMoveX, &worldMoveY, xMouseMove, yMouseMove);

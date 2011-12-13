@@ -22,6 +22,7 @@ class Idle : public IRenderState {
 		void changeData(string nodeFile, string edgeFile="");
 		void changeSideLength( void );
 		void changeWindow( void );
+		void changeVisParameter( void );
 
 	private:
 		Renderer* _r;
