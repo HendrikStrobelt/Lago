@@ -146,15 +146,16 @@ vec4 getColor(vec2 texCoordCenter, vec2 texCoord, float stepX , float stepY) {
 	} 
 
 	if (max > 0.0f) {
-		float hue = ((1.0f - max) * 90.0f)/ 360.0f;
+		//float hue = ((1.0f - max) * 90.0f)/ 360.0f;
+		//float alpha = (0.66f + max / 3.0f);
+		float hue = 0;
+		float sat = 0;
 		float alpha = (0.66f + max / 3.0f);
+		float bright = 1.0f - (0.33f + max / 3.0f * 2.0f);
 
 		vec3 influence;
-		if (!outsideEdge) {
-			influence = rgbFrom(hue, 1.0f, 1.0f);
-		} else {
-			influence = rgbFrom(hue, 0.5f, 1.0f);
-		}
+		influence = rgbFrom(hue, sat, bright);
+
 		vec3 oldResult = texture(gaussTex, texCoordCenter).rgb;
 		
 		//with influence mix them
