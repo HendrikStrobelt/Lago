@@ -3,7 +3,7 @@
 in vec2 fTexCoord;
 uniform float maxValue;
 uniform sampler2D gaussTex;
-uniform sampler2D colorSchemesTex;
+uniform sampler2D colorScheme;
 
 uniform int width;
 uniform int height;
@@ -44,6 +44,58 @@ float scale(float normedVal) {
 		return pow(normedVal, exponent); 	
 	}
 }
+
+
+vec3 getColor(vec2 texCoord) {
+   float normalized = texture(gaussTex, texCoord).b / maxValue;
+   float scaled = min(1.0, scale(normalized));
+
+	if (scaled < 0.0001f) { //background
+		scaled = 0.0f;
+	}
+
+	return texture(colorScheme, vec2(scaled, 0.5f)).rgb;
+}
+
+
+void main(void)
+{
+	vec2 texCoord;
+
+	if (antiAlias) {
+		
+		vec3 color;
+		float stepX = 1.0f / width;
+		float stepY = 1.0f / height;
+
+		for (int run = 0; run < 4; run++) {
+
+			switch (run) {
+				case 0:
+					texCoord = fTexCoord + vec2((stepX * 0.7133f), (stepY * 0.2318f));
+				break;
+				case 1:
+					texCoord = fTexCoord + vec2((stepX * 0.2318f), (stepY * -0.7133f));				
+				break;
+				case 2:
+					texCoord = fTexCoord + vec2((stepX * -0.7133f), (stepY * -0.2318f));				
+				break;
+				case 3:
+					texCoord = fTexCoord + vec2((stepX * -0.2318f), (stepY * 0.7133f));				
+				break;
+			}
+		
+			color += getColor(texCoord);
+
+		}
+
+		fragColor = vec4((color / vec3(4,4,4)), 1.0f);
+	} else {
+		texCoord = fTexCoord;
+		fragColor = vec4(getColor(texCoord), 1.0f);
+	}
+}
+
 
 
 
@@ -106,61 +158,3 @@ vec3 getColor(vec2 texCoord) {
    return fragColor_b;
 }
 */
-
-vec3 getColor(vec2 texCoord) {
-   float normalized = texture(gaussTex, texCoord).b / maxValue;
-   float scaled = min(1.0, scale(normalized));
-
-/*   if (scaled < 0.0001) {
-		return vec3(0.9, 0.9, 0.9);															//background
-   } else {
-		vec4 col = texture(colorSchemesTex, vec2(scaled, 0.25f));
-		return mix(vec3(0.9, 0.9, 0.9), col.rgb, col.a);
-   }
-*/
-
-	if (scaled < 0.0001f) {
-		scaled = 0.0f;
-	}
-
-	return texture(colorSchemesTex, vec2(scaled, 0.25f)).rgb;
-}
-
-
-void main(void)
-{
-	vec2 texCoord;
-
-	if (antiAlias) {
-		
-		vec3 color;
-		float stepX = 1.0f / width;
-		float stepY = 1.0f / height;
-
-		for (int run = 0; run < 4; run++) {
-
-			switch (run) {
-				case 0:
-					texCoord = fTexCoord + vec2((stepX * 0.7133f), (stepY * 0.2318f));
-				break;
-				case 1:
-					texCoord = fTexCoord + vec2((stepX * 0.2318f), (stepY * -0.7133f));				
-				break;
-				case 2:
-					texCoord = fTexCoord + vec2((stepX * -0.7133f), (stepY * -0.2318f));				
-				break;
-				case 3:
-					texCoord = fTexCoord + vec2((stepX * -0.2318f), (stepY * 0.7133f));				
-				break;
-			}
-		
-			color += getColor(texCoord);
-
-		}
-
-		fragColor = vec4((color / vec3(4,4,4)), 1.0f);
-	} else {
-		texCoord = fTexCoord;
-		fragColor = vec4(getColor(texCoord), 1.0f);
-	}
-}

@@ -4,6 +4,7 @@ out vec4 fragColor;
 
 in vec2 fTexCoord;
 uniform float maxValue;
+uniform sampler2D colorScheme;
 uniform sampler2D lineField;
 uniform sampler2D gaussTex;
 
@@ -46,6 +47,101 @@ float scale(float normedVal) {
 	}
 }
 
+
+
+
+vec4 getColor(vec2 texCoordCenter, vec2 texCoord, float stepX , float stepY) {
+	float max = 0.0f;
+
+
+	//Pattern pseudo euklid
+	int rad = 2;
+
+	for (int y = -rad; y <= rad; y++) {
+		for (int x = -rad; x <= rad; x++) {
+
+			vec2 otherPosCenter = (texCoordCenter + vec2(x*stepX, y*stepY));
+
+			float len = length((texCoord - otherPosCenter) * vec2(width, height));
+			float val = scale(texture(lineField, otherPosCenter).g / maxValue);
+
+			if ((x < 0) || (x == 0 && y <= 0)) {
+				if ((val * (rad*2+1)) > (len * 2)) {
+					if (val > max) {
+						max = val;
+					}
+				}
+			} else {
+				if ((val * (rad*2+1)) > ((len * 2) - 1)) {
+					if (val > max) {
+						max = val;
+					}
+				}
+			}
+		} 
+	} 
+
+	if (max > 0.0f) {
+		
+		vec4 influence = texture(colorScheme, vec2(max, 0.5f));
+		vec3 oldResult = texture(gaussTex, texCoordCenter).rgb;
+		
+		//with influence mix them
+		vec3 col =  mix(oldResult, influence.rgb, influence.a);
+		
+		return vec4(col, 1.0f);
+	} else {
+		
+		//no influence simply return the result so far
+		return vec4(texture(gaussTex, texCoordCenter).rgb, 1.0f);
+	}
+}
+
+
+
+void main(void)
+{
+
+	float stepX = 1.0f / width;
+	float stepY = 1.0f / height;
+	vec4 color = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	if (antiAlias) {
+		
+		int empty = 0;
+		vec2 texCoord;
+		for (int run = 0; run < 4; run++) {
+
+			switch (run) {
+				case 0:
+					texCoord = fTexCoord + vec2((stepX * 0.5f), (stepY * 0.5f));
+				break;
+				case 1:
+					texCoord = fTexCoord + vec2((stepX * 0.5f), (stepY * -0.5f));				
+				break;
+				case 2:
+					texCoord = fTexCoord + vec2((stepX * -0.5f), (stepY * -0.5f));				
+				break;
+				case 3:
+					texCoord = fTexCoord + vec2((stepX * -0.5f), (stepY * 0.5f));				
+				break;
+			}
+
+			color +=  getColor(fTexCoord, texCoord, stepX, stepY);
+		}
+
+		color = color / vec4(4,4,4,4);
+		color +=  getColor(fTexCoord, fTexCoord, stepX, stepY);
+		
+		fragColor = color / vec4(2,2,2,2);
+	} else {
+
+		fragColor = getColor(fTexCoord, fTexCoord, stepX, stepY);
+	}
+}
+
+
+/*
 vec3 rgbFrom(float hue, float saturation, float brightness) {
 
 	float r = 0, g = 0, b = 0;
@@ -99,38 +195,8 @@ vec3 rgbFrom(float hue, float saturation, float brightness) {
 }
 
 
-vec4 getColor(vec2 texCoordCenter, vec2 texCoord, float stepX , float stepY) {
-	float max = 0.0f;
 
-
-	//Pattern pseudo euklid
-	int rad = 2;
-
-	for (int y = -rad; y <= rad; y++) {
-		for (int x = -rad; x <= rad; x++) {
-
-			vec2 otherPosCenter = (texCoordCenter + vec2(x*stepX, y*stepY));
-
-			float len = length((texCoord - otherPosCenter) * vec2(width, height));
-			float val = scale(texture(lineField, otherPosCenter).g / maxValue);
-
-			if ((x < 0) || (x == 0 && y <= 0)) {
-				if ((val * (rad*2+1)) > (len * 2)) {
-					if (val > max) {
-						max = val;
-					}
-				}
-			} else {
-				if ((val * (rad*2+1)) > ((len * 2) - 1)) {
-					if (val > max) {
-						max = val;
-					}
-				}
-			}
-		} 
-	} 
-
-	if (max > 0.0f) {
+//from getColor
 		//float hue = ((1.0f - max) * 90.0f)/ 360.0f;
 		//float alpha = (0.66f + max / 3.0f);
 		float hue = 0;
@@ -141,56 +207,4 @@ vec4 getColor(vec2 texCoordCenter, vec2 texCoord, float stepX , float stepY) {
 		vec3 influence;
 		influence = rgbFrom(hue, sat, bright);
 
-		vec3 oldResult = texture(gaussTex, texCoordCenter).rgb;
-		
-		//with influence mix them
-		return vec4( (influence * vec3(alpha, alpha, alpha) + oldResult * vec3(1-alpha, 1-alpha, 1-alpha)), 1.0f);
-	} else {
-		
-		//no influence simply return the result so far
-		return vec4(texture(gaussTex, texCoordCenter).rgb, 1.0f);
-	}
-}
-
-
-
-void main(void)
-{
-
-	float stepX = 1.0f / width;
-	float stepY = 1.0f / height;
-	vec4 color = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-
-	if (antiAlias) {
-		
-		int empty = 0;
-		vec2 texCoord;
-		for (int run = 0; run < 4; run++) {
-
-			switch (run) {
-				case 0:
-					texCoord = fTexCoord + vec2((stepX * 0.5f), (stepY * 0.5f));
-				break;
-				case 1:
-					texCoord = fTexCoord + vec2((stepX * 0.5f), (stepY * -0.5f));				
-				break;
-				case 2:
-					texCoord = fTexCoord + vec2((stepX * -0.5f), (stepY * -0.5f));				
-				break;
-				case 3:
-					texCoord = fTexCoord + vec2((stepX * -0.5f), (stepY * 0.5f));				
-				break;
-			}
-
-			color +=  getColor(fTexCoord, texCoord, stepX, stepY);
-		}
-
-		color = color / vec4(4,4,4,4);
-		color +=  getColor(fTexCoord, fTexCoord, stepX, stepY);
-		
-		fragColor = color / vec4(2,2,2,2);
-	} else {
-
-		fragColor = getColor(fTexCoord, fTexCoord, stepX, stepY);
-	}
-}
+*/

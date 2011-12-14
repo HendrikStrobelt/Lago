@@ -48,6 +48,7 @@ namespace context {
 	void init() {
 		clearRenderVariables();
 		addKeyEventListener(&_options);
+		_options.init();
 		_renderer = new Renderer;
 	}
 
