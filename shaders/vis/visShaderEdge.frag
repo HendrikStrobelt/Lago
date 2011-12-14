@@ -105,40 +105,25 @@ vec4 getColor(vec2 texCoordCenter, vec2 texCoord, float stepX , float stepY) {
 
 	//Pattern pseudo euklid
 	int rad = 2;
-	bool outsideEdge = false;
 
 	for (int y = -rad; y <= rad; y++) {
 		for (int x = -rad; x <= rad; x++) {
 
 			vec2 otherPosCenter = (texCoordCenter + vec2(x*stepX, y*stepY));
-			bool outSide;
 
 			float len = length((texCoord - otherPosCenter) * vec2(width, height));
-			float valG = scale(texture(lineField, otherPosCenter).g / maxValue);
-			float valR = min(1.0f, scale(texture(lineField, otherPosCenter).r / maxValue));  //MIN IS IMPORTANT
-			float val;
-
-			if (valG > valR) {
-				val = valG;
-				outSide = false;
-			} else {
-				val = valR;
-				outSide = true;
-			}
-
+			float val = scale(texture(lineField, otherPosCenter).g / maxValue);
 
 			if ((x < 0) || (x == 0 && y <= 0)) {
 				if ((val * (rad*2+1)) > (len * 2)) {
 					if (val > max) {
 						max = val;
-						outsideEdge = outSide;
 					}
 				}
 			} else {
 				if ((val * (rad*2+1)) > ((len * 2) - 1)) {
 					if (val > max) {
 						max = val;
-						outsideEdge = outSide;
 					}
 				}
 			}
