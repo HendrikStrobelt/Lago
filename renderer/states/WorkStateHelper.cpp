@@ -95,6 +95,10 @@ void WorkStateHelper::takeOver( void ) {
 		_fieldEvaluator[VIEW] = new FieldEvaluation(_r->_windowWidth, _r->_windowHeight);
 		_fieldEvaluator[OFF] = new FieldEvaluation((_r->_windowWidth / OFF_SHRINK), (_r->_windowHeight / OFF_SHRINK));
 
+		if (EDGE_HIERARCHY_FLAT) {
+			joinDepth = 0; //all edges have level 0 and should be displayed
+		}
+
 		//line painter
 		_linePainter = new DividedLinePainter(_r->_edgeVBO, _r->_windowWidth, _r->_windowHeight, edgeElements);
 		_linePainter->setBaseVars(MVP, _fieldEvaluator[VIEW]->getWorkingTexture(), _fieldEvaluator[OFF]->getWorkingTexture(), (OFF_ZOOM * OFF_SHRINK), joinDepth);

@@ -111,12 +111,19 @@ vec3 getColor(vec2 texCoord) {
    float normalized = texture(gaussTex, texCoord).b / maxValue;
    float scaled = min(1.0, scale(normalized));
 
-   if (scaled < 0.0001) {
+/*   if (scaled < 0.0001) {
 		return vec3(0.9, 0.9, 0.9);															//background
    } else {
 		vec4 col = texture(colorSchemesTex, vec2(scaled, 0.25f));
 		return mix(vec3(0.9, 0.9, 0.9), col.rgb, col.a);
-   }	
+   }
+*/
+
+	if (scaled < 0.0001f) {
+		scaled = 0.0f;
+	}
+
+	return texture(colorSchemesTex, vec2(scaled, 0.25f)).rgb;
 }
 
 

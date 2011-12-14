@@ -35,7 +35,7 @@ void VisPainter::cleanUp( void ) {
 
 void VisPainter::loadTexturesOnce( void ) {
 	if (_colorSchemesTex == -1) {
-		_colorSchemesTex = envHelper::loadRGBTexture("_Tex\\colorSchemes.tga");
+		_colorSchemesTex = envHelper::loadRGBTexture("_Tex\\bluebrown.tga");
 	}
 }
 
