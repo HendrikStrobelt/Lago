@@ -9,6 +9,8 @@ class RenderData {
 
 	public:
 		RenderData( void );
+		RenderData(RenderData* par); //creates a shadow copy that will not clean up
+
 		~RenderData( void );
 
 		void clear( void );
@@ -22,7 +24,7 @@ class RenderData {
 		float _maxValuesE[3];
 
 	private:
-
+		bool _isShadowCopy;
 };
 
 

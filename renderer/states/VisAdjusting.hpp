@@ -3,6 +3,7 @@
 
 #include "../IRenderState.hpp"
 #include "../../painter/VisPainter.hpp"
+#include "../RenderData.hpp"
 
 class Renderer;
 
@@ -29,8 +30,13 @@ class VisAdjusting : public IRenderState {
 	private:
 		void swap( void );
 
+		GLuint _blendVis;
+		RenderData* _blendRenderData;
+
 		Renderer* _r;
 		VisPainter* _visPainter;
+		float _blendFactor;
+		bool _blendChange;
 };
 
 
