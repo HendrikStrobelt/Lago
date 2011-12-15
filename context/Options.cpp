@@ -12,6 +12,7 @@ Options::Options( void ) {
 	_colorSchemeEdge = "edge.tga";
 	_nodeScheme = -1;
 	_antiAlias = true;
+	_adaptiveScaleBars = false;
 }
 
 void Options::init( void ) {
@@ -27,6 +28,7 @@ Options::~Options( void ) {
 string Options::toCommandString( void ) {
 	stringstream s;
 	s << " antiAlias$" << boolalpha <<  _antiAlias;
+	s << " adaptiveScaleBars$" << boolalpha << _adaptiveScaleBars;
 	s << " nodeFile$" << "f." << _nodeFile;
 	s << " edgeFile$" << "f." << _edgeFile;
 	s << " nodeCS$" << _colorSchemeNode;
@@ -37,6 +39,16 @@ string Options::toCommandString( void ) {
 void Options::update(map<string, string> dataMap) {
 	if (!_changedLocal) {
 		map<string, string>::iterator it;
+
+		//HUD 
+		if ((it = dataMap.find("adaptiveScaleBars")) != dataMap.end()) {
+			if (it->second.compare("true") == 0) {
+				_adaptiveScaleBars = true;
+			} else {
+				_adaptiveScaleBars = false;
+			}
+		}
+
 
 		//VIS PARAMETER
 		bool aa;

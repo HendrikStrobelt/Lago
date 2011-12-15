@@ -6,6 +6,7 @@ in vec2 vTexCoord;
 
 uniform sampler2D colorScheme;
 uniform bool borderRun;
+uniform bool adaptiveScaleBars;
 
 uniform bool linearMode;
 uniform vec4 pointsX;
@@ -47,7 +48,11 @@ void main(void)
 	if (borderRun) { 
 		fragColor = vec4(0.5f, 0.5f, 0.5f, 1.0f);
 	} else {
-		float s = min(1.0f, scale(vTexCoord.x));
-		fragColor = texture(colorScheme, vec2(s, 0.5f));
+		if (adaptiveScaleBars) {		
+			float s = min(1.0f, scale(vTexCoord.x));
+			fragColor = texture(colorScheme, vec2(s, 0.5f));
+		} else {
+			fragColor = texture(colorScheme, vTexCoord);
+		}
 	}
 }

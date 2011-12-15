@@ -25,6 +25,7 @@ class Options : public IContextListener {
 
 		//pull
 		bool _antiAlias;
+		bool _adaptiveScaleBars;
 		GLuint _nodeScheme;
 		GLuint _edgeScheme;
 
