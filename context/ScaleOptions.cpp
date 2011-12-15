@@ -4,13 +4,13 @@
 #include "Context.hpp"
 
 ScaleOptions::ScaleOptions( void ) {
-	_linearMode = true;
-	_exponent = 1.0f;
+	_linearMode = false;
+	_exponent = 0.333f;
 	_controlPoints[0][0] = 0.0f;
 	_controlPoints[0][1] = 0.0f;
 	_controlPoints[1][0] = 0.0f;
 	_controlPoints[1][1] = 0.0f;
-	_controlPoints[2][0] = 0.8f;
+	_controlPoints[2][0] = 1.0f;
 	_controlPoints[2][1] = 1.0f;
 	_controlPoints[3][0] = 1.0f;
 	_controlPoints[3][1] = 1.0f;
