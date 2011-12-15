@@ -1,0 +1,47 @@
+#version 330
+#extension GL_EXT_geometry_shader4: enable
+
+layout(points) in;
+layout(triangle_strip, max_vertices = 4) out;
+
+in vec4 gCoord1[];
+in vec4 gCoord2[];
+in vec4 gTexCoord1[];
+in vec4 gTexCoord2[];
+in vec3 gColor[];
+
+uniform mat4 S;
+
+out vec3 fColor;
+out vec2 fTexCoord;
+
+void main(void) 
+{
+		int i = 0;
+
+		//v1
+		gl_Position = S * vec4(gCoord1[i].xy,0,1);
+		fColor = gColor[i];
+		fTexCoord = gTexCoord1[i].xy;
+		EmitVertex();
+
+		//v2
+		gl_Position = S * vec4(gCoord1[i].zw,0,1);
+		fColor = gColor[i];
+		fTexCoord = gTexCoord1[i].zw;
+		EmitVertex();
+
+		//v3
+		gl_Position = S * vec4(gCoord2[i].xy,0,1);
+		fColor = gColor[i];
+		fTexCoord = gTexCoord2[i].xy;
+		EmitVertex();
+
+		//v4
+		gl_Position = S * vec4(gCoord2[i].zw,0,1);
+		fColor = gColor[i];
+		fTexCoord = gTexCoord2[i].zw;
+		EmitVertex();
+
+		EndPrimitive();
+}

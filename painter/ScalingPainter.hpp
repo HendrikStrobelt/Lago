@@ -4,6 +4,7 @@
 #include "../helper/GLSLShader.hpp"
 #include "../renderer/RenderData.hpp"
 #include "../context/IContextListener.hpp"
+#include "../text/TextRenderer.hpp"
 
 class ScalingPainter : public IContextListener {
 
@@ -24,10 +25,14 @@ class ScalingPainter : public IContextListener {
 		static GLSLShader* _shader_ptr;
 		static void createShader( void );
 		
+		TextRenderer* test;
+
 		void updateBarPositions(int w, int h);
 
 		void getShader( void );
 		void initVao( void );
+
+		float _textAnchors[6][2];
 
 		GLuint _vao;
 		GLuint _vbo[2];

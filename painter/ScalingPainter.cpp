@@ -1,9 +1,13 @@
 #include "ScalingPainter.hpp"		
 #include "../context/Context.hpp"
+#include "../text/TextRenderer.hpp"
 
 GLSLShader* ScalingPainter::_shader_ptr = NULL;
 
 ScalingPainter::ScalingPainter( void ) {
+
+	test = new TextRenderer("C://Windows//Fonts//times.ttf", 9);
+
 	context::addResizeListener(this);
 	createShader();
 	initVao();
@@ -13,6 +17,7 @@ ScalingPainter::ScalingPainter( void ) {
 ScalingPainter::~ScalingPainter( void) {
 	glDeleteBuffers(2, &_vbo[0]);
 	glDeleteVertexArrays(1, &_vao);
+	delete test;
 }
 
 //static clean up
@@ -21,6 +26,9 @@ void ScalingPainter::cleanUp( void ) {
 }
 
 void ScalingPainter::renderScaleBars(RenderData* rData) {
+
+	test->renderText();
+
 	glBlendFunc(GL_ONE, GL_ZERO);
 
 	glBindVertexArray(_vao);
@@ -69,29 +77,51 @@ void ScalingPainter::updateBarPositions(int w, int h) {
 	float stepX = 2.0f / (float)w;
 	float stepY = 2.0f / (float)h;
 
-	#define left 50.0f
-	#define upper 30.0f
+	#define right 50.0f
+	#define lower 15.0f
 	#define width 12.0f
 	#define height 220.0f
 	#define	shift 22.0f
 
-	float textureQuad[32] =   { (-1.0f + (left)         * stepX), (1.0f - (upper + height) * stepY),
-								(-1.0f + (left + width) * stepX), (1.0f - (upper + height) * stepY),
-								(-1.0f + (left)         * stepX), (1.0f - (upper)          * stepY),
-								(-1.0f + (left + width) * stepX), (1.0f - (upper)          * stepY),
-								(-1.0f + (left + shift)         * stepX), (1.0f - (upper + height) * stepY),
-								(-1.0f + (left + width + shift) * stepX), (1.0f - (upper + height) * stepY),
-								(-1.0f + (left + shift)         * stepX), (1.0f - (upper)          * stepY),
-								(-1.0f + (left + width + shift) * stepX), (1.0f - (upper)          * stepY),
+	float textureQuad[32] =   { (1.0f - (right)         * stepX), (-1.0f + (lower + height) * stepY),
+								(1.0f - (right + width) * stepX), (-1.0f + (lower + height) * stepY),
+								(1.0f - (right)         * stepX), (-1.0f + (lower)          * stepY),
+								(1.0f - (right + width) * stepX), (-1.0f + (lower)          * stepY),
+								(1.0f - (right + shift)         * stepX), (-1.0f + (lower + height) * stepY),
+								(1.0f - (right + width + shift) * stepX), (-1.0f + (lower + height) * stepY),
+								(1.0f - (right + shift)         * stepX), (-1.0f + (lower)          * stepY),
+								(1.0f - (right + width + shift) * stepX), (-1.0f + (lower)          * stepY),
 								
-	/* border stuff */			(-1.0f + (left-2)         * stepX), (1.0f - (upper+2 + height) * stepY),
-								(-1.0f + (left+2 + width) * stepX), (1.0f - (upper+2 + height) * stepY),
-								(-1.0f + (left-2)         * stepX), (1.0f - (upper-2)          * stepY),
-								(-1.0f + (left+2 + width) * stepX), (1.0f - (upper-2)          * stepY),
-								(-1.0f + (left-2 + shift)         * stepX), (1.0f - (upper+2 + height) * stepY),
-								(-1.0f + (left+2 + width + shift) * stepX), (1.0f - (upper+2 + height) * stepY),
-								(-1.0f + (left-2 + shift)         * stepX), (1.0f - (upper-2)          * stepY),
-								(-1.0f + (left+2 + width + shift) * stepX), (1.0f - (upper-2)          * stepY)};
+	/* border stuff */			(1.0f - (right-2)         * stepX), (-1.0f + (lower+2 + height) * stepY),
+								(1.0f - (right+2 + width) * stepX), (-1.0f + (lower+2 + height) * stepY),
+								(1.0f - (right-2)         * stepX), (-1.0f + (lower-2)          * stepY),
+								(1.0f - (right+2 + width) * stepX), (-1.0f + (lower-2)          * stepY),
+								(1.0f - (right-2 + shift)         * stepX), (-1.0f + (lower+2 + height) * stepY),
+								(1.0f - (right+2 + width + shift) * stepX), (-1.0f + (lower+2 + height) * stepY),
+								(1.0f - (right-2 + shift)         * stepX), (-1.0f + (lower-2)          * stepY),
+								(1.0f - (right+2 + width + shift) * stepX), (-1.0f + (lower-2)          * stepY)};
+
+	//calculate the text anchors
+	_textAnchors[0][0] = (1.0 - (right/2.0f) * stepX);       _textAnchors[0][1] = (-1.0 + (lower) * stepY);
+	_textAnchors[1][0] = (1.0 - (right/2.0f) * stepX);       _textAnchors[1][1] = (-1.0 + (lower + (height / 2.0f)) * stepY);
+	_textAnchors[2][0] = (1.0 - (right/2.0f) * stepX);       _textAnchors[2][1] = (-1.0 + (lower + height) * stepY);
+	_textAnchors[3][0] = (1.0 - (right + shift + width + (right/2.0f)) * stepX);       _textAnchors[3][1] = (-1.0 + (lower) * stepY);
+	_textAnchors[4][0] = (1.0 - (right + shift + width + (right/2.0f)) * stepX);       _textAnchors[4][1] = (-1.0 + (lower + (height / 2.0f)) * stepY);
+	_textAnchors[5][0] = (1.0 - (right + shift + width + (right/2.0f)) * stepX);       _textAnchors[5][1] = (-1.0 + (lower + height) * stepY);
+
+
+	for (int i = 0; i < 6; i++) {
+		_textAnchors[i][0] = (_textAnchors[i][0] + 1.0f) / 2.0f;
+		_textAnchors[i][1] = (_textAnchors[i][1] + 1.0f) / 2.0f;
+	}
+
+	test->clearTextStorage();
+	test->addText("11111111", _textAnchors[0][0], _textAnchors[0][1], Color(0.0f, 0.0f, 0.0f));
+	test->addText("22222222", _textAnchors[1][0], _textAnchors[1][1], Color(0.0f, 0.0f, 0.0f));
+	test->addText("33333333", _textAnchors[2][0], _textAnchors[2][1], Color(0.0f, 0.0f, 0.0f));
+	test->addText("44444444", _textAnchors[3][0], _textAnchors[3][1], Color(0.0f, 0.0f, 0.0f));
+	test->addText("55555555", _textAnchors[4][0], _textAnchors[4][1], Color(0.0f, 0.0f, 0.0f));
+	test->addText("66666666", _textAnchors[5][0], _textAnchors[5][1], Color(0.0f, 0.0f, 0.0f));
 
 	glBindBuffer (GL_ARRAY_BUFFER, _vbo[VERTEX]);
 		glBufferData (GL_ARRAY_BUFFER, 32 * sizeof(float), &textureQuad[0], GL_STATIC_DRAW);

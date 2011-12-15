@@ -50,9 +50,9 @@ void main(void)
 	} else {
 		if (adaptiveScaleBars) {		
 			float s = min(1.0f, scale(vTexCoord.x));
-			fragColor = texture(colorScheme, vec2(s, 0.5f));
+			fragColor = texture(colorScheme, vec2(1.0f-s, 0.5f));
 		} else {
-			fragColor = texture(colorScheme, vTexCoord);
+			fragColor = texture(colorScheme, vec2(1.0f-vTexCoord.x, 0.5f));
 		}
 	}
 }
