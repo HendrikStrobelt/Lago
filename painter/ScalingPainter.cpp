@@ -30,10 +30,24 @@ void ScalingPainter::renderScaleBars(RenderData* rData) {
 					glDrawArrays(GL_TRIANGLE_STRIP,  8, 4); 
 					glDrawArrays(GL_TRIANGLE_STRIP, 12, 4); 
 			glBindTexture(GL_TEXTURE_2D, context::_options._nodeScheme);
+					int scaleMode = 0;
+					float* cp = &(context::_scaleOptions[scaleMode]._controlPoints[0][0]);
+					glUniform1i(_shader_ptr->getUniformLocation("linearMode"), context::_scaleOptions[scaleMode]._linearMode);
+					glUniform4f(_shader_ptr->getUniformLocation("pointsX"), cp[0], cp[2], cp[4], cp[6]);
+					glUniform4f(_shader_ptr->getUniformLocation("pointsY"), cp[1], cp[3], cp[5], cp[7]);
+					glUniform1f(_shader_ptr->getUniformLocation("exponent"), context::_scaleOptions[scaleMode]._exponent);
+
 					glUniform1i(_shader_ptr->getUniformLocation("colorScheme"), 0);
 					glUniform1i(_shader_ptr->getUniformLocation("borderRun"), false);
 					glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); 
 			glBindTexture(GL_TEXTURE_2D, context::_options._edgeScheme);		
+					scaleMode = 1;
+					cp = &(context::_scaleOptions[scaleMode]._controlPoints[0][0]);
+					glUniform1i(_shader_ptr->getUniformLocation("linearMode"), context::_scaleOptions[scaleMode]._linearMode);
+					glUniform4f(_shader_ptr->getUniformLocation("pointsX"), cp[0], cp[2], cp[4], cp[6]);
+					glUniform4f(_shader_ptr->getUniformLocation("pointsY"), cp[1], cp[3], cp[5], cp[7]);
+					glUniform1f(_shader_ptr->getUniformLocation("exponent"), context::_scaleOptions[scaleMode]._exponent);
+
 					glUniform1i(_shader_ptr->getUniformLocation("borderRun"), false);
 					glDrawArrays(GL_TRIANGLE_STRIP, 4, 4); 
 			glBindTexture(GL_TEXTURE_2D,  0);
@@ -93,6 +107,11 @@ void ScalingPainter::createShader( void ) {
 		attribs.push_back("vVertex");
 		unis.push_back("colorScheme");
 		unis.push_back("borderRun");
+
+		unis.push_back("linearMode");
+		unis.push_back("pointsX");
+		unis.push_back("pointsY");
+		unis.push_back("exponent");
 
 		_shader_ptr = new GLSLShader(attribs, unis, "shaders/scaleShader/ScaleShader.vert", "shaders/ScaleShader/ScaleShader.frag");
 	}

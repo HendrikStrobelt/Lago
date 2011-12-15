@@ -74,9 +74,9 @@ void ScaleOptions::update(map<string, string> dataMap, string prefix) {
 			}
 			if ((it = dataMap.find(prefix + "p4x")) != dataMap.end()) {					
 				float tmp = atof(it->second.c_str());
-				if (_controlPoints[2][0] != tmp) {
+				if (_controlPoints[3][0] != tmp) {
 					change = true;
-					_controlPoints[2][0] = tmp;
+					_controlPoints[3][0] = tmp;
 				}
 			}
 			if ((it = dataMap.find(prefix + "p1y")) != dataMap.end()) {					
