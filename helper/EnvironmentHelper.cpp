@@ -10,6 +10,7 @@
 #include "../painter/DisplayConvertPainter.hpp"
 #include "../painter/VisPainter.hpp"
 #include "../painter/DividedLinePainter.hpp"
+#include "../painter/ScalingPainter.hpp"
 #include "../renderer/TextureExaminer.hpp"
 #include "../renderer/FieldEvaluation.hpp"
 
@@ -157,6 +158,7 @@ namespace envHelper {
 		DisplayConvertPainter::cleanUp();
 		VisPainter::cleanUp();
 		DividedLinePainter::cleanUp();
+		ScalingPainter::cleanUp();
 
 		TextureExaminer::cleanUp();
 		FieldEvaluation::cleanUp();

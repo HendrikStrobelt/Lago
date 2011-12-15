@@ -85,6 +85,8 @@ void Renderer::renderGraph(RenderData* rData, int xMove, int yMove) {
 	float maxValues[] = {1.0f, 1.0f, 1.0f}; //vis tex is already normalized
 
 	renderTexture(rData->_vis, maxValues, moveX, moveY);
+
+		_scalingBars.renderScaleBars(rData);
 }
 
 void Renderer::renderHUD(float progress) {

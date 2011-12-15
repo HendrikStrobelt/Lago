@@ -14,6 +14,7 @@
 
 #include "..\painter\ProgressbarPainter.hpp"
 #include "..\painter\DisplayConvertPainter.hpp"
+#include "..\painter\ScalingPainter.hpp"
 #include "TextureExaminer.hpp"
 
 class Renderer : public IRenderState {
@@ -68,6 +69,7 @@ class Renderer : public IRenderState {
 
 		//Painter
 		ProgressbarPainter _progressBar;
+		ScalingPainter _scalingBars;
 		DisplayConvertPainter _displayConvert;
 		TextureExaminer _textureExaminer;
 		//
