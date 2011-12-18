@@ -28,7 +28,7 @@
 
 
 //zooom
-#define ZOOM_BASE 1.5
+#define ZOOM_BASE 1.3
 
 //Quads
 #define SIDE_BASE 1.3
