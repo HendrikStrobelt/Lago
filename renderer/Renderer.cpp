@@ -85,15 +85,19 @@ void Renderer::renderGraph(RenderData* rData, int xMove, int yMove) {
 	float maxValues[] = {1.0f, 1.0f, 1.0f}; //vis tex is already normalized
 
 	renderTexture(rData->_vis, maxValues, moveX, moveY);
-
-		_scalingBars.renderScaleBars(rData);
 }
 
-void Renderer::renderHUD(float progress) {
-	if (_hasEdges) {
-		_progressBar.renderBar(progress, 3);
-	} else {
-		_progressBar.renderBar(progress, 1);
+void Renderer::renderHUD(float progress, float maxVals[]) {
+	if (progress >= 0.0f) {
+		if (_hasEdges) {
+			_progressBar.renderBar(progress, 3);
+		} else {
+			_progressBar.renderBar(progress, 1);
+		}
+	}
+
+	if (maxVals[0] > 0.0f) {
+		_scalingBars.renderScaleBars(maxVals, _hasEdges);
 	}
 }
 

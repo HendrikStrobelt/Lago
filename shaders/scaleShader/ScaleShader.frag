@@ -49,8 +49,8 @@ void main(void)
 		fragColor = vec4(0.5f, 0.5f, 0.5f, 1.0f);
 	} else {
 		if (adaptiveScaleBars) {		
-			float s = min(1.0f, scale(vTexCoord.x));
-			fragColor = texture(colorScheme, vec2(1.0f-s, 0.5f));
+			float s = min(1.0f, scale(1.0f-vTexCoord.x));
+			fragColor = texture(colorScheme, vec2(s, 0.5f));
 		} else {
 			fragColor = texture(colorScheme, vec2(1.0f-vTexCoord.x, 0.5f));
 		}

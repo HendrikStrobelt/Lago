@@ -405,7 +405,7 @@ RenderedGlyph* TextRenderer::renderGlyph(char c) {
 
 
 void TextRenderer::fillAlphabet( void ) {
-	_CHARS = 66;
+	_CHARS = 69;
 	_ALPHABET = new char[_CHARS];
 
 	int i = 0;
@@ -413,6 +413,9 @@ void TextRenderer::fillAlphabet( void ) {
 	_ALPHABET[i] = '(';	_ALPHABET_INDEX['('] = i; i++;
 	_ALPHABET[i] = ')';	_ALPHABET_INDEX[')'] = i; i++;
 	_ALPHABET[i] = '!';	_ALPHABET_INDEX['!'] = i; i++;
+	_ALPHABET[i] = '.';	_ALPHABET_INDEX['.'] = i; i++;
+	_ALPHABET[i] = '+';	_ALPHABET_INDEX['+'] = i; i++;
+	_ALPHABET[i] = '-';	_ALPHABET_INDEX['-'] = i; i++;
 
 	for (char c = '0'; c <= '9'; c++) {
 		_ALPHABET[i] = c ;

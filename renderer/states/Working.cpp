@@ -13,7 +13,11 @@ Working::~Working( void ) {
 
 void Working::render( void ) {
 	_r->renderGraph(_r->_currentData, _r->_mouseMoveX, _r->_mouseMoveY);
-	_r->renderHUD(_worker->_progress);
+	
+	float maxVals[2];
+	maxVals[0] = _r->_currentData->_maxValuesN[2];
+	maxVals[1] = _r->_currentData->_maxValuesE[1];
+	_r->renderHUD(_worker->_progress, maxVals);
 }
 
 void Working::renderGauss( void ) { /*do nothing*/ };

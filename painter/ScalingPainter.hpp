@@ -5,6 +5,9 @@
 #include "../renderer/RenderData.hpp"
 #include "../context/IContextListener.hpp"
 #include "../text/TextRenderer.hpp"
+#include <string>
+
+using namespace std;
 
 class ScalingPainter : public IContextListener {
 
@@ -12,7 +15,7 @@ class ScalingPainter : public IContextListener {
 		ScalingPainter( void );
 		~ScalingPainter( void );
 		
-		void renderScaleBars(RenderData* rData);
+		void renderScaleBars(float maxVals[], bool hasEdges);
 
 		//interface method
 		void resizeEvent(int width, int height);
@@ -28,11 +31,18 @@ class ScalingPainter : public IContextListener {
 		TextRenderer* test;
 
 		void updateBarPositions(int w, int h);
+		string getFloatString(float value);
+		float reverseScale(float normedVal, bool linearMode, float exponent, float pointsX[], float pointsY[]);
+		float mix(float x, float y, float a);
 
 		void getShader( void );
 		void initVao( void );
 
 		float _textAnchors[6][2];
+		float _maxE;
+		float _maxN;
+		float _n05;
+		float _e05;
 
 		GLuint _vao;
 		GLuint _vbo[2];

@@ -11,6 +11,11 @@ Idle::~Idle( void ) {
 
 void Idle::render( void ) {
 	_r->renderGraph(_r->_currentData);
+	
+	float maxVals[2];
+	maxVals[0] = _r->_currentData->_maxValuesN[2];
+	maxVals[1] = _r->_currentData->_maxValuesE[1];
+	_r->renderHUD(-1.0f, maxVals);
 }
 
 void Idle::renderGauss( void ) {

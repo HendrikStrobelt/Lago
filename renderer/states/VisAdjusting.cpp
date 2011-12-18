@@ -15,6 +15,11 @@ VisAdjusting::~VisAdjusting( void ) {
 
 void VisAdjusting::render( void ) {
 	_r->renderGraph(_r->_currentData, _r->_mouseMoveX, _r->_mouseMoveY);
+	
+	float maxVals[2];
+	maxVals[0] = _r->_currentData->_maxValuesN[2];
+	maxVals[1] = _r->_currentData->_maxValuesE[1];
+	_r->renderHUD(-1.0f, maxVals);
 }
 
 void VisAdjusting::renderGauss( void ) { /* nothing to do */ }

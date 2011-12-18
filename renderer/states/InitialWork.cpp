@@ -14,7 +14,8 @@ InitialWork::~InitialWork( void ) {
 }
 
 void InitialWork::render( void ) {
-	_r->renderHUD(_worker->_progress);
+	float maxVals[]  = {-1.0f, -1.0f};
+	_r->renderHUD(_worker->_progress, maxVals);
 }
 
 void InitialWork::renderGauss( void ) { /*do nothing*/ };

@@ -12,7 +12,7 @@ Options::Options( void ) {
 	_colorSchemeEdge = "edge.tga";
 	_nodeScheme = -1;
 	_antiAlias = true;
-	_adaptiveScaleBars = false;
+	_adaptiveScaleBars = true;
 }
 
 void Options::init( void ) {
