@@ -40,4 +40,8 @@
 #define OFF_ZOOM 2  //2 times zoomed out
 #define OFF_SHRINK 1 //calculated in a x times smaller field
 
+
+//labels
+#define MAX_LABEL_LENGTH 50
+
 #endif

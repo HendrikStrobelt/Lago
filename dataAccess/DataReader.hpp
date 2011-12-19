@@ -41,7 +41,7 @@ class DataReader {
 		FILE* _nodeFile;
 		FILE* _edgeFile;
 
-		int _nodeCols[4];
+		int _nodeCols[5];
 		int _edgeCols[3];
 };
 

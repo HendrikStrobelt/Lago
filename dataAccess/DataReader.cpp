@@ -18,7 +18,7 @@ DataReader::~DataReader( void ) {
 
 
 bool DataReader::hasNodeLabels( void ) {
-	if (N_LABEL != NO_LABELS) {
+	if (_nodeCols[N_LABEL] != NO_LABELS) {
 		return true;
 	} else {
 		return false;
@@ -26,7 +26,7 @@ bool DataReader::hasNodeLabels( void ) {
 }
 
 bool DataReader::hasNodeLabelWeights( void ) {
-	if (N_LABEL_WEIGHT != NO_LABEL_WEIGHTS) {
+	if (_nodeCols[N_LABEL_WEIGHT] != NO_LABEL_WEIGHTS) {
 		return true;
 	} else {
 		return false;
@@ -172,7 +172,9 @@ bool DataReader::readNextNode(vector<Node>* nodes, vector<Label>* labels) {
 				n.weight = (float)atof(token);
 			} else 
 			if (i == _nodeCols[N_LABEL]) {
-				l.text = token;
+				string s = token;
+				s.substr(0, MAX_LABEL_LENGTH);
+				strcpy(l.text,s.c_str());
 			} else 
 			if (i == _nodeCols[N_LABEL_WEIGHT]) {
 				l.weight = (float)atof(token);

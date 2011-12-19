@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <boost\filesystem.hpp>
+#include <algorithm>
 
 using namespace boost::filesystem;
 
@@ -18,6 +19,7 @@ DataCache::DataCache( void ) {
 	_edgeStructureInfo = NULL;
 	_packedNodes = NULL;
 	_packedEdges = NULL;
+	_sortedLabels = NULL;
 }
 
 DataCache::~DataCache( void ) {
@@ -43,6 +45,10 @@ void DataCache::loadDataSet(string nodeFile, string edgeFile) {
 		//no dump exists 
 		loadFromFiles(nodeFile, edgeFile);
 	}
+}
+
+const vector<Label>* DataCache::getSortedLabels( void ) {
+	return _sortedLabels;
 }
 
 const PackedNode* DataCache::getPackedNodes(int* size) {
@@ -81,6 +87,11 @@ const EdgeStructureInfoContainer* DataCache::getEdgeStructureInfo( void ) {
 	}
 }
 
+const bool DataCache::hasLabels( void ) {
+	return (_sortedLabels != NULL);
+}
+
+
 //private
 
 
@@ -106,12 +117,13 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 	//load node data
 	dr.setNodeFile(nodeFile);
 	vector<Node> nodes;
+	vector<Label>* labels = new vector<Label>();
 
 	cout << "loading nodes from " << nodeFile;
 
 	bool read = true;
 	while (read) {
-		read = dr.readNextNode(&nodes);
+		read = dr.readNextNode(&nodes, labels);
 	}
 
 	cout << " (total of " << nodes.size() << " nodes)" << "\n";
@@ -152,41 +164,72 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 		cout << " (hierarchy height " << _edgeStructureInfo->getMaxDepth() << ")" << "\n";
 		cout << "     extracting needed informations" << "\n";
 		_packedEdges = eh.getPackedHierarchy(&_eCount);
+
+
+		if (dr.hasNodeLabels() && !dr.hasNodeLabelWeights()) {
+			//create own label weights --- degree
+			for (int i = 0; i < labels->size(); i++) {
+				labels->at(i).weight = 0.0f;
+			}
+			for (int i = 0; i < refEdges.size(); i++) {
+				labels->at(refEdges[i].n1Ref).weight++;
+				labels->at(refEdges[i].n2Ref).weight++;
+			}
+		}
+	}
+
+	bool writeLabels = false;
+	if (dr.hasNodeLabels()) {
+		cout << " preparing labels" << "\n";
+		writeLabels = true;
+        sortLabels(labels);
+		_sortedLabels = labels;
+	} else {
+		delete labels;
 	}
 
 	cout << "saving extracted node/edge data to _DataDump for faster access" << "\n";
-	writeToDump(getDumpName(nodeFile, edgeFile), writeEdges);
+	writeToDump(getDumpName(nodeFile, edgeFile), writeEdges, writeLabels);
 }
 
 
-void DataCache::writeToDump(string dumpName, bool writeEdges) {
+void DataCache::writeToDump(string dumpName, bool writeEdges, bool writeLabels) {
 	
 	path dir(dumpName);
 	if (!exists(dir)) {
         create_directory(dir); 
 	}
 
-	//load nodes
+	//write nodes
 		string nodeFile = dumpName;
 		nodeFile.append("//packedNodes.bin");
 		ofstream packedNodes(nodeFile, ios::binary);
 		dump::w(&packedNodes, _nCount, _packedNodes);
 		packedNodes.close();
-	//load node structure info
+	//write node structure info
 		string nodeInfoFile = dumpName;
 		nodeInfoFile.append("//nodeStructureInfo.bin");
 		ofstream nodeInfos(nodeInfoFile, ios::binary);
 		_nodeStructureInfo->serialize(&nodeInfos);
 		nodeInfos.close();
 
+	if (writeLabels) {
+		//write label vector
+		string labelFile = dumpName;
+		labelFile.append("//sortedLabels.bin");
+		ofstream sortedLabels(labelFile, ios::binary);
+		dump::w(&sortedLabels, _sortedLabels);
+		sortedLabels.close();			
+	}
+
 	if (writeEdges) {
-		//load edges
+		//write edges
 			string edgeFile = dumpName;
 			edgeFile.append("//packedEdges.bin");
 			ofstream packedEdges(edgeFile, ios::binary);
 			dump::w(&packedEdges, _eCount, _packedEdges);
 			packedEdges.close();
-		//load node structure info
+		//write node structure info
 			string edgeInfoFile = dumpName;
 			edgeInfoFile.append("//edgeStructureInfo.bin");
 			ofstream edgeInfos(edgeInfoFile, ios::binary);
@@ -214,6 +257,18 @@ void DataCache::loadFromDump(string dumpName, bool loadEdges) {
 	cout << "loaded " << _nodeStructureInfo->getRenderNodes(_nodeStructureInfo->getMaxDepth()) << "/";
 	cout << _nodeStructureInfo->getAllNodes(_nodeStructureInfo->getMaxDepth()) << " nodes";
 
+	//load edges
+		string labelFile = dumpName;
+		labelFile.append("//sortedLabels.bin");
+		path labelPath(labelFile);
+	if (exists(labelPath)) {
+		_sortedLabels = new vector<Label>();
+		ifstream sortedLabels(labelFile, ios::binary);
+		dump::r(&sortedLabels, _sortedLabels);
+		sortedLabels.close();
+		cout << " (with labels)";
+	}
+
 	if (loadEdges) {
 		//load edges
 			string edgeFile = dumpName;
@@ -236,19 +291,22 @@ void DataCache::loadFromDump(string dumpName, bool loadEdges) {
 }
 
 
+void DataCache::sortLabels(vector<Label>* unsorted) {
+	struct labelCompare {
+		bool operator() (Label l1, Label l2) {
+			return (l1.weight > l2.weight);
+		}
+	} comparator;
+
+	sort(unsorted->begin(), unsorted->end(), comparator);
+}
+
 void DataCache::clearMembers( void ) {
-	if (_nodeStructureInfo != NULL) {
-		delete _nodeStructureInfo;
-	}
-	if (_edgeStructureInfo != NULL) {
-		delete _edgeStructureInfo;
-	}
-	if (_packedNodes != NULL) {
-		delete _packedNodes;
-	}
-	if (_packedEdges != NULL) {
-		delete _packedEdges;
-	}
+	delete _nodeStructureInfo;
+	delete _edgeStructureInfo;
+	delete _packedNodes;
+	delete _packedEdges;
+	delete _sortedLabels;
 
 	_eCount = 0;
 	_nCount = 0;
@@ -256,4 +314,5 @@ void DataCache::clearMembers( void ) {
 	_edgeStructureInfo = NULL;
 	_packedNodes = NULL;
 	_packedEdges = NULL;
+	_sortedLabels = NULL;
 }
