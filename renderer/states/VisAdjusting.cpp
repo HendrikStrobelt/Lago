@@ -14,11 +14,11 @@ VisAdjusting::~VisAdjusting( void ) {
 //Interface methods
 
 void VisAdjusting::render( void ) {
-	_r->renderGraph(_r->_currentData, _r->_mouseMoveX, _r->_mouseMoveY);
+	_r->renderGraph(_r->_newData, 0.0f, 0.0f);
 	
 	float maxVals[2];
-	maxVals[0] = _r->_currentData->_maxValuesN[2];
-	maxVals[1] = _r->_currentData->_maxValuesE[1];
+	maxVals[0] = _r->_newData->_maxValuesN[2];
+	maxVals[1] = _r->_newData->_maxValuesE[1];
 	_r->renderHUD(-1.0f, maxVals);
 }
 

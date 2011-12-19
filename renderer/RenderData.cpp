@@ -35,4 +35,5 @@ void RenderData::clear( void ) {
 	 _maxValuesE[1] = -1;
 	 _maxValuesE[2] = -1;
 
+	 _labelPainter.clear();
 }

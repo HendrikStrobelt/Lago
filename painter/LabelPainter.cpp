@@ -1,10 +1,7 @@
 #include "LabelPainter.hpp"
-#include "../context/Context.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 
 LabelPainter::LabelPainter( void ) {
-	context::addResizeListener(this);
-
 	_renderer[4] = new TextRenderer("C://Windows//fonts//times.ttf", 36);
 	_renderer[3] = new TextRenderer("C://Windows//fonts//times.ttf", 26);
 	_renderer[2] = new TextRenderer("C://Windows//fonts//times.ttf", 22);
@@ -21,11 +18,14 @@ LabelPainter::~LabelPainter( void ) {
 
 //public stuff
 
-void LabelPainter::changeLabels(glm::mat4 MVP, const vector<Label>* sortedLabels) {
-	vector<Label> topX;
+void LabelPainter::clear( void ) {
 	for (int i = 0; i < 5; i++) {
 		_renderer[i]->clearTextStorage();
 	}
+}
+
+void LabelPainter::changeLabels(glm::mat4 MVP, const vector<Label>* sortedLabels) {
+	vector<Label> topX;
 
 	int i = 0;
 
@@ -55,14 +55,8 @@ void LabelPainter::changeLabels(glm::mat4 MVP, const vector<Label>* sortedLabels
 }
 
 
-void LabelPainter::renderLabels(float xShift, float yShift) {
+void LabelPainter::renderLabels(int xShift, int yShift) {
 	for (int i = 0; i < 5; i++) {
 		_renderer[i]->renderText(xShift, yShift);
-	}
-}
-
-void LabelPainter::resizeEvent(int width, int height) {
-	for (int i = 0; i < 5; i++) {
-		_renderer[i]->resizeEvent(width, height);
 	}
 }

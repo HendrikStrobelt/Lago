@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GL/glfw.h>
 #include <glm/glm.hpp>
+#include "../painter/LabelPainter.hpp"
 
 class RenderData {
 
@@ -20,6 +21,8 @@ class RenderData {
 
 		float _maxValuesN[3];
 		float _maxValuesE[3];
+
+		LabelPainter _labelPainter;
 
 	private:
 

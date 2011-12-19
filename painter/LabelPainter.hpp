@@ -7,18 +7,16 @@
 
 #include <glm\glm.hpp>
 
-class LabelPainter : IContextListener {
+class LabelPainter {
 
 	public:
 		LabelPainter( void );
 		~LabelPainter( void );
 
 		void changeLabels(glm::mat4 MVP, const vector<Label>* sortedLabels); 
+		void renderLabels(int xShift=0, int yShift=0);
 
-		void renderLabels(float xShift=0.0f, float yShift=0.0f);
-
-		//interface method
-		void resizeEvent(int width, int height);
+		void clear( void );
 
 	private:
 		TextRenderer* _renderer[5];

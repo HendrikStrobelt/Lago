@@ -180,7 +180,7 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 
 	bool writeLabels = false;
 	if (dr.hasNodeLabels()) {
-		cout << " preparing labels" << "\n";
+		cout << "preparing labels" << "\n";
 		writeLabels = true;
         sortLabels(labels);
 		_sortedLabels = labels;

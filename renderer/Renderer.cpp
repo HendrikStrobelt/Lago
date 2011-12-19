@@ -74,6 +74,14 @@ void Renderer::setNewData(string nodeFile, string edgeFile) {
 	}
 }	
 
+void Renderer::updateLabels(RenderData* rData) {
+	if (_dCache.hasLabels()) {
+		glm::mat4 P = cameraHelper::calculateProjection(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+		glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
+		rData->_labelPainter.changeLabels(MVP, _dCache.getSortedLabels());
+	}
+}
+
 void Renderer::renderGraph(RenderData* rData, int xMove, int yMove) {
 	int mouseMoveX, mouseMoveY;
 	mouseHandler::getPressMovement(&mouseMoveX, &mouseMoveY);
@@ -86,6 +94,7 @@ void Renderer::renderGraph(RenderData* rData, int xMove, int yMove) {
 	float maxValues[] = {1.0f, 1.0f, 1.0f}; //vis tex is already normalized
 
 	renderTexture(rData->_vis, maxValues, moveX, moveY);
+	renderLabels(rData, mouseMoveX, -mouseMoveY);
 }
 
 void Renderer::renderHUD(float progress, float maxVals[]) {
@@ -100,13 +109,11 @@ void Renderer::renderHUD(float progress, float maxVals[]) {
 	if (maxVals[0] > 0.0f) {
 		_scalingBars.renderScaleBars(maxVals, _hasEdges);
 	}
+}
 
+void Renderer::renderLabels(RenderData* rData, int xMove, int yMove) {
 	if (_dCache.hasLabels()) {
-		glm::mat4 P = cameraHelper::calculateProjection(_dCache.getNodeStructureInfo(), context::_zoomFactor);
-		glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
-
-		_labelPainter.changeLabels(P, _dCache.getSortedLabels());
-		_labelPainter.renderLabels();
+		rData->_labelPainter.renderLabels(xMove, yMove);
 	}
 }
 

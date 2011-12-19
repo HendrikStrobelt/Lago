@@ -15,7 +15,6 @@
 #include "..\painter\ProgressbarPainter.hpp"
 #include "..\painter\DisplayConvertPainter.hpp"
 #include "..\painter\ScalingPainter.hpp"
-#include "..\painter\LabelPainter.hpp"
 #include "TextureExaminer.hpp"
 
 class Renderer : public IRenderState {
@@ -73,14 +72,15 @@ class Renderer : public IRenderState {
 		ScalingPainter _scalingBars;
 		DisplayConvertPainter _displayConvert;
 		TextureExaminer _textureExaminer;
-		LabelPainter _labelPainter;
 		//
 
 		void setNewData(string nodeFile, string edgeFile="");
+		void updateLabels(RenderData* rData);
 
 		void setState(IRenderState* state);
 		void renderGraph(RenderData* rData, int xMove=0, int yMove=0);
 		void renderHUD(float progress, float maxVals[]);
+		void renderLabels(RenderData* rData, int xMove, int yMove);
 		void renderTexture(GLuint tex, float max[], float xMove=0.0f, float yMove=0.0f);
 		void calculateMaxValues(float result[], GLuint texture, int textureWidth, int textureHeight);
 };
