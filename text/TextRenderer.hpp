@@ -25,8 +25,9 @@ struct Color {
 	float r;
 	float g;
 	float b;
-	Color( void ) : r(0), g(0), b(0) {};
-	Color(float pR, float pG, float pB) : r(pR), g(pG), b(pB) {};
+	float a;
+	Color( void ) : r(0), g(0), b(0), a(0){};
+	Color(float pR, float pG, float pB, float pA) : r(pR), g(pG), b(pB), a(pA) {};
 };
 
 class TextRenderer : public  IContextListener {
@@ -35,15 +36,15 @@ class TextRenderer : public  IContextListener {
 		TextRenderer(string fontPath, int fontSize, bool silent = true);
 		~TextRenderer( void );
 
-		void addText(string text, float centerX, float centerY, Color color);
+		void addText(string text, float centerX, float centerY, float normedWeight=1.0f);
 		void clearTextStorage( void );
 
 		void renderText(float xShift=0.0f, float yShift=0.0f);
-		
+		void renderText(Color color, float xShift=0.0f, float yShift=0.0f);
 
 	private:
 		
-		enum VBOS {VERTEX_COORD1, VERTEX_COORD2, TEX_COORD1, TEX_COORD2, COLOR};
+		enum VBOS {VERTEX_COORD1, VERTEX_COORD2, TEX_COORD1, TEX_COORD2, WEIGHT};
 
 		void resize(int windowWidth, int windowHeight);
 		void setFontSize(int newSize);

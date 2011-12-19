@@ -61,23 +61,17 @@ TextRenderer::~TextRenderer( void ) {
 
 //PUBLIC
 
-void TextRenderer::addText(string text, float centerX, float centerY, Color color) {
+void TextRenderer::addText(string text, float centerX, float centerY, float normedWeight) {
 
 	float* coords1 = new float[text.length() *4];
 	float* coords2 = new float[text.length() *4];
 	float* texCoords1 = new float[text.length() *4];
 	float* texCoords2 = new float[text.length() *4];
-	float* colorArray = new float[text.length() *3];
-
-	float colFloat[3];
-	colFloat[0] = color.r;
-	colFloat[1] = color.g;
-	colFloat[2] = color.b;
+	float* weightArray = new float[text.length()];
 
 	for (int i = 0; i < text.length(); i++) {
-		memcpy(colorArray + (i*3), colFloat, 3 * sizeof(float));
+		weightArray[i] = normedWeight;
 	}
-
 
 	//Calculate bounding box and text shifts
 	int xOff = 0;
@@ -134,7 +128,7 @@ void TextRenderer::addText(string text, float centerX, float centerY, Color colo
 		coords2[i*2 + 1] -= centerShiftY;
 	}
 
-	_storage.push_back(new PreparedText(text.size(), centerX, centerY, coords1, coords2, texCoords1, texCoords2, colorArray));
+	_storage.push_back(new PreparedText(text.size(), centerX, centerY, coords1, coords2, texCoords1, texCoords2, weightArray));
 	_textLength += text.length();
 	_storageChange = true;
 }
@@ -156,6 +150,11 @@ void TextRenderer::resize(int windowWidth, int windowHeight) {
 
 
 void TextRenderer::renderText(float xShift, float yShift) {
+	Color col(-1.0f, -1.0f, -1.0f, -1.0f);
+	renderText(col, xShift, yShift);
+}
+
+void TextRenderer::renderText(Color color, float xShift, float yShift) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -168,7 +167,7 @@ void TextRenderer::renderText(float xShift, float yShift) {
 		float* coords2 = new float[_textLength *4];
 		float* texCoords1 = new float[_textLength *4];
 		float* texCoords2 = new float[_textLength *4];
-		float* colorArray = new float[_textLength *3];
+		float* weightArray = new float[_textLength];
 
 		int copLength = 0;
 		for (int i = 0; i < _storage.size(); i++) {
@@ -185,7 +184,7 @@ void TextRenderer::renderText(float xShift, float yShift) {
 
 			memcpy(texCoords1 + (copLength * 4), _storage[i]->_texCoords1, _storage[i]->_textLength * sizeof(float) * 4);
 			memcpy(texCoords2 + (copLength * 4), _storage[i]->_texCoords2, _storage[i]->_textLength * sizeof(float) * 4);
-			memcpy(colorArray + (copLength * 3), _storage[i]->_color, _storage[i]->_textLength * sizeof(float) * 3);
+			memcpy(weightArray + (copLength), _storage[i]->_weight, _storage[i]->_textLength * sizeof(float));
 			copLength += _storage[i]->_textLength;
 		}
 
@@ -198,34 +197,49 @@ void TextRenderer::renderText(float xShift, float yShift) {
 				glBufferData(GL_ARRAY_BUFFER, _textLength * 4 * sizeof(float), texCoords1, GL_DYNAMIC_DRAW);
 			glBindBuffer(GL_ARRAY_BUFFER, _vbo[TEX_COORD2]);
 				glBufferData(GL_ARRAY_BUFFER, _textLength * 4 * sizeof(float), texCoords2, GL_DYNAMIC_DRAW);
-			glBindBuffer(GL_ARRAY_BUFFER, _vbo[COLOR]);
-				glBufferData(GL_ARRAY_BUFFER, _textLength * 3 * sizeof(float), colorArray, GL_DYNAMIC_DRAW);
+			glBindBuffer(GL_ARRAY_BUFFER, _vbo[WEIGHT]);
+				glBufferData(GL_ARRAY_BUFFER, _textLength * sizeof(float), weightArray, GL_DYNAMIC_DRAW);
 		glBindVertexArray(0);
 
 		delete[] coords1;
 		delete[] coords2;
 		delete[] texCoords1;
 		delete[] texCoords2;
-		delete[] colorArray;
+		delete[] weightArray;
 
 		_storageChange = false;
 	}
 	
 	//render text now
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glBindTexture(GL_TEXTURE_2D, _fontTex);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, _fontTex);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, context::_options._labelScheme);
 			glBindVertexArray(_vao);
 				_shader->use();	
-
 					glUniform1i(_shader->getUniformLocation("tex"), 0);	
+					glUniform1i(_shader->getUniformLocation("colorScheme"), 1);	
+					glUniform4f(_shader->getUniformLocation("color"), color.r, color.g, color.b, color.a);
 					glUniform2f(_shader->getUniformLocation("pixelShift"), xShift, yShift);
 					glUniformMatrix4fv(_shader->getUniformLocation("S"), 1, GL_FALSE, glm::value_ptr(S));
+
+					int scaleMode = 2;
+					float* cp = &(context::_scaleOptions[scaleMode]._controlPoints[0][0]);
+					glUniform1i(_shader->getUniformLocation("linearMode"), context::_scaleOptions[scaleMode]._linearMode);
+					glUniform4f(_shader->getUniformLocation("pointsX"), cp[0], cp[2], cp[4], cp[6]);
+					glUniform4f(_shader->getUniformLocation("pointsY"), cp[1], cp[3], cp[5], cp[7]);
+					glUniform1f(_shader->getUniformLocation("exponent"), context::_scaleOptions[scaleMode]._exponent);
+
 					glDrawArrays(GL_POINTS, 0, _textLength);
-	
 				_shader->unUse();
 			glBindVertexArray(0);
+		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, 0); 
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 
 	glFlush();
 }
@@ -324,11 +338,17 @@ void TextRenderer::initShader( void ) {
 	attribs.push_back("vCoord2");
 	attribs.push_back("vTexCoord1");
 	attribs.push_back("vTexCoord2");
-	attribs.push_back("vColor");
+	attribs.push_back("vWeight");
 	vector<string> unis;
 	unis.push_back("pixelShift");
 	unis.push_back("tex");
 	unis.push_back("S");
+	unis.push_back("color");
+	unis.push_back("colorScheme");
+	unis.push_back("linearMode");
+	unis.push_back("pointsX");
+	unis.push_back("pointsY");
+	unis.push_back("exponent");
 
 	_shader = new GLSLShader(attribs, unis, "shaders/text/text.vert", "shaders/text/text.frag", "shaders/text/text.gem");
 }
@@ -351,9 +371,9 @@ void TextRenderer::prepareBuffers( void ) {
 		glBindBuffer(GL_ARRAY_BUFFER, _vbo[TEX_COORD2]);
 			glEnableVertexAttribArray(_shader->getAttributeLocation("vTexCoord2"));
 			glVertexAttribPointer (_shader->getAttributeLocation("vTexCoord2"), 4, GL_FLOAT, GL_FALSE, 0, 0);
-		glBindBuffer(GL_ARRAY_BUFFER, _vbo[COLOR]);
-			glEnableVertexAttribArray(_shader->getAttributeLocation("vColor"));
-			glVertexAttribPointer (_shader->getAttributeLocation("vColor"), 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, _vbo[WEIGHT]);
+			glEnableVertexAttribArray(_shader->getAttributeLocation("vWeight"));
+			glVertexAttribPointer (_shader->getAttributeLocation("vWeight"), 1, GL_FLOAT, GL_FALSE, 0, 0);
 	glBindVertexArray(0);
 }
 

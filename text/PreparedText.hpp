@@ -4,7 +4,7 @@
 class PreparedText {
 
 	public:
-		PreparedText(int textLength, float centerX, float centerY, float* coords1, float* coords2, float* texCoords1, float* texCoords2, float* color);
+		PreparedText(int textLength, float centerX, float centerY, float* coords1, float* coords2, float* texCoords1, float* texCoords2, float* weight);
 		~PreparedText( void );
 
 		//pull only
@@ -12,7 +12,7 @@ class PreparedText {
 		float* _coords2;
 		float* _texCoords1;
 		float* _texCoords2;
-		float* _color;
+		float* _weight;
 		float _centerX;
 		float _centerY;
 		int _textLength;

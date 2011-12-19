@@ -62,6 +62,7 @@ bool Connection::sync( void ) {
 					context::_options.update(dataMap);
 					context::_scaleOptions[0].update(dataMap, "N.");
 					context::_scaleOptions[1].update(dataMap, "E.");
+					context::_scaleOptions[2].update(dataMap, "L.");
 				}
 			}
 		}

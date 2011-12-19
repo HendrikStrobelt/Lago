@@ -14,7 +14,7 @@ namespace context {
 	bool _run;
 	float _pixelSize;
 	Options _options;
-	ScaleOptions _scaleOptions[2];
+	ScaleOptions _scaleOptions[3];
 
 	//pull
 	float _zoomFactor;

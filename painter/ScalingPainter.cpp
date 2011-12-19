@@ -64,27 +64,27 @@ void ScalingPainter::renderScaleBars(float maxVals[], bool hasEdges) {
 		_e05 = e05;
 
 		test->clearTextStorage();
-		test->addText(getFloatString(0), _textAnchors[0][0], _textAnchors[0][1], Color(0.0f, 0.0f, 0.0f));//right low
+		test->addText(getFloatString(0), _textAnchors[0][0], _textAnchors[0][1]);//right low
 		if (n05 < 0.0f) { //error code no middle value
-			test->addText("", _textAnchors[1][0], _textAnchors[1][1], Color(0.0f, 0.0f, 0.0f));
+			test->addText("", _textAnchors[1][0], _textAnchors[1][1]);
 		} else {
-			test->addText(getFloatString(n05), _textAnchors[1][0], _textAnchors[1][1], Color(0.0f, 0.0f, 0.0f));
+			test->addText(getFloatString(n05), _textAnchors[1][0], _textAnchors[1][1]);
 		}
-		test->addText(getFloatString(_maxN), _textAnchors[2][0], _textAnchors[2][1], Color(0.0f, 0.0f, 0.0f));
+		test->addText(getFloatString(_maxN), _textAnchors[2][0], _textAnchors[2][1]);
 		
 		if (hasEdges) {
-			test->addText(getFloatString(0), _textAnchors[3][0], _textAnchors[3][1], Color(0.0f, 0.0f, 0.0f));//left low
+			test->addText(getFloatString(0), _textAnchors[3][0], _textAnchors[3][1]);//left low
 			if (e05 < 0.0f) { //error code no middle value
-				test->addText("", _textAnchors[4][0], _textAnchors[4][1], Color(0.0f, 0.0f, 0.0f));
+				test->addText("", _textAnchors[4][0], _textAnchors[4][1]);
 			} else {
-				test->addText(getFloatString(e05), _textAnchors[4][0], _textAnchors[4][1], Color(0.0f, 0.0f, 0.0f));
+				test->addText(getFloatString(e05), _textAnchors[4][0], _textAnchors[4][1]);
 			}
-			test->addText(getFloatString(_maxE), _textAnchors[5][0], _textAnchors[5][1], Color(0.0f, 0.0f, 0.0f));
+			test->addText(getFloatString(_maxE), _textAnchors[5][0], _textAnchors[5][1]);
 		}
 	}
 
 
-	test->renderText();
+	test->renderText(Color(0.0f, 0.0f, 0.0f, 1.0f));
 
 	glBlendFunc(GL_ONE, GL_ZERO);
 

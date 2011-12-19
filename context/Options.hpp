@@ -28,6 +28,7 @@ class Options : public IContextListener {
 		bool _adaptiveScaleBars;
 		GLuint _nodeScheme;
 		GLuint _edgeScheme;
+		GLuint _labelScheme;
 
 		bool _changedLocal;
 	
@@ -37,7 +38,7 @@ class Options : public IContextListener {
 		string _edgeFile;
 		string _colorSchemeEdge;
 		string _colorSchemeNode;
-
+		string _colorSchemeLabel;
 
 		void dataChanged(string nodeFile, string edgeFile="");
 		void loadTextures( void );

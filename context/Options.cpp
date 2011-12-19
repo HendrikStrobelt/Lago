@@ -10,6 +10,7 @@ Options::Options( void ) {
 	_edgeFile = "";
 	_colorSchemeNode = "node.tga";
 	_colorSchemeEdge = "edge.tga";
+	_colorSchemeLabel = "label.tga";
 	_nodeScheme = -1;
 	_antiAlias = true;
 	_adaptiveScaleBars = true;
@@ -22,6 +23,7 @@ void Options::init( void ) {
 Options::~Options( void ) {
 	glDeleteTextures(1, &_nodeScheme);
 	glDeleteTextures(1, &_edgeScheme);
+	glDeleteTextures(1, &_labelScheme);
 }
 
 
@@ -33,6 +35,7 @@ string Options::toCommandString( void ) {
 	s << " edgeFile$" << "f." << _edgeFile;
 	s << " nodeCS$" << _colorSchemeNode;
 	s << " edgeCS$" << _colorSchemeEdge;
+	s << " labelCS$" << _colorSchemeLabel;
 	return s.str();
 }
 
@@ -82,13 +85,22 @@ void Options::update(map<string, string> dataMap) {
 		}
 
 		//COLOR SCHEMES
-		string csNode, csEdge;
+		string csNode, csEdge, csLabel;
 		if ((it = dataMap.find("nodeCS")) != dataMap.end()) {
 			csNode = it->second;
 		}
 
 		if ((it = dataMap.find("edgeCS")) != dataMap.end()) {
 			csEdge = it->second;
+		}
+
+		if ((it = dataMap.find("labelCS")) != dataMap.end()) {
+			csLabel = it->second;
+		}
+
+		if (!csLabel.empty() && (csLabel != _colorSchemeLabel)) {
+			_colorSchemeLabel = csLabel;
+			loadTextures();
 		}
 
 		if (   (!csEdge.empty() && !csNode.empty()) && (csEdge != _colorSchemeEdge || csNode != _colorSchemeNode)  ) {
@@ -112,6 +124,7 @@ void Options::loadTextures( void ) {
 	if (_nodeScheme != -1) {
 		glDeleteTextures(1, &_nodeScheme);
 		glDeleteTextures(1, &_edgeScheme);
+		glDeleteTextures(1, &_labelScheme);
 	}
 
 	string path("_Tex//colorSchemes//");
@@ -121,6 +134,9 @@ void Options::loadTextures( void ) {
 
 	string edge = path + _colorSchemeEdge;
 	_edgeScheme = envHelper::loadRGBTexture(edge);
+
+	string label = path + _colorSchemeLabel;
+	_labelScheme = envHelper::loadRGBTexture(label);
 }
 
 void Options::keyEvent(int key, int action) {

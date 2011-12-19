@@ -44,7 +44,7 @@ void LabelPainter::changeLabels(glm::mat4 MVP, const vector<Label>* sortedLabels
 			topX.back().y = labelPos.y;
 			
 			int a = strlen(topX.back().text);
-			_renderer[3]->addText(topX.back().text, labelPos.x, labelPos.y, Color(1.0f, 0.0f, 0.0f));
+			_renderer[3]->addText(topX.back().text, labelPos.x, labelPos.y, 0.5f);
 		}
 
 		i++;
