@@ -11,6 +11,7 @@ in vec4 gTexCoord2[];
 in vec3 gColor[];
 
 uniform mat4 S;
+uniform vec2 pixelShift;
 
 out vec3 fColor;
 out vec2 fTexCoord;
@@ -20,25 +21,25 @@ void main(void)
 		int i = 0;
 
 		//v1
-		gl_Position = S * vec4(gCoord1[i].xy,0,1);
+		gl_Position = S * vec4(gCoord1[i].xy + pixelShift,0,1);
 		fColor = gColor[i];
 		fTexCoord = gTexCoord1[i].xy;
 		EmitVertex();
 
 		//v2
-		gl_Position = S * vec4(gCoord1[i].zw,0,1);
+		gl_Position = S * vec4(gCoord1[i].zw + pixelShift,0,1);
 		fColor = gColor[i];
 		fTexCoord = gTexCoord1[i].zw;
 		EmitVertex();
 
 		//v3
-		gl_Position = S * vec4(gCoord2[i].xy,0,1);
+		gl_Position = S * vec4(gCoord2[i].xy + pixelShift,0,1);
 		fColor = gColor[i];
 		fTexCoord = gTexCoord2[i].xy;
 		EmitVertex();
 
 		//v4
-		gl_Position = S * vec4(gCoord2[i].zw,0,1);
+		gl_Position = S * vec4(gCoord2[i].zw + pixelShift,0,1);
 		fColor = gColor[i];
 		fTexCoord = gTexCoord2[i].zw;
 		EmitVertex();

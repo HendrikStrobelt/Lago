@@ -67,11 +67,11 @@ void WorkStateHelper::work( void ) {
 void WorkStateHelper::takeOver( void ) {
 	
 	resetAll();
-	glm::mat4 P = cameraHelper::calculateProjection(_r->dCache.getNodeStructureInfo(), context::_zoomFactor);
+	glm::mat4 P = cameraHelper::calculateProjection(_r->_dCache.getNodeStructureInfo(), context::_zoomFactor);
 	glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
 
-	int joinDepth = _r->dCache.getNodeStructureInfo()->getJoinDepth(context::_pixelSize);
-	int nodeElements = _r->dCache.getNodeStructureInfo()->getAllNodes(joinDepth);
+	int joinDepth = _r->_dCache.getNodeStructureInfo()->getJoinDepth(context::_pixelSize);
+	int nodeElements = _r->_dCache.getNodeStructureInfo()->getAllNodes(joinDepth);
 	float sideLength = context::_pixelSize * pow(SIDE_BASE, context::_sideExponent);
 
 	_gaussPainter[VIEW] = new GaussPainter(_r->_nodeVBO, _r->_windowWidth, _r->_windowHeight, nodeElements);
@@ -80,10 +80,10 @@ void WorkStateHelper::takeOver( void ) {
 	_pc[GAUSS_VIEW] = new PainterCommander(_gaussPainter[VIEW], POINT_INIT_STEP);
 
 	if (_r->_hasEdges) {
-		int edgeElements = _r->dCache.getEdgeStructureInfo()->getAllEdges(joinDepth);
+		int edgeElements = _r->_dCache.getEdgeStructureInfo()->getAllEdges(joinDepth);
 		
 		//gauss off
-		glm::mat4 P2 = cameraHelper::calculateProjection(_r->dCache.getNodeStructureInfo(), context::_zoomFactor / (OFF_ZOOM * OFF_SHRINK));
+		glm::mat4 P2 = cameraHelper::calculateProjection(_r->_dCache.getNodeStructureInfo(), context::_zoomFactor / (OFF_ZOOM * OFF_SHRINK));
 		glm::mat4 MVP2 = glm::translate(P2, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
 
 		_gaussPainter[OFF] = new GaussPainter(_r->_nodeVBO, (_r->_windowWidth / OFF_SHRINK), (_r->_windowHeight / OFF_SHRINK), nodeElements);

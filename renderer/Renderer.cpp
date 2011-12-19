@@ -5,6 +5,7 @@
 #include "../helper/MouseHandler.hpp"
 #include "../Node.hpp"
 
+#include <glm/gtc/matrix_transform.hpp>
 
 Renderer::Renderer( void ) {
 	_currentData = new RenderData;
@@ -16,7 +17,7 @@ Renderer::Renderer( void ) {
 
 	//load initial data
 	setNewData("_Data/LineNode.out");
-	context::_pixelSize = cameraHelper::getPixelSize(dCache.getNodeStructureInfo(), context::_zoomFactor);
+	context::_pixelSize = cameraHelper::getPixelSize(_dCache.getNodeStructureInfo(), context::_zoomFactor);
 
 	_mouseMoveX = 0;
 	_mouseMoveY = 0;
@@ -53,10 +54,10 @@ void Renderer::setState(IRenderState* state) {
 }
 
 void Renderer::setNewData(string nodeFile, string edgeFile) {
-	dCache.loadDataSet(nodeFile, edgeFile);
+	_dCache.loadDataSet(nodeFile, edgeFile);
 
 	int nodeCount;
-	const PackedNode* packedNodes = dCache.getPackedNodes(&nodeCount);
+	const PackedNode* packedNodes = _dCache.getPackedNodes(&nodeCount);
 	glBindBuffer(GL_ARRAY_BUFFER, _nodeVBO);
 		glBufferData(GL_ARRAY_BUFFER, nodeCount * sizeof(PackedNode), packedNodes, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -64,7 +65,7 @@ void Renderer::setNewData(string nodeFile, string edgeFile) {
 	if (!edgeFile.empty()) {
 		_hasEdges = true;
 		int edgeCount;
-		const PackedEdge* packedEdges = dCache.getPackedEdges(&edgeCount);
+		const PackedEdge* packedEdges = _dCache.getPackedEdges(&edgeCount);
 		glBindBuffer(GL_ARRAY_BUFFER, _edgeVBO);
 			glBufferData(GL_ARRAY_BUFFER, edgeCount * sizeof(PackedEdge), packedEdges, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -98,6 +99,14 @@ void Renderer::renderHUD(float progress, float maxVals[]) {
 
 	if (maxVals[0] > 0.0f) {
 		_scalingBars.renderScaleBars(maxVals, _hasEdges);
+	}
+
+	if (_dCache.hasLabels()) {
+		glm::mat4 P = cameraHelper::calculateProjection(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+		glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
+
+		_labelPainter.changeLabels(P, _dCache.getSortedLabels());
+		_labelPainter.renderLabels();
 	}
 }
 
@@ -140,13 +149,13 @@ void Renderer::changePanning(int xMouseMove, int yMouseMove) {
 }
 
 void Renderer::changeZoom( void ) {
- 	context::_pixelSize = cameraHelper::getPixelSize(dCache.getNodeStructureInfo(), context::_zoomFactor);
+ 	context::_pixelSize = cameraHelper::getPixelSize(_dCache.getNodeStructureInfo(), context::_zoomFactor);
 	_state->changeZoom();
 }
 
 void Renderer::changeData(string nodeFile, string edgeFile) {
 	setNewData(nodeFile, edgeFile);
-	context::_pixelSize = cameraHelper::getPixelSize(dCache.getNodeStructureInfo(), context::_zoomFactor);
+	context::_pixelSize = cameraHelper::getPixelSize(_dCache.getNodeStructureInfo(), context::_zoomFactor);
 	_state->changeData(nodeFile, edgeFile);
 }
 
@@ -156,7 +165,7 @@ void Renderer::changeSideLength( void ) {
 
 void Renderer::changeWindow( void ) {
 	context::getWindowSize(&_windowWidth, &_windowHeight);
-	context::_pixelSize = cameraHelper::getPixelSize(dCache.getNodeStructureInfo(), context::_zoomFactor);
+	context::_pixelSize = cameraHelper::getPixelSize(_dCache.getNodeStructureInfo(), context::_zoomFactor);
 	_state->changeWindow();
 }
 

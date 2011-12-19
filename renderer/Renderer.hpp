@@ -15,6 +15,7 @@
 #include "..\painter\ProgressbarPainter.hpp"
 #include "..\painter\DisplayConvertPainter.hpp"
 #include "..\painter\ScalingPainter.hpp"
+#include "..\painter\LabelPainter.hpp"
 #include "TextureExaminer.hpp"
 
 class Renderer : public IRenderState {
@@ -46,7 +47,7 @@ class Renderer : public IRenderState {
 
 	private:
 
-		DataCache dCache;
+		DataCache _dCache;
 
 		RenderData* _currentData;
 		RenderData* _newData;
@@ -72,6 +73,7 @@ class Renderer : public IRenderState {
 		ScalingPainter _scalingBars;
 		DisplayConvertPainter _displayConvert;
 		TextureExaminer _textureExaminer;
+		LabelPainter _labelPainter;
 		//
 
 		void setNewData(string nodeFile, string edgeFile="");

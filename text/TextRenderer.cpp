@@ -155,7 +155,7 @@ void TextRenderer::resize(int windowWidth, int windowHeight) {
 }
 
 
-void TextRenderer::renderText( void ) {
+void TextRenderer::renderText(float xShift, float yShift) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -218,6 +218,7 @@ void TextRenderer::renderText( void ) {
 				_shader->use();	
 
 					glUniform1i(_shader->getUniformLocation("tex"), 0);	
+					glUniform2f(_shader->getUniformLocation("pixelShift"), xShift, yShift);
 					glUniformMatrix4fv(_shader->getUniformLocation("S"), 1, GL_FALSE, glm::value_ptr(S));
 					glDrawArrays(GL_POINTS, 0, _textLength);
 	
@@ -325,6 +326,7 @@ void TextRenderer::initShader( void ) {
 	attribs.push_back("vTexCoord2");
 	attribs.push_back("vColor");
 	vector<string> unis;
+	unis.push_back("pixelShift");
 	unis.push_back("tex");
 	unis.push_back("S");
 
@@ -405,7 +407,7 @@ RenderedGlyph* TextRenderer::renderGlyph(char c) {
 
 
 void TextRenderer::fillAlphabet( void ) {
-	_CHARS = 69;
+	_CHARS = 72;
 	_ALPHABET = new char[_CHARS];
 
 	int i = 0;
@@ -416,6 +418,8 @@ void TextRenderer::fillAlphabet( void ) {
 	_ALPHABET[i] = '.';	_ALPHABET_INDEX['.'] = i; i++;
 	_ALPHABET[i] = '+';	_ALPHABET_INDEX['+'] = i; i++;
 	_ALPHABET[i] = '-';	_ALPHABET_INDEX['-'] = i; i++;
+	_ALPHABET[i] = ':';	_ALPHABET_INDEX[':'] = i; i++;
+	_ALPHABET[i] = '_';	_ALPHABET_INDEX['_'] = i; i++;
 
 	for (char c = '0'; c <= '9'; c++) {
 		_ALPHABET[i] = c ;

@@ -158,7 +158,7 @@ bool DataReader::readNextNode(vector<Node>* nodes, vector<Label>* labels) {
 		Node n;
 		Label l;
 
-		char* token = strtok(_line,",");
+		char* token = strtok(_line,",\n");
 
 		int i = 0;
 		while (token != NULL) {
@@ -172,16 +172,15 @@ bool DataReader::readNextNode(vector<Node>* nodes, vector<Label>* labels) {
 				n.weight = (float)atof(token);
 			} else 
 			if (i == _nodeCols[N_LABEL]) {
-				string s = token;
-				s.substr(0, MAX_LABEL_LENGTH);
-				strcpy(l.text,s.c_str());
+				strncpy(l.text, token, MAX_LABEL_LENGTH);
+				l.text[MAX_LABEL_LENGTH] = '\0';
 			} else 
 			if (i == _nodeCols[N_LABEL_WEIGHT]) {
 				l.weight = (float)atof(token);
 			}						
 		
 			i++;
-			token = strtok(NULL, ","); //next token
+			token = strtok(NULL, ",\n"); //next token
 		}
 		
 		nodes->push_back(n);
@@ -201,7 +200,7 @@ bool DataReader::readNextEdge(vector<ReferenceEdge>* edges) {
 		fgets(_line, sizeof(_line), _edgeFile) != NULL) {
 	
 		ReferenceEdge e;
-		char* token = strtok(_line,",");
+		char* token = strtok(_line,",\n");
 
 		int i = 0;
 		while (token != NULL) {
@@ -216,7 +215,7 @@ bool DataReader::readNextEdge(vector<ReferenceEdge>* edges) {
 			}						
 		
 			i++;
-			token = strtok(NULL, ","); //next token
+			token = strtok(NULL, ",\n"); //next token
 		}
 
 		edges->push_back(e);

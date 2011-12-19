@@ -38,7 +38,7 @@ class TextRenderer : public  IContextListener {
 		void addText(string text, float centerX, float centerY, Color color);
 		void clearTextStorage( void );
 
-		void renderText( void );
+		void renderText(float xShift=0.0f, float yShift=0.0f);
 		
 
 	private:
