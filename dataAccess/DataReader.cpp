@@ -17,6 +17,21 @@ DataReader::~DataReader( void ) {
 }
 
 
+bool DataReader::hasNodeLabels( void ) {
+	if (N_LABEL != NO_LABELS) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool DataReader::hasNodeLabelWeights( void ) {
+	if (N_LABEL_WEIGHT != NO_LABEL_WEIGHTS) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
 void DataReader::setNodeFile(string filePath) {
 	if (_nodeFile != NULL) {
@@ -27,6 +42,7 @@ void DataReader::setNodeFile(string filePath) {
 	_nodeCols[Y] = 1;
 	_nodeCols[N_WEIGHT] = NO_WEIGHTS;
 	_nodeCols[N_LABEL] = NO_LABELS;
+	_nodeCols[N_LABEL_WEIGHT] = NO_LABEL_WEIGHTS;
 
 	fopen_s(&_nodeFile, filePath.c_str(), "r");
 	if (_nodeFile) {
@@ -46,11 +62,14 @@ void DataReader::setNodeFile(string filePath) {
 				foundY = true;
 			} else 
 			if (strcmp(token, "N_WEIGHT") == 0) {
-				_nodeCols[Y] = i;
+				_nodeCols[N_WEIGHT] = i;
 			} else 
 			if (strcmp(token, "N_LABEL") == 0) {
-				_nodeCols[Y] = i;
-			};
+				_nodeCols[N_LABEL] = i;
+			} else 
+			if (strcmp(token, "N_LABEL_WEIGHT") == 0) {
+				_nodeCols[N_LABEL_WEIGHT] = i;
+			}
 		
 			i++;
 			token = strtok(NULL, ","); //next token
@@ -63,6 +82,9 @@ void DataReader::setNodeFile(string filePath) {
 			}
 			if (_nodeCols[N_LABEL] != NO_LABELS) {
 				cout << ", N_LABEL(" << _nodeCols[N_LABEL] << ")";
+			}
+			if (_nodeCols[N_LABEL_WEIGHT] != NO_LABEL_WEIGHTS) {
+				cout << ", N_LABEL_WEIGHT(" << _nodeCols[N_LABEL_WEIGHT] << ")";
 			}
 			cout << "\n";
 		} else {
@@ -82,38 +104,26 @@ void DataReader::setEdgeFile(string filePath) {
 		fclose(_edgeFile);
 	}
 
-	_edgeCols[X1] = 0;
-	_edgeCols[Y1] = 1;
-	_edgeCols[X2] = 2;
-	_edgeCols[Y2] = 3;
+	_edgeCols[N1] = 0;
+	_edgeCols[N2] = 1;
 	_edgeCols[E_WEIGHT] = NO_WEIGHTS;
 
 	fopen_s(&_edgeFile, filePath.c_str(), "r");
 	if (_edgeFile) {
 		fgets(_line, sizeof(_line), _edgeFile); //read first line
-		bool foundX1 = false;
-		bool foundY1 = false;
-		bool foundX2 = false;
-		bool foundY2 = false;
+		bool foundN1 = false;
+		bool foundN2 = false;
 		
 		int i = 0;
 		char* token = strtok(_line,",");
 		while (token != NULL) {
-			if (strcmp(token, "X1") == 0) {
-				_edgeCols[X1] = i;
-				foundX1 = true;
+			if (strcmp(token, "N1") == 0) {
+				_edgeCols[N1] = i;
+				foundN1 = true;
 			} else 
-			if (strcmp(token, "Y1") == 0) {
-				_edgeCols[Y1] = i;
-				foundY1 = true;
-			} else 
-			if (strcmp(token, "X2") == 0) {
-				_edgeCols[X2] = i;
-				foundX2 = true;
-			} else 
-			if (strcmp(token, "Y2") == 0) {
-				_edgeCols[Y2] = i;
-				foundY2 = true;
+			if (strcmp(token, "N2") == 0) {
+				_edgeCols[N2] = i;
+				foundN2 = true;
 			} else 
 			if (strcmp(token, "E_WEIGHT") == 0) {
 				_edgeCols[E_WEIGHT] = i;
@@ -123,15 +133,14 @@ void DataReader::setEdgeFile(string filePath) {
 			token = strtok(NULL, ","); //next token
 		}
 
-		if (foundX1 && foundY1 && foundX2 && foundY2) {
-			cout << "header detection successfull: using X1(" << _edgeCols[X1] << "), Y1(" << _edgeCols[Y1] << ")";
-			cout << ", X2(" << _edgeCols[X2] << "), Y2(" << _edgeCols[Y2] << ")";
+		if (foundN1 && foundN2) {
+			cout << "header detection successfull: using N1(" << _edgeCols[N1] << "), N2(" << _edgeCols[N2] << ")";
 			if (_edgeCols[E_WEIGHT] != NO_WEIGHTS) {
 				cout << ", E_WEIGHT(" << _edgeCols[E_WEIGHT] << ")";
 			}
 			cout << "\n";
 		} else {
-			cout << "no header detected: skipping line1 using fallback X1(0), Y1(1), X2(2), Y2(3)" << "\n";
+			cout << "no header detected: skipping line1 using fallback N1(0), N2(1)" << "\n";
 		}
 		_edgeFileSet = true;
 	} else {
@@ -142,11 +151,13 @@ void DataReader::setEdgeFile(string filePath) {
 }
 
 
-bool DataReader::readNextNode(vector<Node>* nodes) {
+bool DataReader::readNextNode(vector<Node>* nodes, vector<Label>* labels) {
 	if (_nodeFileSet && 
 		fgets(_line, sizeof(_line), _nodeFile) != NULL) {
 
 		Node n;
+		Label l;
+
 		char* token = strtok(_line,",");
 
 		int i = 0;
@@ -161,7 +172,10 @@ bool DataReader::readNextNode(vector<Node>* nodes) {
 				n.weight = (float)atof(token);
 			} else 
 			if (i == _nodeCols[N_LABEL]) {
-				//TODO not yet supported node labels
+				l.text = token;
+			} else 
+			if (i == _nodeCols[N_LABEL_WEIGHT]) {
+				l.weight = (float)atof(token);
 			}						
 		
 			i++;
@@ -169,32 +183,31 @@ bool DataReader::readNextNode(vector<Node>* nodes) {
 		}
 		
 		nodes->push_back(n);
+		if (hasNodeLabels() && labels != NULL) {
+			l.x = n.x;
+			l.y = n.y;
+			labels->push_back(l);
+		}
 		return true;
 	} else {
 		return false;
 	}
 }
 
-bool DataReader::readNextEdge(vector<Edge>* edges) {
+bool DataReader::readNextEdge(vector<ReferenceEdge>* edges) {
 	if (_edgeFileSet && 
 		fgets(_line, sizeof(_line), _edgeFile) != NULL) {
 	
-		Edge e;
+		ReferenceEdge e;
 		char* token = strtok(_line,",");
 
 		int i = 0;
 		while (token != NULL) {
-			if (i == _edgeCols[X1]) {
-				e.x1 = (float)atof(token);
+			if (i == _edgeCols[N1]) {
+				e.n1Ref = (int)atoi(token);
 			} else
-			if (i == _edgeCols[Y1]) {
-				e.y1 = (float)atof(token);
-			} else
-			if (i == _edgeCols[X2]) {
-				e.x2 = (float)atof(token);
-			} else
-			if (i == _edgeCols[Y2]) {
-				e.y2 = (float)atof(token);
+			if (i == _edgeCols[N2]) {
+				e.n2Ref = (int)atoi(token);
 			} else
 			if (i == _edgeCols[E_WEIGHT]) {
 				e.weight = atof(token);

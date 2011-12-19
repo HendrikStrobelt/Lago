@@ -128,13 +128,20 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 		//load edge data
 		writeEdges = true;
 		dr.setEdgeFile(edgeFile);
-		vector<Edge> edges;
+		vector<ReferenceEdge> refEdges;
 
 		cout << "loading edges from " << edgeFile;
 
 		read = true;
 		while (read) {
-			read = dr.readNextEdge(&edges);
+			read = dr.readNextEdge(&refEdges);
+		}
+		//switch to internal format
+		vector<Edge> edges;
+		edges.reserve(refEdges.size());
+		for (int i = 0; i < refEdges.size(); i++) {
+			ReferenceEdge* refEdge = &refEdges[i];
+			edges.push_back(Edge(&nodes[refEdge->n1Ref], &nodes[refEdge->n2Ref], refEdge));
 		}
 
 		cout << " (total of " << edges.size() << " edges)" << "\n";

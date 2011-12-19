@@ -7,11 +7,13 @@
 
 #include "../Node.hpp"
 #include "../Edge.hpp"
+#include "../Label.hpp"
 
 using namespace std;
 
 #define NO_WEIGHTS -1
 #define NO_LABELS -1
+#define NO_LABEL_WEIGHTS -1
 
 class DataReader {
 
@@ -22,13 +24,16 @@ class DataReader {
 		void setNodeFile(string filePath);
 		void setEdgeFile(string filePath);
 
-		bool readNextNode(vector<Node>* nodes);
-		bool readNextEdge(vector<Edge>* edges);
+		bool hasNodeLabels( void );
+		bool hasNodeLabelWeights( void );
+
+		bool readNextNode(vector<Node>* nodes, vector<Label>* labels=NULL);
+		bool readNextEdge(vector<ReferenceEdge>* edges);
 
 	private:
 
-		enum NODE_COLS {X, Y, N_WEIGHT, N_LABEL};
-		enum EDGE_COLS {X1, Y1, X2, Y2, E_WEIGHT};
+		enum NODE_COLS {X, Y, N_WEIGHT, N_LABEL, N_LABEL_WEIGHT};
+		enum EDGE_COLS {N1, N2, E_WEIGHT};
 
 		char _line[1024];
 		bool _nodeFileSet;
@@ -37,7 +42,7 @@ class DataReader {
 		FILE* _edgeFile;
 
 		int _nodeCols[4];
-		int _edgeCols[5];
+		int _edgeCols[3];
 };
 
 #endif
