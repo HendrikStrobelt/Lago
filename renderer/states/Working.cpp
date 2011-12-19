@@ -38,7 +38,6 @@ void Working::work( void ) {
 			_r->_newData->_lineField = _worker->_linePainter->detachTexture();
 		}
 
-		_r->updateLabels(_r->_newData);
 		_r->setState(_r->_visAdjust);
 	}
 }

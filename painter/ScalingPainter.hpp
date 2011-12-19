@@ -33,7 +33,6 @@ class ScalingPainter : public IContextListener {
 		void updateBarPositions(int w, int h);
 		string getFloatString(float value);
 		float reverseScale(float normedVal, bool linearMode, float exponent, float pointsX[], float pointsY[]);
-		float mix(float x, float y, float a);
 
 		void getShader( void );
 		void initVao( void );

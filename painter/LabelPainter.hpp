@@ -19,7 +19,9 @@ class LabelPainter {
 		void clear( void );
 
 	private:
-		TextRenderer* _renderer[5];
+		float scale(float normedVal, bool linearMode, float exponent, float pointsX[], float pointsY[]);
+		float mix(float x, float y, float a);
+		TextRenderer* _renderer[6];
 };
 
 

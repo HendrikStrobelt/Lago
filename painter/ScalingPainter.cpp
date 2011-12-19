@@ -203,10 +203,6 @@ float ScalingPainter::reverseScale(float normedVal, bool linearMode, float expon
 	}
 }
 
-float ScalingPainter::mix(float x, float y, float a) {
-	return (x * (1.0f-a) + y * a);
-}
-
 void ScalingPainter::createShader( void ) {
 	if (_shader_ptr == NULL) {
 		vector<string> unis;

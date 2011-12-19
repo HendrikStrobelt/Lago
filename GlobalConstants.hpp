@@ -43,6 +43,6 @@
 
 //labels
 #define MAX_LABEL_LENGTH 30
-#define MAX_LABELS 10
+#define MAX_LABELS 40
 
 #endif
