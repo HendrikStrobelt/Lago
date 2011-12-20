@@ -21,8 +21,11 @@ LabelPainter::~LabelPainter( void ) {
 //public stuff
 
 void LabelPainter::clear( void ) {
+	int w,h;
+	context::getWindowSize(&w, &h);
 	for (int i = 0; i < 6; i++) {
 		_renderer[i]->clearTextStorage();
+		_renderer[i]->resize(w, h);
 	}
 }
 

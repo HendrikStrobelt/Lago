@@ -28,7 +28,7 @@ class ScalingPainter : public IContextListener {
 		static GLSLShader* _shader_ptr;
 		static void createShader( void );
 		
-		TextRenderer* test;
+		TextRenderer* text;
 
 		void updateBarPositions(int w, int h);
 		string getFloatString(float value);

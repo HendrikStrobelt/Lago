@@ -5,7 +5,6 @@
 #include <vector>
 #include <iostream>
 #include "../helper/GLSLShader.hpp"
-#include "../context/IContextListener.hpp"
 #include "RenderedGlyph.hpp"
 #include "PreparedText.hpp"
 
@@ -30,7 +29,7 @@ struct Color {
 	Color(float pR, float pG, float pB, float pA) : r(pR), g(pG), b(pB), a(pA) {};
 };
 
-class TextRenderer : public  IContextListener {
+class TextRenderer {
 	
 	public:
 		TextRenderer(string fontPath, int fontSize, bool silent = true);
@@ -42,11 +41,12 @@ class TextRenderer : public  IContextListener {
 		void renderText(float xShift=0.0f, float yShift=0.0f);
 		void renderText(Color color, float xShift=0.0f, float yShift=0.0f);
 
+		void resize(int windowWidth, int windowHeight);
+
 	private:
 		
 		enum VBOS {VERTEX_COORD1, VERTEX_COORD2, TEX_COORD1, TEX_COORD2, WEIGHT};
 
-		void resize(int windowWidth, int windowHeight);
 		void setFontSize(int newSize);
 		void uploadGlyphSet(int glyphW, int glyphH);
 		int getKerningXShift(FT_UInt previousGlyph, FT_UInt thisGlyph);

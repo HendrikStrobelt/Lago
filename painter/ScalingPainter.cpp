@@ -7,7 +7,7 @@
 GLSLShader* ScalingPainter::_shader_ptr = NULL;
 
 ScalingPainter::ScalingPainter( void ) {
-	test = new TextRenderer("C://Windows//Fonts//verdana.ttf", 9);
+	text = new TextRenderer("C://Windows//Fonts//verdana.ttf", 9);
 
 	_maxN = -1;
 	_maxE = -1;
@@ -23,7 +23,7 @@ ScalingPainter::ScalingPainter( void ) {
 ScalingPainter::~ScalingPainter( void) {
 	glDeleteBuffers(2, &_vbo[0]);
 	glDeleteVertexArrays(1, &_vao);
-	delete test;
+	delete text;
 }
 
 //static clean up
@@ -63,28 +63,28 @@ void ScalingPainter::renderScaleBars(float maxVals[], bool hasEdges) {
 		_n05 = n05;
 		_e05 = e05;
 
-		test->clearTextStorage();
-		test->addText(getFloatString(0), _textAnchors[0][0], _textAnchors[0][1]);//right low
+		text->clearTextStorage();
+		text->addText(getFloatString(0), _textAnchors[0][0], _textAnchors[0][1]);//right low
 		if (n05 < 0.0f) { //error code no middle value
-			test->addText("", _textAnchors[1][0], _textAnchors[1][1]);
+			text->addText("", _textAnchors[1][0], _textAnchors[1][1]);
 		} else {
-			test->addText(getFloatString(n05), _textAnchors[1][0], _textAnchors[1][1]);
+			text->addText(getFloatString(n05), _textAnchors[1][0], _textAnchors[1][1]);
 		}
-		test->addText(getFloatString(_maxN), _textAnchors[2][0], _textAnchors[2][1]);
+		text->addText(getFloatString(_maxN), _textAnchors[2][0], _textAnchors[2][1]);
 		
 		if (hasEdges) {
-			test->addText(getFloatString(0), _textAnchors[3][0], _textAnchors[3][1]);//left low
+			text->addText(getFloatString(0), _textAnchors[3][0], _textAnchors[3][1]);//left low
 			if (e05 < 0.0f) { //error code no middle value
-				test->addText("", _textAnchors[4][0], _textAnchors[4][1]);
+				text->addText("", _textAnchors[4][0], _textAnchors[4][1]);
 			} else {
-				test->addText(getFloatString(e05), _textAnchors[4][0], _textAnchors[4][1]);
+				text->addText(getFloatString(e05), _textAnchors[4][0], _textAnchors[4][1]);
 			}
-			test->addText(getFloatString(_maxE), _textAnchors[5][0], _textAnchors[5][1]);
+			text->addText(getFloatString(_maxE), _textAnchors[5][0], _textAnchors[5][1]);
 		}
 	}
 
 
-	test->renderText(Color(0.0f, 0.0f, 0.0f, 1.0f));
+	text->renderText(Color(0.0f, 0.0f, 0.0f, 1.0f));
 
 	glBlendFunc(GL_ONE, GL_ZERO);
 
@@ -129,6 +129,7 @@ void ScalingPainter::renderScaleBars(float maxVals[], bool hasEdges) {
 }
 
 void ScalingPainter::resizeEvent(int width, int height) {
+	text->resize(width, height);
 	updateBarPositions(width, height);
 }
 

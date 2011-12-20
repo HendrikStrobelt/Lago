@@ -11,7 +11,6 @@ TextRenderer::TextRenderer(string fontPath, int fontSize, bool silent) {
 	_silent = silent;
 	_glyphSet = NULL;
 	context::getWindowSize(&_windowWidth, &_windowHeight);
-	context::addResizeListener(this);
 
 	//init lib
 	if(FT_Init_FreeType(&_ftLib)) {
@@ -142,12 +141,12 @@ void TextRenderer::clearTextStorage( void ) {
 	_storageChange = true;
 }
 
+
 void TextRenderer::resize(int windowWidth, int windowHeight) {
 	_windowWidth = windowWidth;
 	_windowHeight = windowHeight;
 	_storageChange = true;
 }
-
 
 void TextRenderer::renderText(float xShift, float yShift) {
 	Color col(-1.0f, -1.0f, -1.0f, -1.0f);
