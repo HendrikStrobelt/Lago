@@ -63,6 +63,11 @@ namespace mouseHandler {
 	
 	void mouseWheelEvent(int pos) {
 		context::setZoomExponent(context::_zoomExponent + pos);
+
+		if (glfwGetMouseButton(GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
+			context::setSideExponent(context::_sideExponent + pos);
+		}
+
 		glfwSetMouseWheel(0);
 	}
 

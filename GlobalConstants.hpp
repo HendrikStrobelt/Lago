@@ -27,10 +27,8 @@
 #define TE_MAX_ITERATIONS 1
 
 
-//zooom
+//zooom & quad exponent should be equal to enable direct zoom middle mouse button
 #define ZOOM_BASE 1.3
-
-//Quads
 #define SIDE_BASE 1.3
 
 //dividedLines
