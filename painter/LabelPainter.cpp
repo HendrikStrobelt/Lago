@@ -3,17 +3,16 @@
 #include "../context/Context.hpp"
 
 LabelPainter::LabelPainter( void ) {
-	_renderer[5] = new TextRenderer("C://Windows//fonts//timesbd.ttf", 24);
-	_renderer[4] = new TextRenderer("C://Windows//fonts//timesbd.ttf", 16);
-	_renderer[3] = new TextRenderer("C://Windows//fonts//timesbd.ttf", 12);
-	_renderer[2] = new TextRenderer("C://Windows//fonts//timesbd.ttf", 8);
-	_renderer[1] = new TextRenderer("C://Windows//fonts//timesbd.ttf", 6);
-	_renderer[0] = new TextRenderer("C://Windows//fonts//timesbd.ttf", 4);
+	_renderer[4] = new TextRenderer("C://Windows//fonts//times.ttf", 28);
+	_renderer[3] = new TextRenderer("C://Windows//fonts//times.ttf", 20);
+	_renderer[2] = new TextRenderer("C://Windows//fonts//times.ttf", 16);
+	_renderer[1] = new TextRenderer("C://Windows//fonts//times.ttf", 12);
+	_renderer[0] = new TextRenderer("C://Windows//fonts//times.ttf", 10);
 }
 
 
 LabelPainter::~LabelPainter( void ) {
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 5; i++) {
 		delete _renderer[i];
 	}
 }
@@ -23,7 +22,7 @@ LabelPainter::~LabelPainter( void ) {
 void LabelPainter::clear( void ) {
 	int w,h;
 	context::getWindowSize(&w, &h);
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 5; i++) {
 		_renderer[i]->clearTextStorage();
 		_renderer[i]->resize(w, h);
 	}
@@ -47,30 +46,40 @@ void LabelPainter::changeLabels(glm::mat4 MVP, const vector<Label>* sortedLabels
 			topX.push_back(sortedLabels->at(i));
 			topX.back().x = labelPos.x;
 			topX.back().y = labelPos.y;
-			
-			int a = strlen(topX.back().text);
-
-			float normedVal = topX.back().weight / topX.front().weight;
-			ScaleOptions* so = &context::_scaleOptions[2];
-			float pointsX[4] = {so->_controlPoints[0][0], so->_controlPoints[1][0], so->_controlPoints[2][0], so->_controlPoints[3][0]};
-			float pointsY[4] = {so->_controlPoints[0][1], so->_controlPoints[1][1], so->_controlPoints[2][1], so->_controlPoints[3][1]};
-
-			float scaled = scale(normedVal, so->_linearMode, so->_exponent, pointsX, pointsY);
-			int index = min(5, (int)floor(scaled * 6.0f));
-
-			_renderer[index]->addText(topX.back().text, labelPos.x, labelPos.y, normedVal);
 		}
 
 		i++;
 	}
 
-	//add them to the correct renderer
+	float maxW = topX.front().weight;
+	float minW = topX.back().weight;
+	float div = maxW - minW;
+
+	for (int i = 0; i < topX.size(); i++) {
+
+		float normedVal;
+
+		if (div != 0) {
+			normedVal = (topX[i].weight - minW)  / div;
+		} else {
+			normedVal = 0.5f;
+		}
+		
+		ScaleOptions* so = &context::_scaleOptions[2];
+		float pointsX[4] = {so->_controlPoints[0][0], so->_controlPoints[1][0], so->_controlPoints[2][0], so->_controlPoints[3][0]};
+		float pointsY[4] = {so->_controlPoints[0][1], so->_controlPoints[1][1], so->_controlPoints[2][1], so->_controlPoints[3][1]};
+
+		float scaled = scale(normedVal, so->_linearMode, so->_exponent, pointsX, pointsY);
+
+		int index = min(4, (int)floor(scaled * 5.0f));
+		_renderer[index]->addText(topX[i].text, topX[i].x, topX[i].y, normedVal);
+	}
 	
 }
 
 
 void LabelPainter::renderLabels(int xShift, int yShift) {
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 5; i++) {
 		_renderer[i]->renderText(xShift, yShift);
 	}
 }

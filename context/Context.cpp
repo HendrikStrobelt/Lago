@@ -49,8 +49,6 @@ namespace context {
 		clearRenderVariables();
 		addKeyEventListener(&_options);
 		_options.init();
-		_scaleOptions[2]._linearMode = false;
-		_scaleOptions[2]._exponent = 0.5f;
 		_renderer = new Renderer;
 	}
 
