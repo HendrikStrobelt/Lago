@@ -43,4 +43,7 @@
 #define MAX_LABEL_LENGTH 30
 #define START_MAX_LABELS 20
 
+//graphviz
+#define USE_GRAPHVIZ true
+
 #endif

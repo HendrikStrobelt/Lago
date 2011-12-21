@@ -21,7 +21,7 @@ class LabelPainter {
 	private:
 		float scale(float normedVal, bool linearMode, float exponent, float pointsX[], float pointsY[]);
 		float mix(float x, float y, float a);
-		TextRenderer* _renderer[6];
+		TextRenderer* _renderer[5];
 };
 
 

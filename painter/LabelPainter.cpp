@@ -1,6 +1,8 @@
 #include "LabelPainter.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include "../context/Context.hpp"
+#include "../helper/GraphVizCom.hpp"
+#include "../GlobalConstants.hpp"
 
 LabelPainter::LabelPainter( void ) {
 	_renderer[4] = new TextRenderer("C://Windows//fonts//times.ttf", 28);
@@ -31,14 +33,19 @@ void LabelPainter::clear( void ) {
 void LabelPainter::changeLabels(glm::mat4 MVP, const vector<Label>* sortedLabels) {
 	vector<Label> topX;
 
+	int w,h;
+	context::getWindowSize(&w, &h);
 	int i = 0;
 
 	glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 0.0f));
 	glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 1.0f));
+
 	glm::mat4 MVP2 = S * T * MVP; // transforms world to 0..1-0..1 coordinates
 
-	vector<int> topX2sortedIndex;
+	vector<int> x_topX;
+	vector<int> y_topX;
 
+	//select top x labels
 	while (topX.size() < context::_options._labelCount && i < sortedLabels->size()) {
 		glm::vec4 labelPos(sortedLabels->at(i).x, sortedLabels->at(i).y, 0.0f, 1.0f);
 		labelPos = MVP2 * labelPos;
@@ -46,7 +53,8 @@ void LabelPainter::changeLabels(glm::mat4 MVP, const vector<Label>* sortedLabels
 		if (labelPos.x >= 0.0f && labelPos.x <= 1.0f && labelPos.y >= 0.0f && labelPos.y <= 1.0f) {
 			//inside
 			topX.push_back(sortedLabels->at(i));
-			topX2sortedIndex.push_back(i);
+			x_topX.push_back(labelPos.x * (float)w);
+			y_topX.push_back(labelPos.y * (float)h);
 		}
 
 		i++;
@@ -80,18 +88,37 @@ void LabelPainter::changeLabels(glm::mat4 MVP, const vector<Label>* sortedLabels
 		topX2RenderIndex.push_back(index);
 	}
 
-	//set their positions
-	int textCount[5] = {0,0,0,0,0};
-	for (int i = 0; i < topX.size(); i++) {
-		float x = sortedLabels->at(topX2sortedIndex[i]).x;
-		float y = sortedLabels->at(topX2sortedIndex[i]).y;
+	//calculate new positions
+	vector<graphVizCom::MovedBox>* newPos = NULL;
 
-		glm::vec4 labelPos(x, y, 0.0f, 1.0f);
-		labelPos = MVP2 * labelPos;
+	if (USE_GRAPHVIZ) {
+		graphVizCom::prepare();
 
-		_renderer[topX2RenderIndex[i]]->setCenter(textCount[topX2RenderIndex[i]], labelPos.x, labelPos.y);
-		textCount[topX2RenderIndex[i]]++;
+		int off[5] = {0,0,0,0,0};
+		for (int i = 0; i < topX.size(); i++) {
+			int rI = topX2RenderIndex[i];
+			PreparedText* label = _renderer[rI]->getTexts()->at(off[rI]);
+			graphVizCom::add(x_topX[i], y_topX[i], label->_textPixWidth, label->_textPixHeight);
+			off[rI]++;
+		}
+		newPos = graphVizCom::transmit();
+
+		for (int i = 0; i < newPos->size(); i++) {
+			x_topX[newPos->at(i).id] =  newPos->at(i).x;
+			y_topX[newPos->at(i).id] =  newPos->at(i).y;
+		}
 	}
+
+	//set new positions
+	int off[5] = {0,0,0,0,0};
+	for (int i = 0; i < topX.size(); i++) {
+		int rI = topX2RenderIndex[i];
+		_renderer[rI]->setCenter(off[rI], (float)x_topX[i] / (float)w, (float)y_topX[i] / (float)h);
+		off[rI]++;
+	}
+
+
+	delete newPos;
 }
 
 
