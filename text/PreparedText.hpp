@@ -4,8 +4,10 @@
 class PreparedText {
 
 	public:
-		PreparedText(int textLength, float centerX, float centerY, float* coords1, float* coords2, float* texCoords1, float* texCoords2, float* weight);
+		PreparedText(int textLength, int textWidth, int textHeight, float* coords1, float* coords2, float* texCoords1, float* texCoords2, float* weight);
 		~PreparedText( void );
+
+		void setCenterPos(float centerX, float centerY);
 
 		//pull only
 		float* _coords1;
@@ -16,6 +18,8 @@ class PreparedText {
 		float _centerX;
 		float _centerY;
 		int _textLength;
+		int _textPixWidth;
+		int _textPixHeight;
 
 	private:
 

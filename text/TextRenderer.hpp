@@ -35,9 +35,13 @@ class TextRenderer {
 		TextRenderer(string fontPath, int fontSize, bool silent = true);
 		~TextRenderer( void );
 
-		void addText(string text, float centerX, float centerY, float normedWeight=1.0f);
-		void clearTextStorage( void );
+		int addText(string text, float centerX, float centerY, float normedWeight=1.0f);
+		int addText(string text, float normedWeight=1.0f);
+		void setCenter(int storageIndex, float centerX, float centerY);
+		const vector<PreparedText* >* getTexts( void );
 
+		void clearTextStorage( void );
+		
 		void renderText(float xShift=0.0f, float yShift=0.0f);
 		void renderText(Color color, float xShift=0.0f, float yShift=0.0f);
 

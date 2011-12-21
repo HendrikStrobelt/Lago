@@ -60,7 +60,14 @@ TextRenderer::~TextRenderer( void ) {
 
 //PUBLIC
 
-void TextRenderer::addText(string text, float centerX, float centerY, float normedWeight) {
+
+int TextRenderer::addText(string text, float centerX, float centerY, float normedWeight) {
+	int index = addText(text, normedWeight);
+	setCenter(index, centerX, centerY);
+	return index;
+}
+
+int TextRenderer::addText(string text, float normedWeight) {
 
 	float* coords1 = new float[text.length() *4];
 	float* coords2 = new float[text.length() *4];
@@ -127,9 +134,20 @@ void TextRenderer::addText(string text, float centerX, float centerY, float norm
 		coords2[i*2 + 1] -= centerShiftY;
 	}
 
-	_storage.push_back(new PreparedText(text.size(), centerX, centerY, coords1, coords2, texCoords1, texCoords2, weightArray));
+	_storage.push_back(new PreparedText(text.size(), textWidth, textHeight, coords1, coords2, texCoords1, texCoords2, weightArray));
 	_textLength += text.length();
 	_storageChange = true;
+
+	return _storage.size()-1;
+}
+
+void TextRenderer::setCenter(int storageIndex, float centerX, float centerY) {
+	_storage[storageIndex]->setCenterPos(centerX, centerY);
+	_storageChange = true;
+}
+
+const vector<PreparedText* >* TextRenderer::getTexts( void ) {
+	return &_storage;
 }
 
 void TextRenderer::clearTextStorage( void ) {

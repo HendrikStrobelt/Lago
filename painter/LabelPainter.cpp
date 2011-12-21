@@ -37,6 +37,8 @@ void LabelPainter::changeLabels(glm::mat4 MVP, const vector<Label>* sortedLabels
 	glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 1.0f));
 	glm::mat4 MVP2 = S * T * MVP; // transforms world to 0..1-0..1 coordinates
 
+	vector<int> topX2sortedIndex;
+
 	while (topX.size() < context::_options._labelCount && i < sortedLabels->size()) {
 		glm::vec4 labelPos(sortedLabels->at(i).x, sortedLabels->at(i).y, 0.0f, 1.0f);
 		labelPos = MVP2 * labelPos;
@@ -44,8 +46,7 @@ void LabelPainter::changeLabels(glm::mat4 MVP, const vector<Label>* sortedLabels
 		if (labelPos.x >= 0.0f && labelPos.x <= 1.0f && labelPos.y >= 0.0f && labelPos.y <= 1.0f) {
 			//inside
 			topX.push_back(sortedLabels->at(i));
-			topX.back().x = labelPos.x;
-			topX.back().y = labelPos.y;
+			topX2sortedIndex.push_back(i);
 		}
 
 		i++;
@@ -55,6 +56,9 @@ void LabelPainter::changeLabels(glm::mat4 MVP, const vector<Label>* sortedLabels
 	float minW = topX.back().weight;
 	float div = maxW - minW;
 
+	vector<int> topX2RenderIndex;
+
+	//add them to the correct renderer
 	for (int i = 0; i < topX.size(); i++) {
 
 		float normedVal;
@@ -72,9 +76,22 @@ void LabelPainter::changeLabels(glm::mat4 MVP, const vector<Label>* sortedLabels
 		float scaled = scale(normedVal, so->_linearMode, so->_exponent, pointsX, pointsY);
 
 		int index = min(4, (int)floor(scaled * 5.0f));
-		_renderer[index]->addText(topX[i].text, topX[i].x, topX[i].y, normedVal);
+		_renderer[index]->addText(topX[i].text, normedVal);
+		topX2RenderIndex.push_back(index);
 	}
-	
+
+	//set their positions
+	int textCount[5] = {0,0,0,0,0};
+	for (int i = 0; i < topX.size(); i++) {
+		float x = sortedLabels->at(topX2sortedIndex[i]).x;
+		float y = sortedLabels->at(topX2sortedIndex[i]).y;
+
+		glm::vec4 labelPos(x, y, 0.0f, 1.0f);
+		labelPos = MVP2 * labelPos;
+
+		_renderer[topX2RenderIndex[i]]->setCenter(textCount[topX2RenderIndex[i]], labelPos.x, labelPos.y);
+		textCount[topX2RenderIndex[i]]++;
+	}
 }
 
 
