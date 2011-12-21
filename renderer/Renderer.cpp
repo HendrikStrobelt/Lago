@@ -75,7 +75,7 @@ void Renderer::setNewData(string nodeFile, string edgeFile) {
 }	
 
 void Renderer::updateLabels(RenderData* rData) {
-	if (_dCache.hasLabels()) {
+	if (_dCache.hasLabels() && context::_options._showLabels) {
 		glm::mat4 P = cameraHelper::calculateProjection(_dCache.getNodeStructureInfo(), context::_zoomFactor);
 		glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
 		rData->_labelPainter.changeLabels(MVP, _dCache.getSortedLabels());
@@ -112,7 +112,7 @@ void Renderer::renderHUD(float progress, float maxVals[]) {
 }
 
 void Renderer::renderLabels(RenderData* rData, int xMove, int yMove) {
-	if (_dCache.hasLabels()) {
+	if (_dCache.hasLabels() && 	context::_options._showLabels)  {
 		rData->_labelPainter.renderLabels(xMove, yMove);
 	}
 }

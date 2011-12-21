@@ -30,6 +30,9 @@ class Options : public IContextListener {
 		GLuint _edgeScheme;
 		GLuint _labelScheme;
 
+		bool _showLabels;
+		int _labelCount;
+
 		bool _changedLocal;
 	
 

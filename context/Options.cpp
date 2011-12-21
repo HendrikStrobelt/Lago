@@ -14,6 +14,8 @@ Options::Options( void ) {
 	_nodeScheme = -1;
 	_antiAlias = true;
 	_adaptiveScaleBars = true;
+	bool _showLabels = false;
+	int _labelCount = START_MAX_LABELS;
 }
 
 void Options::init( void ) {
@@ -36,6 +38,8 @@ string Options::toCommandString( void ) {
 	s << " nodeCS$" << _colorSchemeNode;
 	s << " edgeCS$" << _colorSchemeEdge;
 	s << " labelCS$" << _colorSchemeLabel;
+	s << " showLabels$" << _showLabels;
+	s << " labelCount$" << _labelCount;
 	return s.str();
 }
 
@@ -54,19 +58,51 @@ void Options::update(map<string, string> dataMap) {
 
 
 		//VIS PARAMETER
-		bool aa;
+		bool visChange = false;
+
 		if ((it = dataMap.find("antiAlias")) != dataMap.end()) {
+			bool aa;
 			if (it->second.compare("true") == 0) {
 				aa = true;
 			} else {
 				aa = false;
 			}
+			if (aa != _antiAlias) {
+				visChange = true;
+				_antiAlias = aa;
+			}
 		}
 
-		if (aa != _antiAlias) {
-			_antiAlias = aa;
+		if ((it = dataMap.find("showLabels")) != dataMap.end()) {
+			bool showLabels;
+			if (it->second.compare("true") == 0) {
+				showLabels = true;
+			} else {
+				showLabels = false;
+			}
+			if (showLabels != _showLabels) {
+				if (showLabels) {//label update is only necessary if we show them
+					visChange = true; 
+				}
+				_showLabels = showLabels;
+			}
+		}
+
+		if ((it = dataMap.find("labelCount")) != dataMap.end()) {
+			int labelCount;
+			labelCount = atoi(it->second.c_str());
+			if (labelCount != _labelCount) {
+				if (_showLabels) {//label update is only necessary if we show them
+					visChange = true;
+				}
+				_labelCount = labelCount;
+			}
+		}
+
+		if (visChange) {
 			context::visParameterChange();
 		}
+
 
 		//DATA SET
 		string nFile, eFile;
