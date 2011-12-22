@@ -20,33 +20,32 @@ namespace graphVizCom {
 	int _windowWidth;
 	int _windowHeight;
 
+	float _centerX;
+	float _centerY;
+
 	//public
 	void prepare( void ) {
 		context::getWindowSize(&_windowWidth, &_windowHeight);
 
-		_nr = -2;
+		_nr = 0;
+		_centerX = 0.0f;
+		_centerY = 0.0f;
 		_commands.str("");
 
 		cout << _commands;
 		_commands << "graph{ \n";
 		_commands << "graph [overlap=\"prism\" overlap_scaling=\"0\" sep=\"+0\"] \n";
-
-		//spanning points far away to be sure they don't disturb
-		add(-_windowWidth,-_windowHeight,1,1);
-		add(_windowWidth*2, _windowHeight*2, 1, 1);
 	}
 
 	void add(int centerX, int centerY, int width, int height) {
-		if (_nr < 0) {
-			_commands << "sp" << abs(_nr);
-		} else {
-			_commands << _nr;
-		}		
+		_commands << _nr;
 		_commands << " [pos=\"" << centerX*72.0f << "," << centerY*72.0f << "\", ";
 		_commands << "width=\"" << ((float)width) << "\", ";
 		_commands << "height=\"" << ((float)height) << "\" ";
 		_commands << "shape=\"box\" fixedsize=\"true\"] \n";
 		_nr++;
+		_centerX += centerX;
+		_centerY += centerY;
 	}
 
 
@@ -60,6 +59,9 @@ namespace graphVizCom {
 			es.in() << _commands.str();
 			cout << _commands.str();
 			es.close_in();
+		
+			float centerX2 = 0.0f;
+			float centerY2 = 0.0f;
 
 			MovedBox tmp;
 			string line;
@@ -67,16 +69,29 @@ namespace graphVizCom {
 				if (line.length() > 4 && line.substr(0, 4) == "node") {
 					vector<string> tokens = split(line);
 					
-					if (!(tokens[1] == "sp1" || tokens[1] == "sp2")) { //ignore spanning points
-						tmp.id = ((int)(floor(atof(tokens[1].c_str()))));
-						tmp.x = ((int)(floor(atof(tokens[2].c_str())))) - _windowWidth;//correct spanning points
-						tmp.y = ((int)(floor(atof(tokens[3].c_str())))) - _windowHeight; 
-
-						ret->push_back(tmp);
-					}
+					tmp.id = ((int)(floor(atof(tokens[1].c_str()))));
+					tmp.x = ((int)(floor(atof(tokens[2].c_str()))));
+					tmp.y = ((int)(floor(atof(tokens[3].c_str()))));
+					centerX2 += tmp.x;
+					centerY2 += tmp.y;
+					ret->push_back(tmp);
 				}
 			}
 			es.close();
+
+			_centerX /= _nr;
+			_centerY /= _nr;
+			centerX2 /= _nr;
+			centerY2 /= _nr;
+
+			float xMove = _centerX - centerX2;
+			float yMove = _centerY - centerY2;
+
+			for (int i = 0; i < ret->size(); i++) {
+				ret->at(i).x = ret->at(i).x + xMove;
+				ret->at(i).y = ret->at(i).y + yMove;
+			}
+
 		} catch( std::exception const & e ) {
 		    std::cerr << "error: "  <<  e.what()  <<  "\n";
 		}
