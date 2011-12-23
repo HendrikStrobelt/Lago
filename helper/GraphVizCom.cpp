@@ -32,7 +32,6 @@ namespace graphVizCom {
 		_centerY = 0.0f;
 		_commands.str("");
 
-		cout << _commands;
 		_commands << "graph{ \n";
 		_commands << "graph [overlap=\"prism\" overlap_scaling=\"0\" sep=\"+0\"] \n";
 	}
@@ -57,7 +56,6 @@ namespace graphVizCom {
 
 			_commands << "} \n";
 			es.in() << _commands.str();
-			cout << _commands.str();
 			es.close_in();
 		
 			float centerX2 = 0.0f;
