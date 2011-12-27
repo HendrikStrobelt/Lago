@@ -3,10 +3,17 @@
 #include <iostream>
 
 
+GLSLShader::GLSLShader(string transformFeedbackVar, vector<string> attributes, vector<string> uniforms, string vertShader, string fragShader, string gemShader) {
+	_transformFeedback = true;
+	_transformFeedbackVar = transformFeedbackVar;
+	GLSLShader(attributes, uniforms, vertShader, fragShader, gemShader);
+}
+ 
 GLSLShader::GLSLShader(vector<string> attributes, vector<string> uniforms, string vertShader, string fragShader, string gemShader) {
 	_shaders[VERTEX_SHADER] = 0;
 	_shaders[FRAGMENT_SHADER] = 0;
 	_shaders[GEOMETRY_SHADER] = 0;
+	_transformFeedback = false;
 
 	load(GL_VERTEX_SHADER, vertShader);
 	load(GL_FRAGMENT_SHADER, fragShader);
@@ -63,6 +70,13 @@ void GLSLShader::createAndLinkProgram( void ) {
 	
 	//add output variable for color
 	glBindFragDataLocation(_program, 0, "fragColor");
+
+	if (_transformFeedback) {
+		//add output for transform feedback
+		GLchar const * outs[1];
+		outs[0] = _transformFeedbackVar.c_str();
+		glTransformFeedbackVaryings(_program, 1, outs, GL_SEPARATE_ATTRIBS); 
+	}
 
 	//link and check whether the program links fine
 	GLint status;

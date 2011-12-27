@@ -10,6 +10,7 @@
 Renderer::Renderer( void ) {
 	_currentData = new RenderData;
 	_newData = new RenderData;
+	_cellLabelGetter = NULL;
 
 	glGenBuffers(1, &_nodeVBO);
 	glGenBuffers(1, &_edgeVBO);
@@ -41,6 +42,7 @@ Renderer::~Renderer( void ) {
 	delete _initalWork;
 	delete _working;
 	delete _visAdjust;
+	delete _cellLabelGetter;
 }
 
 
@@ -48,6 +50,18 @@ Renderer::~Renderer( void ) {
 
 void Renderer::rightClick(int x, int y) {
 	cout << "x " << x << "y " << y << "\n";
+
+	glm::mat4 P = cameraHelper::calculateProjection(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+	glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
+
+	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	vector<int>* ids = _cellLabelGetter->getLabelIndices(x, y, _currentData->_evalField, MVP);
+
+	glfwSwapBuffers();
+
+	delete ids;
 }
 
 
@@ -60,6 +74,8 @@ void Renderer::setState(IRenderState* state) {
 
 void Renderer::setNewData(string nodeFile, string edgeFile) {
 	_dCache.loadDataSet(nodeFile, edgeFile);
+
+	delete _cellLabelGetter;
 
 	int nodeCount;
 	const PackedNode* packedNodes = _dCache.getPackedNodes(&nodeCount);
@@ -77,6 +93,8 @@ void Renderer::setNewData(string nodeFile, string edgeFile) {
 	} else {
 		_hasEdges = false;
 	}
+
+	_cellLabelGetter = new CellLabelGetter(_nodeVBO, _dCache.getNodeStructureInfo()->getAllNodes(_dCache.getNodeStructureInfo()->getMaxDepth()));
 }	
 
 void Renderer::updateLabels(RenderData* rData) {

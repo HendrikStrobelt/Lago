@@ -13,6 +13,7 @@
 #include "../painter/ScalingPainter.hpp"
 #include "../renderer/TextureExaminer.hpp"
 #include "../renderer/FieldEvaluation.hpp"
+#include "../renderer/CellLabelGetter.hpp"
 
 #include "../context/Context.hpp"
 
@@ -162,5 +163,6 @@ namespace envHelper {
 
 		TextureExaminer::cleanUp();
 		FieldEvaluation::cleanUp();
+		CellLabelGetter::cleanUp();
 	}
 };

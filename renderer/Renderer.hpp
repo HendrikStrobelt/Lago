@@ -16,6 +16,7 @@
 #include "..\painter\DisplayConvertPainter.hpp"
 #include "..\painter\ScalingPainter.hpp"
 #include "TextureExaminer.hpp"
+#include "CellLabelGetter.hpp"
 
 class Renderer : public IRenderState {
 
@@ -74,6 +75,7 @@ class Renderer : public IRenderState {
 		ScalingPainter _scalingBars;
 		DisplayConvertPainter _displayConvert;
 		TextureExaminer _textureExaminer;
+		CellLabelGetter* _cellLabelGetter;
 		//
 
 		void setNewData(string nodeFile, string edgeFile="");
