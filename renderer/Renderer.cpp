@@ -54,12 +54,7 @@ void Renderer::rightClick(int x, int y) {
 	glm::mat4 P = cameraHelper::calculateProjection(_dCache.getNodeStructureInfo(), context::_zoomFactor);
 	glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
 
-	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-
 	vector<int>* ids = _cellLabelGetter->getLabelIndices(x, y, _currentData->_evalField, MVP);
-
-	glfwSwapBuffers();
 
 	delete ids;
 }

@@ -6,7 +6,27 @@
 GLSLShader::GLSLShader(string transformFeedbackVar, vector<string> attributes, vector<string> uniforms, string vertShader, string fragShader, string gemShader) {
 	_transformFeedback = true;
 	_transformFeedbackVar = transformFeedbackVar;
-	GLSLShader(attributes, uniforms, vertShader, fragShader, gemShader);
+
+	_shaders[VERTEX_SHADER] = 0;
+	_shaders[FRAGMENT_SHADER] = 0;
+	_shaders[GEOMETRY_SHADER] = 0;
+
+	load(GL_VERTEX_SHADER, vertShader);
+	load(GL_FRAGMENT_SHADER, fragShader);
+	if (!gemShader.empty()) {
+		load(GL_GEOMETRY_SHADER, gemShader);
+	}
+
+	createAndLinkProgram();
+		
+	use();	
+		for (unsigned int i = 0; i < attributes.size(); i++) {
+			_attributeMap[attributes[i]] = glGetAttribLocation(_program, attributes[i].c_str());	
+		}
+		for (unsigned int i = 0; i < uniforms.size(); i++) {
+			_uniformMap[uniforms[i]] = glGetUniformLocation(_program, uniforms[i].c_str());
+		}
+	unUse();	
 }
  
 GLSLShader::GLSLShader(vector<string> attributes, vector<string> uniforms, string vertShader, string fragShader, string gemShader) {
