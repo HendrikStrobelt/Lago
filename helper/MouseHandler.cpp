@@ -46,16 +46,19 @@ namespace mouseHandler {
 			}
 		} else 
 		if (action == GLFW_RELEASE) {
+			int x,y;
+			glfwGetMousePos(&x, &y);
+			
 			if (button == GLFW_MOUSE_BUTTON_LEFT) {
 				_leftDown = false;
-				int x,y;
-				glfwGetMousePos(&x, &y);
 
 				int xMove = x - _xPressStart;
 				int yMove = y - _yPressStart;
 				if (xMove != 0 || yMove != 0) {
 					context::updateWorldTranslate(xMove, yMove);
 				}
+			} else if (button == GLFW_MOUSE_BUTTON_RIGHT) {		
+				context::rightClick(x, y);
 			}
 		}
 	}

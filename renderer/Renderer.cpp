@@ -46,6 +46,11 @@ Renderer::~Renderer( void ) {
 
 //public
 
+void Renderer::rightClick(int x, int y) {
+	cout << "x " << x << "y " << y << "\n";
+}
+
+
 //private methods that can be used by the states
 
 void Renderer::setState(IRenderState* state) {
@@ -78,7 +83,7 @@ void Renderer::updateLabels(RenderData* rData) {
 	if (_dCache.hasLabels() && context::_options._showLabels) {
 		glm::mat4 P = cameraHelper::calculateProjection(_dCache.getNodeStructureInfo(), context::_zoomFactor);
 		glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
-		rData->_labelPainter.changeLabels(MVP, _dCache.getSortedLabels());
+		rData->_labelPainter.changeLabels(MVP, _dCache.getIndexedLabels());
 	}
 }
 

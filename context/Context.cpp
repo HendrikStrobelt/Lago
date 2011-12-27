@@ -90,6 +90,10 @@ namespace context {
 
 	//SETTER
 
+	void rightClick(int x, int y) {
+		_renderer->rightClick(x, y);
+	}
+
 	void setSideExponent(int newSideExponent) {
 		_sideExponent = newSideExponent;
 		if (_sideExponent < 0) {

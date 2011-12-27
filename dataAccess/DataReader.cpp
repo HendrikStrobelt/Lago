@@ -183,12 +183,13 @@ bool DataReader::readNextNode(vector<Node>* nodes, vector<Label>* labels) {
 			token = strtok(NULL, ",\n"); //next token
 		}
 		
-		nodes->push_back(n);
 		if (hasNodeLabels() && labels != NULL) {
 			l.x = n.x;
 			l.y = n.y;
 			labels->push_back(l);
+			n.labelID = labels->size() - 1;
 		}
+		nodes->push_back(n);
 		return true;
 	} else {
 		return false;

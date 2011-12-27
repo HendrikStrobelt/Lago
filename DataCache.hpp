@@ -18,7 +18,7 @@ class DataCache {
 
 		void loadDataSet(string nodeFile, string edgeFile = "");
 
-		const vector<Label>* getSortedLabels( void );
+		const vector<Label>* getIndexedLabels( void );
 		const PackedNode* getPackedNodes(int* size);
 		const PackedEdge* getPackedEdges(int* size);
 		const NodeStructureInfoContainer* getNodeStructureInfo( void );
@@ -32,15 +32,13 @@ class DataCache {
 		void loadFromDump(string dumpName, bool loadEdges);
 		void writeToDump(string dumpName, bool writeEdges, bool writeLabels);
 
-		
-		void sortLabels(vector<Label>* unsorted);
 		void clearMembers( void );
 
 		int _nCount;
 		int _eCount;
 		PackedNode* _packedNodes;
 		PackedEdge* _packedEdges;
-		vector<Label>* _sortedLabels;
+		vector<Label>* _indexedLabels;
 
 		NodeStructureInfoContainer* _nodeStructureInfo;
 		EdgeStructureInfoContainer* _edgeStructureInfo;

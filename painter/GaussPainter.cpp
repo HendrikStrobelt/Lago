@@ -109,7 +109,7 @@ void GaussPainter::initVao(GLuint vbo) {
 			glEnableVertexAttribArray(_shader_ptr->getAttributeLocation("vDepth"));
 			glVertexAttribIPointer(_shader_ptr->getAttributeLocation("vDepth"), 1, GL_SHORT, sizeof(PackedNode), (void*)(2 * sizeof(float)));
 			glEnableVertexAttribArray(_shader_ptr->getAttributeLocation("vWeight"));
-			glVertexAttribPointer (_shader_ptr->getAttributeLocation("vWeight"), 1, GL_FLOAT, GL_FALSE, sizeof(PackedNode), (void*)(2 * sizeof(float) + sizeof(short)));
+			glVertexAttribPointer (_shader_ptr->getAttributeLocation("vWeight"), 1, GL_FLOAT, GL_FALSE, sizeof(PackedNode), (void*)(2 * sizeof(float) + sizeof(short) + sizeof(int)));
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }

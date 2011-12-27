@@ -7,7 +7,6 @@
 #include <iostream>
 #include <fstream>
 #include <boost\filesystem.hpp>
-#include <algorithm>
 
 using namespace boost::filesystem;
 
@@ -19,7 +18,7 @@ DataCache::DataCache( void ) {
 	_edgeStructureInfo = NULL;
 	_packedNodes = NULL;
 	_packedEdges = NULL;
-	_sortedLabels = NULL;
+	_indexedLabels = NULL;
 }
 
 DataCache::~DataCache( void ) {
@@ -47,8 +46,8 @@ void DataCache::loadDataSet(string nodeFile, string edgeFile) {
 	}
 }
 
-const vector<Label>* DataCache::getSortedLabels( void ) {
-	return _sortedLabels;
+const vector<Label>* DataCache::getIndexedLabels( void ) {
+	return _indexedLabels;
 }
 
 const PackedNode* DataCache::getPackedNodes(int* size) {
@@ -88,7 +87,7 @@ const EdgeStructureInfoContainer* DataCache::getEdgeStructureInfo( void ) {
 }
 
 const bool DataCache::hasLabels( void ) {
-	return (_sortedLabels != NULL);
+	return (_indexedLabels != NULL);
 }
 
 
@@ -182,8 +181,7 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 	if (dr.hasNodeLabels()) {
 		cout << "preparing labels" << "\n";
 		writeLabels = true;
-        sortLabels(labels);
-		_sortedLabels = labels;
+		_indexedLabels = labels;
 	} else {
 		delete labels;
 	}
@@ -216,10 +214,10 @@ void DataCache::writeToDump(string dumpName, bool writeEdges, bool writeLabels) 
 	if (writeLabels) {
 		//write label vector
 		string labelFile = dumpName;
-		labelFile.append("//sortedLabels.bin");
-		ofstream sortedLabels(labelFile, ios::binary);
-		dump::w(&sortedLabels, _sortedLabels);
-		sortedLabels.close();			
+		labelFile.append("//indexedLabels.bin");
+		ofstream indexedLabels(labelFile, ios::binary);
+		dump::w(&indexedLabels, _indexedLabels);
+		indexedLabels.close();			
 	}
 
 	if (writeEdges) {
@@ -259,13 +257,13 @@ void DataCache::loadFromDump(string dumpName, bool loadEdges) {
 
 	//load edges
 		string labelFile = dumpName;
-		labelFile.append("//sortedLabels.bin");
+		labelFile.append("//indexedLabels.bin");
 		path labelPath(labelFile);
 	if (exists(labelPath)) {
-		_sortedLabels = new vector<Label>();
-		ifstream sortedLabels(labelFile, ios::binary);
-		dump::r(&sortedLabels, _sortedLabels);
-		sortedLabels.close();
+		_indexedLabels = new vector<Label>();
+		ifstream indexedLabels(labelFile, ios::binary);
+		dump::r(&indexedLabels, _indexedLabels);
+		indexedLabels.close();
 		cout << " (with labels)";
 	}
 
@@ -291,22 +289,12 @@ void DataCache::loadFromDump(string dumpName, bool loadEdges) {
 }
 
 
-void DataCache::sortLabels(vector<Label>* unsorted) {
-	struct labelCompare {
-		bool operator() (Label l1, Label l2) {
-			return (l1.weight > l2.weight);
-		}
-	} comparator;
-
-	sort(unsorted->begin(), unsorted->end(), comparator);
-}
-
 void DataCache::clearMembers( void ) {
 	delete _nodeStructureInfo;
 	delete _edgeStructureInfo;
 	delete _packedNodes;
 	delete _packedEdges;
-	delete _sortedLabels;
+	delete _indexedLabels;
 
 	_eCount = 0;
 	_nCount = 0;
@@ -314,5 +302,5 @@ void DataCache::clearMembers( void ) {
 	_edgeStructureInfo = NULL;
 	_packedNodes = NULL;
 	_packedEdges = NULL;
-	_sortedLabels = NULL;
+	_indexedLabels = NULL;
 }

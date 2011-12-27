@@ -36,6 +36,8 @@ namespace context {
 		void tick( void );
 
 		//setters
+		void rightClick(int x, int y);//TMP
+
 		void setSideExponent(int newSideExponent);
 		void setZoomExponent(int newZoomExponent);
 		void setDataSet(string nodeFile, string edgeFile="");

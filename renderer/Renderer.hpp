@@ -30,6 +30,8 @@ class Renderer : public IRenderState {
 		Renderer( void );
 		~Renderer( void );
 
+		void rightClick(int x, int y);//TMP
+
 		//State methods
 		void render( void );
 		void renderGauss( void );
