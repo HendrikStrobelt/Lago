@@ -24,7 +24,11 @@ class LabelSelectionPainter {
 		static GLSLShader* _l_shader_ptr;
 		static void createShader( void );
 		
+		void sortLabels(vector<Label>* unsorted);
 		void initVao( void );
+		void prepareTextRenderer(vector<Label>* sortedLabels);
+		float scale(float normedVal, bool linearMode, float exponent, float pointsX[], float pointsY[]);
+		float mix(float x, float y, float a);
 		
 		TextRenderer* _renderer[5];
 		bool _active;
