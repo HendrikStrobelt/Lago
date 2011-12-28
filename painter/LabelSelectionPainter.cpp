@@ -1,9 +1,11 @@
 #include "LabelSelectionPainter.hpp"
 
 #include <algorithm>
+#include <sstream>
 #include <glm\gtc\matrix_transform.hpp>
 #include "../context/Context.hpp"
 #include "../text/PreparedText.hpp"
+
 
 GLSLShader* LabelSelectionPainter::_l_shader_ptr = NULL;
 GLSLShader* LabelSelectionPainter::_b_shader_ptr = NULL;
@@ -16,6 +18,7 @@ LabelSelectionPainter::LabelSelectionPainter( void ) {
 	_renderer[2] = new TextRenderer("C://Windows//fonts//times.ttf", 16);
 	_renderer[1] = new TextRenderer("C://Windows//fonts//times.ttf", 12);
 	_renderer[0] = new TextRenderer("C://Windows//fonts//times.ttf", 10);
+
 	_active = false;
 }
 
@@ -40,32 +43,56 @@ void LabelSelectionPainter::clear( void ) {
 }
 
 void LabelSelectionPainter::setData(vector<int>* ids, const vector<Label>* indexedLabels) {
-	_active = true;
+	if (ids->size() > 0) {
+		for (int i = 0; i < 5; i++) {
+			_renderer[i]->clearTextStorage();
+		} 
 
-	vector<Label> selected;
-	for (int i = 0; i < ids->size(); i++) {
-		selected.push_back(indexedLabels->at(ids->at(i)));
-	}
-
-	sortLabels(&selected);
-	prepareTextRenderer(&selected);
-
-
-	//update box
-	float quad[8] = { -1.0f, 1.0f,     -1.0f,  0.0f,      -0.5f, 1.0f,     -0.5f,  0.0f};
-
-	glBindBuffer(GL_ARRAY_BUFFER, _vbo[BOX]);
-		glBufferData (GL_ARRAY_BUFFER, 8 * sizeof(float), &quad[0], GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+		_active = true;
 	
-	//update lines
-	float lines[4] = { -1.0f, -1.0f,     1.0f,  1.0f};
+		vector<Label> selected;
+		for (int i = 0; i < ids->size(); i++) {
+			selected.push_back(indexedLabels->at(ids->at(i)));
+		}
+		
+		int xSize, ySize;
+		vector<float> yAnchor;
+		sortLabels(&selected);
+		prepareTextRenderer(&xSize, &ySize, &yAnchor, &selected);
 
-	glBindBuffer(GL_ARRAY_BUFFER, _vbo[LINES]);
-		glBufferData (GL_ARRAY_BUFFER, 4 * sizeof(float), &lines[0], GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	_lines = 1;
+		int w,h;
+		context::getWindowSize(&w, &h);
 
+		//update box
+		float quad[8] = { -1.0f, 1.0f,
+						  -1.0f,  1.0f - ((float)ySize / (float) h * 2.0f),
+						  -1.0f + ((float)xSize / (float) w * 2.0f), 1.0f,
+						  -1.0f + ((float)xSize / (float) w * 2.0f), 1.0f - ((float)ySize / (float) h * 2.0f)};
+
+		glBindBuffer(GL_ARRAY_BUFFER, _vbo[BOX]);
+			glBufferData (GL_ARRAY_BUFFER, 8 * sizeof(float), &quad[0], GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	
+		//update lines
+		float xAnchor = -1.0f + ((float)xSize / (float) w * 2.0f);
+		float* lines = new float[yAnchor.size() * 4];
+		
+		for (int i = 0; i < yAnchor.size(); i++) {
+			lines[i * 4] = xAnchor;
+			lines[i * 4 + 1] = yAnchor[i];
+			lines[i * 4 + 2] = 0.0f;
+			lines[i * 4 + 3] = 0.0f;
+		}
+
+		glBindBuffer(GL_ARRAY_BUFFER, _vbo[LINES]);
+			glBufferData (GL_ARRAY_BUFFER, 4 * yAnchor.size() * sizeof(float), &lines[0], GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		_lines = yAnchor.size();
+
+		delete lines;
+	} else {
+		_active = false;
+	}
 
 	delete ids;
 }
@@ -74,14 +101,14 @@ void LabelSelectionPainter::renderSelection( void ) {
 	if (_active) {	
 		glBindVertexArray(_vao[BOX]);
 			_b_shader_ptr->use();			
-				glUniform4f(_b_shader_ptr->getUniformLocation("color"), 1.0f, 1.0f, 1.0f, 1.0f);
+				glUniform4f(_b_shader_ptr->getUniformLocation("color"), 0.9f, 0.9f, 0.9f, 1.0f);
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); 
 			_b_shader_ptr->unUse();
 		glBindVertexArray(0);
 
 		glBindVertexArray(_vao[LINES]);
 			_l_shader_ptr->use();			
-				glUniform4f(_l_shader_ptr->getUniformLocation("color"), 0.0f, 0.0f, 0.0f, 0.0f);
+				glUniform4f(_l_shader_ptr->getUniformLocation("color"), 0.9f, 0.9f, 0.9f, 1.0f);
 				glDrawArrays(GL_LINES, 0, 2 * _lines); 
 			_l_shader_ptr->unUse();
 		glBindVertexArray(0);
@@ -138,7 +165,7 @@ void LabelSelectionPainter::sortLabels(vector<Label>* unsorted) {
 	sort(unsorted->begin(), unsorted->end(), comparator);
 }
 
-void LabelSelectionPainter::prepareTextRenderer(vector<Label>* sortedLabels) {
+void LabelSelectionPainter::prepareTextRenderer(int* retXSize, int* retYSize, vector<float>* retYAnchor, vector<Label>* sortedLabels) {
 	vector<Label> topX;
 
 	int windowW,windowH;
@@ -174,13 +201,18 @@ void LabelSelectionPainter::prepareTextRenderer(vector<Label>* sortedLabels) {
 		float scaled = scale(normedVal, so->_linearMode, so->_exponent, pointsX, pointsY);
 
 		int index = min(4, (int)floor(scaled * 5.0f));
-		_renderer[index]->addText(topX[i].text, normedVal);
+		stringstream text;
+		text << topX[i].text;
+		text << " (";
+		text << topX[i].weight;
+		text << ")";
+		_renderer[index]->addText(text.str(), normedVal);
 		topX2RenderIndex.push_back(index);
 	}
 
 	//calculate positions
 	int maxPixWidth = -1;
-	int yOff = 0;
+	int yOff = Y_MARGIN;
 
 	int off[5] = {0,0,0,0,0};
 	for (int i = 0; i < topX.size(); i++) {
@@ -191,16 +223,20 @@ void LabelSelectionPainter::prepareTextRenderer(vector<Label>* sortedLabels) {
 		int h = texts->at(off[rI])->_textPixHeight;
 
 		float y = 1.0f - ((float)yOff + (float)h / 2.0f) / (float) windowH;
-		float x = ((float)w / 2.0f) / (float) windowW;
+		float x = ((float)w / 2.0f + (float)X_MARGIN) / (float) windowW;
 	
 		if (w > maxPixWidth) {
 			maxPixWidth = w;
 		}
-		yOff += h;
+		yOff += (h + Y_MARGIN);
+		retYAnchor->push_back(y * 2.0f - 1.0f);
 
 		_renderer[rI]->setCenter(off[rI], x, y);
 		off[rI]++;
 	}
+
+	*retYSize = yOff;
+	*retXSize = (2 * X_MARGIN + maxPixWidth);
 }
 
 float LabelSelectionPainter::scale(float normedVal, bool linearMode, float exponent, float pointsX[], float pointsY[]) {

@@ -23,8 +23,8 @@ void main(void)
 	
 	if (gLabelID[i] != -1) {
 
-		float tStepX = 1.0f / width;
-		float tStepY = 1.0f / height;
+		float tStepX = (1.0f / width) * 3;
+		float tStepY = (1.0f / height) * 3;
 
 		vec2 mouseVal = texture(fieldTex, compareTexCoord).rg;
 		vec2 pointVal = texture(fieldTex, getTexCoordinates(gl_PositionIn[i].xy)).rg;

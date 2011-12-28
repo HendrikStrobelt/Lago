@@ -179,7 +179,6 @@ void TextRenderer::renderText(Color color, float xShift, float yShift) {
 	glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(2.0f / (float)_windowWidth, 2.0f / (float)_windowHeight, 1.0f));
 
 	if (_storageChange) {
-
 		float* coords1 = new float[_textLength *4];
 		float* coords2 = new float[_textLength *4];
 		float* texCoords1 = new float[_textLength *4];

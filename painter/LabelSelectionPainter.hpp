@@ -7,6 +7,9 @@
 
 class LabelSelectionPainter {
 
+#define X_MARGIN 8
+#define Y_MARGIN 8
+
 	public:
 		LabelSelectionPainter( void );
 		~LabelSelectionPainter( void );
@@ -26,7 +29,7 @@ class LabelSelectionPainter {
 		
 		void sortLabels(vector<Label>* unsorted);
 		void initVao( void );
-		void prepareTextRenderer(vector<Label>* sortedLabels);
+		void prepareTextRenderer(int* retXSize, int* retYSize, vector<float>* retYAnchor, vector<Label>* sortedLabels);
 		float scale(float normedVal, bool linearMode, float exponent, float pointsX[], float pointsY[]);
 		float mix(float x, float y, float a);
 		
