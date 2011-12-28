@@ -11,9 +11,11 @@
 #include "../painter/VisPainter.hpp"
 #include "../painter/DividedLinePainter.hpp"
 #include "../painter/ScalingPainter.hpp"
+#include "../painter/LabelSelectionPainter.hpp"
 #include "../renderer/TextureExaminer.hpp"
 #include "../renderer/FieldEvaluation.hpp"
 #include "../renderer/CellLabelGetter.hpp"
+
 
 #include "../context/Context.hpp"
 
@@ -160,6 +162,7 @@ namespace envHelper {
 		VisPainter::cleanUp();
 		DividedLinePainter::cleanUp();
 		ScalingPainter::cleanUp();
+		LabelSelectionPainter::cleanUp();
 
 		TextureExaminer::cleanUp();
 		FieldEvaluation::cleanUp();

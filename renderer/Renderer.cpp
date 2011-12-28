@@ -56,11 +56,7 @@ void Renderer::rightClick(int x, int y) {
 
 	vector<int>* ids = _cellLabelGetter->getLabelIndices(x, y, _currentData->_evalField, MVP);
 
-	for (int i = 0; i < ids->size(); i++) {
-		cout << ids->at(i) << "\n";
-	}
-
-	delete ids;
+	_labelSelectionPainter.setData(ids, _dCache.getIndexedLabels());
 }
 
 
@@ -131,6 +127,8 @@ void Renderer::renderHUD(float progress, float maxVals[]) {
 	if (maxVals[0] > 0.0f) {
 		_scalingBars.renderScaleBars(maxVals, _hasEdges);
 	}
+
+	_labelSelectionPainter.renderSelection();
 }
 
 void Renderer::renderLabels(RenderData* rData, int xMove, int yMove) {

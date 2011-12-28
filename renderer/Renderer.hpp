@@ -15,6 +15,7 @@
 #include "..\painter\ProgressbarPainter.hpp"
 #include "..\painter\DisplayConvertPainter.hpp"
 #include "..\painter\ScalingPainter.hpp"
+#include "..\painter\LabelSelectionPainter.hpp"
 #include "TextureExaminer.hpp"
 #include "CellLabelGetter.hpp"
 
@@ -75,6 +76,7 @@ class Renderer : public IRenderState {
 		ScalingPainter _scalingBars;
 		DisplayConvertPainter _displayConvert;
 		TextureExaminer _textureExaminer;
+		LabelSelectionPainter _labelSelectionPainter;
 		CellLabelGetter* _cellLabelGetter;
 		//
 
