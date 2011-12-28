@@ -8,9 +8,14 @@ layout(points, max_vertices = 1) out;
 in int gLabelID[];
 out int labelID;
 
-uniform sampler2D fieldTex;
 uniform vec2 compareTexCoord;
+uniform sampler2D fieldTex;
+uniform int width;
+uniform int height;
 
+vec2 getTexCoordinates(vec2 screenCoordinates) {
+	return ((screenCoordinates + 1.0) / 2.0);
+}
 
 void main(void) 
 {
@@ -18,10 +23,16 @@ void main(void)
 	
 	if (gLabelID[i] != -1) {
 
-//		vec4 mouseVal = texture(fieldTex, vec2(0.5f, 0.5f));
-//		vec2 pointVal = texture(fieldTex, vec2(0.5f, 0.5f)).rg;//texture(fieldTex, gl_PositionIn[i].xy).rg;
+		float tStepX = 1.0f / width;
+		float tStepY = 1.0f / height;
 
-		if (true) {
+		vec2 mouseVal = texture(fieldTex, compareTexCoord).rg;
+		vec2 pointVal = texture(fieldTex, getTexCoordinates(gl_PositionIn[i].xy)).rg;
+
+		if (   mouseVal.x < (pointVal.x + tStepX) && mouseVal.x > (pointVal.x - tStepX)
+		   &&  mouseVal.y < (pointVal.y + tStepY) && mouseVal.y > (pointVal.y - tStepY)
+		) { //near equality
+
 			gl_Position = gl_PositionIn[i];
 			labelID = gLabelID[i];
 			EmitVertex();

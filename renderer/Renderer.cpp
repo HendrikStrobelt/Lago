@@ -56,6 +56,10 @@ void Renderer::rightClick(int x, int y) {
 
 	vector<int>* ids = _cellLabelGetter->getLabelIndices(x, y, _currentData->_evalField, MVP);
 
+	for (int i = 0; i < ids->size(); i++) {
+		cout << ids->at(i) << "\n";
+	}
+
 	delete ids;
 }
 

@@ -34,8 +34,10 @@ vector<int>* CellLabelGetter::getLabelIndices(int mouseX, int mouseY, GLuint fie
 			glBindVertexArray(_dataVAO);
 				_shader_ptr->use();		
 					glUniformMatrix4fv(_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
-					glUniform1i(_shader_ptr->getUniformLocation("fieldTex"), fieldTex);
+					glUniform1i(_shader_ptr->getUniformLocation("fieldTex"), 0);
 					glUniform2f(_shader_ptr->getUniformLocation("compareTexCoord"), texX, texY);
+					glUniform1i(_shader_ptr->getUniformLocation("width"), w);
+					glUniform1i(_shader_ptr->getUniformLocation("height"), h);
 
 						glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, _capturedVBO); 
 						glBeginQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, _query); 
@@ -81,6 +83,8 @@ void CellLabelGetter::createShader( void ) {
 		unis.push_back("MVP");
 		unis.push_back("fieldTex");
 		unis.push_back("compareTexCoord");
+		unis.push_back("width");
+		unis.push_back("height");
 
 		_shader_ptr = new GLSLShader("labelID", attribs, unis, "shaders/cellLabel/cellLabelGetter.vert", "shaders/cellLabel/cellLabelGetter.frag", "shaders/cellLabel/cellLabelGetter.gem");
 	}

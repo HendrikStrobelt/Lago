@@ -32,9 +32,9 @@ void Working::work( void ) {
 	} else {
 		//done change state
 		_r->_newData->_gaussTex = _worker->_pc[GAUSS_VIEW]->detachResult();
+		_r->_newData->_evalField = _worker->_fieldEvaluator[VIEW]->detachResultTexture();
 
-		if (_r->_hasEdges) {
-			_r->_newData->_evalField = _worker->_fieldEvaluator[VIEW]->detachResultTexture();
+		if (_r->_hasEdges) {	
 			_r->_newData->_lineField = _worker->_linePainter->detachTexture();
 		}
 

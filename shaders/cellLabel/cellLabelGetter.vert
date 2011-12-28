@@ -4,7 +4,6 @@ in vec2 vVertex;
 in int vLabelID;
 
 uniform mat4 MVP;
-
 out int gLabelID;
 
 void main()

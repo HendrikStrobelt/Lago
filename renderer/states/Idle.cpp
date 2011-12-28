@@ -24,11 +24,9 @@ void Idle::renderGauss( void ) {
 }
 
 void Idle::renderEvalField( void ) {
-	if (_r->_hasEdges) {
-		float maxVals[3];
-		_r->calculateMaxValues(maxVals, _r->_currentData->_evalField, _r->_windowWidth, _r->_windowHeight);
-		_r->renderTexture(_r->_currentData->_evalField, maxVals);
-	}
+	float maxVals[3];
+	_r->calculateMaxValues(maxVals, _r->_currentData->_evalField, _r->_windowWidth, _r->_windowHeight);
+	_r->renderTexture(_r->_currentData->_evalField, maxVals);
 }
 
 void Idle::renderLineField( void ) {
