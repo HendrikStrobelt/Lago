@@ -4,6 +4,7 @@
 #include "../Label.hpp"
 #include "../helper/GLSLShader.hpp"
 #include "../text/TextRenderer.hpp"
+#include <glm\glm.hpp>
 
 class LabelSelectionPainter {
 
@@ -16,7 +17,7 @@ class LabelSelectionPainter {
 
 		void clear( void );
 		void setData(vector<int>* ids, const vector<Label>* indexedLabels);
-		void renderSelection( void );
+		void renderSelection(glm::mat4 MVP, int xShift, int yShift);
 
 		//static clean up
 		static void cleanUp( void );

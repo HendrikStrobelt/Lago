@@ -3,8 +3,10 @@
 #include <algorithm>
 #include <sstream>
 #include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtc\type_ptr.hpp>
 #include "../context/Context.hpp"
 #include "../text/PreparedText.hpp"
+
 
 
 GLSLShader* LabelSelectionPainter::_l_shader_ptr = NULL;
@@ -80,8 +82,8 @@ void LabelSelectionPainter::setData(vector<int>* ids, const vector<Label>* index
 		for (int i = 0; i < yAnchor.size(); i++) {
 			lines[i * 4] = xAnchor;
 			lines[i * 4 + 1] = yAnchor[i];
-			lines[i * 4 + 2] = 0.0f;
-			lines[i * 4 + 3] = 0.0f;
+			lines[i * 4 + 2] = selected[i].x;
+			lines[i * 4 + 3] = selected[i].y;
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, _vbo[LINES]);
@@ -97,19 +99,29 @@ void LabelSelectionPainter::setData(vector<int>* ids, const vector<Label>* index
 	delete ids;
 }
 
-void LabelSelectionPainter::renderSelection( void ) {
-	if (_active) {	
+void LabelSelectionPainter::renderSelection(glm::mat4 MVP, int xShift, int yShift) {
+	if (_active) {
+		int w,h;
+		context::getWindowSize(&w, &h);
+
+		glm::mat4 MVP_1(1.0f);
+
 		glBindVertexArray(_vao[BOX]);
 			_b_shader_ptr->use();			
+				glUniformMatrix4fv(_l_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(MVP_1));
 				glUniform4f(_b_shader_ptr->getUniformLocation("color"), 0.9f, 0.9f, 0.9f, 1.0f);
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); 
 			_b_shader_ptr->unUse();
 		glBindVertexArray(0);
 
+		glm::mat4 MVP_S = glm::translate(glm::mat4(1.0f), glm::vec3((float)xShift / (float)w * 2.0f, -(float)yShift / (float)h * 2.0f, 0.0f));
+		MVP_S = MVP_S * MVP;
+
 		glBindVertexArray(_vao[LINES]);
 			_l_shader_ptr->use();			
+				glUniformMatrix4fv(_l_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(MVP_S));
 				glUniform4f(_l_shader_ptr->getUniformLocation("color"), 0.9f, 0.9f, 0.9f, 1.0f);
-				glDrawArrays(GL_LINES, 0, 2 * _lines); 
+				glDrawArrays(GL_POINTS, 0, _lines); 
 			_l_shader_ptr->unUse();
 		glBindVertexArray(0);
 
@@ -129,8 +141,10 @@ void LabelSelectionPainter::createShader( void ) {
 
 		attribs.push_back("vVertex");
 		unis.push_back("color");
-		_l_shader_ptr = new GLSLShader(attribs, unis, "shaders/standard/shader.vert", "shaders/standard/shader.frag");
+		unis.push_back("MVP");
 		_b_shader_ptr = new GLSLShader(attribs, unis, "shaders/standard/shader.vert", "shaders/standard/shader.frag");
+
+		_l_shader_ptr = new GLSLShader(attribs, unis, "shaders/labelLines/shader.vert", "shaders/labelLines/shader.frag", "shaders/labelLines/shader.gem");
 	}
 }
 
@@ -149,7 +163,7 @@ void LabelSelectionPainter::initVao( void ) {
 	glBindVertexArray(_vao[LINES]);	 
 		glBindBuffer(GL_ARRAY_BUFFER, _vbo[LINES]);
 			glEnableVertexAttribArray(_l_shader_ptr->getAttributeLocation("vVertex"));
-			glVertexAttribPointer (_l_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, 0, 0);	
+			glVertexAttribPointer (_l_shader_ptr->getAttributeLocation("vVertex"), 4, GL_FLOAT, GL_FALSE, 0, 0);	
 		glBindBuffer (GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 

@@ -128,7 +128,12 @@ void Renderer::renderHUD(float progress, float maxVals[]) {
 		_scalingBars.renderScaleBars(maxVals, _hasEdges);
 	}
 
-	_labelSelectionPainter.renderSelection();
+	glm::mat4 P = cameraHelper::calculateProjection(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+	glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
+
+	int xShift, yShift;
+	mouseHandler::getPressMovement(&xShift, &yShift);
+	_labelSelectionPainter.renderSelection(MVP, xShift, yShift);
 }
 
 void Renderer::renderLabels(RenderData* rData, int xMove, int yMove) {

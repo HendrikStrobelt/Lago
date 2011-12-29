@@ -1,0 +1,21 @@
+#version 330
+#extension GL_EXT_geometry_shader4: enable
+
+layout(points) in;
+layout(line_strip, max_vertices = 2) out;
+
+uniform mat4 MVP;
+
+void main(void) 
+{
+	int i = 0;
+
+	gl_Position = vec4(gl_PositionIn[i].xy, 0.0f, 1.0f);
+	EmitVertex();
+
+	gl_Position = MVP * vec4(gl_PositionIn[i].zw, 0.0f, 1.0f);
+	EmitVertex();
+
+	//finish
+	EndPrimitive();
+}
