@@ -49,13 +49,7 @@ Renderer::~Renderer( void ) {
 //public
 
 void Renderer::rightClick(int x, int y) {
-	cout << "x " << x << "y " << y << "\n";
-
-	glm::mat4 P = cameraHelper::calculateProjection(_dCache.getNodeStructureInfo(), context::_zoomFactor);
-	glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
-
-	vector<int>* ids = _cellLabelGetter->getLabelIndices(x, y, _currentData->_evalField, MVP);
-
+	vector<int>* ids = _cellLabelGetter->getLabelIndices(x, y, _currentData->_evalField, getStandardMVP());
 	_labelSelectionPainter.setData(ids, _dCache.getIndexedLabels());
 }
 
@@ -94,10 +88,15 @@ void Renderer::setNewData(string nodeFile, string edgeFile) {
 
 void Renderer::updateLabels(RenderData* rData) {
 	if (_dCache.hasLabels() && context::_options._showLabels) {
-		glm::mat4 P = cameraHelper::calculateProjection(_dCache.getNodeStructureInfo(), context::_zoomFactor);
-		glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
-		rData->_labelPainter.changeLabels(MVP, _dCache.getIndexedLabels());
+		rData->_labelPainter.changeLabels(getStandardMVP(), _dCache.getIndexedLabels());
 	}
+}
+
+glm::mat4 Renderer::getStandardMVP( void ) {
+	glm::mat4 P = cameraHelper::calculateProjection(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+	glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
+
+	return MVP;
 }
 
 void Renderer::renderGraph(RenderData* rData, int xMove, int yMove) {
@@ -128,12 +127,9 @@ void Renderer::renderHUD(float progress, float maxVals[]) {
 		_scalingBars.renderScaleBars(maxVals, _hasEdges);
 	}
 
-	glm::mat4 P = cameraHelper::calculateProjection(_dCache.getNodeStructureInfo(), context::_zoomFactor);
-	glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
-
 	int xShift, yShift;
 	mouseHandler::getPressMovement(&xShift, &yShift);
-	_labelSelectionPainter.renderSelection(MVP, xShift, yShift);
+	_labelSelectionPainter.renderSelection(getStandardMVP(), xShift, yShift);
 }
 
 void Renderer::renderLabels(RenderData* rData, int xMove, int yMove) {
@@ -182,22 +178,26 @@ void Renderer::changePanning(int xMouseMove, int yMouseMove) {
 
 void Renderer::changeZoom( void ) {
  	context::_pixelSize = cameraHelper::getPixelSize(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+	_labelSelectionPainter.clear();
 	_state->changeZoom();
 }
 
 void Renderer::changeData(string nodeFile, string edgeFile) {
 	setNewData(nodeFile, edgeFile);
 	context::_pixelSize = cameraHelper::getPixelSize(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+	_labelSelectionPainter.clear();
 	_state->changeData(nodeFile, edgeFile);
 }
 
 void Renderer::changeSideLength( void ) {
+	_labelSelectionPainter.clear();
 	_state->changeSideLength();
 }
 
 void Renderer::changeWindow( void ) {
 	context::getWindowSize(&_windowWidth, &_windowHeight);
 	context::_pixelSize = cameraHelper::getPixelSize(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+	_labelSelectionPainter.clear();
 	_state->changeWindow();
 }
 

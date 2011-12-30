@@ -72,8 +72,7 @@ void WorkStateHelper::work( void ) {
 void WorkStateHelper::takeOver( void ) {
 	
 	resetAll();
-	glm::mat4 P = cameraHelper::calculateProjection(_r->_dCache.getNodeStructureInfo(), context::_zoomFactor);
-	glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
+	glm::mat4 MVP = _r->getStandardMVP();
 
 	int joinDepth = _r->_dCache.getNodeStructureInfo()->getJoinDepth(context::_pixelSize);
 	int nodeElements = _r->_dCache.getNodeStructureInfo()->getAllNodes(joinDepth);

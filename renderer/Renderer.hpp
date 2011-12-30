@@ -82,6 +82,7 @@ class Renderer : public IRenderState {
 
 		void setNewData(string nodeFile, string edgeFile="");
 		void updateLabels(RenderData* rData);
+		glm::mat4 getStandardMVP( void );
 
 		void setState(IRenderState* state);
 		void renderGraph(RenderData* rData, int xMove=0, int yMove=0);
