@@ -29,10 +29,9 @@ void main(void)
 		vec2 mouseVal = texture(fieldTex, compareTexCoord).rg;
 		vec2 pointVal = texture(fieldTex, getTexCoordinates(gl_PositionIn[i].xy)).rg;
 
-		if (   mouseVal.x < (pointVal.x + tStepX) && mouseVal.x > (pointVal.x - tStepX)
-		   &&  mouseVal.y < (pointVal.y + tStepY) && mouseVal.y > (pointVal.y - tStepY)
-		) { //near equality
+		vec2 c0 = abs(mouseVal - pointVal);
 
+		if (c0.x < tStepX && c0.y < tStepY) { //near equality
 			gl_Position = gl_PositionIn[i];
 			labelID = gLabelID[i];
 			EmitVertex();

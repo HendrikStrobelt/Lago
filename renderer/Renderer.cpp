@@ -50,7 +50,7 @@ Renderer::~Renderer( void ) {
 
 void Renderer::rightClick(int x, int y) {
 	vector<int>* ids = _cellLabelGetter->getLabelIndices(x, y, _currentData->_evalField, getStandardMVP());
-	_labelSelectionPainter.setData(ids, _dCache.getIndexedLabels());
+	_labelSelectionPainter.setData(ids, _dCache.getIndexedLabels(), x, y);
 }
 
 
@@ -129,7 +129,7 @@ void Renderer::renderHUD(float progress, float maxVals[]) {
 
 	int xShift, yShift;
 	mouseHandler::getPressMovement(&xShift, &yShift);
-	_labelSelectionPainter.renderSelection(getStandardMVP(), xShift, yShift);
+	_labelSelectionPainter.renderSelection(getStandardMVP(), _currentData->_evalField, xShift, yShift);
 }
 
 void Renderer::renderLabels(RenderData* rData, int xMove, int yMove) {
@@ -173,6 +173,7 @@ void Renderer::takeOver( void ) {
 }
 
 void Renderer::changePanning(int xMouseMove, int yMouseMove) {
+	_labelSelectionPainter.changePanning(xMouseMove, yMouseMove);
 	_state->changePanning(xMouseMove, yMouseMove);
 }
 

@@ -16,16 +16,19 @@ class LabelSelectionPainter {
 		~LabelSelectionPainter( void );
 
 		void clear( void );
-		void setData(vector<int>* ids, const vector<Label>* indexedLabels);
-		void renderSelection(glm::mat4 MVP, int xShift, int yShift);
+		void changePanning(int xShift, int yShift);
+		void setData(vector<int>* ids, const vector<Label>* indexedLabels, int mouseX, int mouseY);
+		void renderSelection(glm::mat4 MVP, GLuint evalTex, int xShift, int yShift);
 
 		//static clean up
 		static void cleanUp( void );
 	private:
-		enum PAINTER { BOX, LINES };
+		enum PAINTER { BOX, LINES, CELL_BORDER };
+		enum VBO {VERTEX, TEX};
 
 		static GLSLShader* _b_shader_ptr;
 		static GLSLShader* _l_shader_ptr;
+		static GLSLShader* _c_shader_ptr;
 		static void createShader( void );
 		
 		void sortLabels(vector<Label>* unsorted);
@@ -36,10 +39,12 @@ class LabelSelectionPainter {
 		
 		TextRenderer* _renderer[5];
 		bool _active;
+		float _clickX;
+		float _clickY;
 		int _lines;
 
-		GLuint _vao[2];
-		GLuint _vbo[2];
+		GLuint _vao[3];
+		GLuint _vbo[3];
 };
 
 #endif

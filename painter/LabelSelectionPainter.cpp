@@ -11,6 +11,7 @@
 
 GLSLShader* LabelSelectionPainter::_l_shader_ptr = NULL;
 GLSLShader* LabelSelectionPainter::_b_shader_ptr = NULL;
+GLSLShader* LabelSelectionPainter::_c_shader_ptr = NULL;
 
 LabelSelectionPainter::LabelSelectionPainter( void ) {
 	createShader();
@@ -25,8 +26,8 @@ LabelSelectionPainter::LabelSelectionPainter( void ) {
 }
 
 LabelSelectionPainter::~LabelSelectionPainter( void ) {
-	glDeleteBuffers(2, &_vbo[0]);
-	glDeleteVertexArrays(2, &_vao[0]);
+	glDeleteBuffers(4, &_vbo[0]);
+	glDeleteVertexArrays(3, &_vao[0]);
 	for (int i = 0; i < 5; i++) {
 		delete _renderer[i];
 	}
@@ -35,6 +36,7 @@ LabelSelectionPainter::~LabelSelectionPainter( void ) {
 void LabelSelectionPainter::cleanUp( void ) {
 	delete _l_shader_ptr;
 	delete _b_shader_ptr;
+	delete _c_shader_ptr;
 }
 
 
@@ -44,8 +46,24 @@ void LabelSelectionPainter::clear( void ) {
 	_active = false;
 }
 
-void LabelSelectionPainter::setData(vector<int>* ids, const vector<Label>* indexedLabels) {
+void LabelSelectionPainter::changePanning(int xShift, int yShift) {
+	int w,h;
+	context::getWindowSize(&w, &h);
+	
+	_clickX += (float)xShift / (float)w;
+	_clickY -= (float)yShift / (float)h;
+}
+
+void LabelSelectionPainter::setData(vector<int>* ids, const vector<Label>* indexedLabels, int mouseX, int mouseY) {
 	if (ids->size() > 0) {
+		int w,h;
+		context::getWindowSize(&w, &h);
+
+		//mouse update in 0..1 0/0 left down
+			_clickX = mouseX / (float)w;
+			_clickY = 1.0f - mouseY / (float)h;
+		//
+
 		for (int i = 0; i < 5; i++) {
 			_renderer[i]->clearTextStorage();
 		} 
@@ -61,9 +79,6 @@ void LabelSelectionPainter::setData(vector<int>* ids, const vector<Label>* index
 		vector<float> yAnchor;
 		sortLabels(&selected);
 		prepareTextRenderer(&xSize, &ySize, &yAnchor, &selected);
-
-		int w,h;
-		context::getWindowSize(&w, &h);
 
 		//update box
 		float quad[8] = { -1.0f, 1.0f,
@@ -99,13 +114,53 @@ void LabelSelectionPainter::setData(vector<int>* ids, const vector<Label>* index
 	delete ids;
 }
 
-void LabelSelectionPainter::renderSelection(glm::mat4 MVP, int xShift, int yShift) {
+void LabelSelectionPainter::renderSelection(glm::mat4 MVP, GLuint evalTex, int xShift, int yShift) {
 	if (_active) {
 		int w,h;
 		context::getWindowSize(&w, &h);
 
+		//lines
+		glm::mat4 MVP_S = glm::translate(glm::mat4(1.0f), glm::vec3((float)xShift / (float)w * 2.0f, -(float)yShift / (float)h * 2.0f, 0.0f));
+		MVP_S = MVP_S * MVP;
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glLineWidth(2.0f);
+		glBindVertexArray(_vao[LINES]);
+			glBindTexture(GL_TEXTURE_2D, context::_options._labelScheme);
+				_l_shader_ptr->use();			
+					glUniform1i(_l_shader_ptr->getUniformLocation("colorScheme"), 0);
+					glUniformMatrix4fv(_l_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(MVP_S));
+					glDrawArrays(GL_POINTS, 0, _lines); 
+				_l_shader_ptr->unUse();
+			glBindTexture(GL_TEXTURE_2D, 0);
+		glBindVertexArray(0);
+
+		//cellBorder
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBindVertexArray(_vao[CELL_BORDER]);
+			glActiveTexture(GL_TEXTURE0);	
+			glBindTexture(GL_TEXTURE_2D, context::_options._labelScheme);
+				glActiveTexture(GL_TEXTURE1);	
+				glBindTexture(GL_TEXTURE_2D, evalTex);
+					_c_shader_ptr->use();		
+						glUniform1i(_c_shader_ptr->getUniformLocation("width"), w);
+						glUniform1i(_c_shader_ptr->getUniformLocation("height"), h);
+						glUniform1i(_c_shader_ptr->getUniformLocation("colorScheme"), 0);
+						glUniform1i(_c_shader_ptr->getUniformLocation("evalField"), 1);
+						glUniform2f(_c_shader_ptr->getUniformLocation("move"), (float)xShift/(float)w*2.0f, -(float)yShift/(float)h*2.0f);
+						glUniform2f(_c_shader_ptr->getUniformLocation("mouseCoords"), _clickX, _clickY);
+						glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); 
+					_c_shader_ptr->unUse();
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, 0);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		glBindVertexArray(0);
+
 		glm::mat4 MVP_1(1.0f);
 
+		//box
+		glBlendFunc(GL_ONE, GL_ZERO);
 		glBindVertexArray(_vao[BOX]);
 			_b_shader_ptr->use();			
 				glUniformMatrix4fv(_l_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(MVP_1));
@@ -114,17 +169,7 @@ void LabelSelectionPainter::renderSelection(glm::mat4 MVP, int xShift, int yShif
 			_b_shader_ptr->unUse();
 		glBindVertexArray(0);
 
-		glm::mat4 MVP_S = glm::translate(glm::mat4(1.0f), glm::vec3((float)xShift / (float)w * 2.0f, -(float)yShift / (float)h * 2.0f, 0.0f));
-		MVP_S = MVP_S * MVP;
-
-		glBindVertexArray(_vao[LINES]);
-			_l_shader_ptr->use();			
-				glUniformMatrix4fv(_l_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(MVP_S));
-				glUniform4f(_l_shader_ptr->getUniformLocation("color"), 0.9f, 0.9f, 0.9f, 1.0f);
-				glDrawArrays(GL_POINTS, 0, _lines); 
-			_l_shader_ptr->unUse();
-		glBindVertexArray(0);
-
+		//text
 		for (int i = 0; i < 5; i++) {
 			_renderer[i]->renderText();
 		}
@@ -144,29 +189,21 @@ void LabelSelectionPainter::createShader( void ) {
 		unis.push_back("MVP");
 		_b_shader_ptr = new GLSLShader(attribs, unis, "shaders/standard/shader.vert", "shaders/standard/shader.frag");
 
+		unis.clear();
+		unis.push_back("MVP");
+		unis.push_back("colorScheme");
 		_l_shader_ptr = new GLSLShader(attribs, unis, "shaders/labelLines/shader.vert", "shaders/labelLines/shader.frag", "shaders/labelLines/shader.gem");
+
+		unis.clear();
+		attribs.push_back("vTex");
+		unis.push_back("mouseCoords");
+		unis.push_back("move");
+		unis.push_back("colorScheme");
+		unis.push_back("evalField");
+		unis.push_back("width");
+		unis.push_back("height");
+		_c_shader_ptr = new GLSLShader(attribs, unis, "shaders/cellBorder/shader.vert", "shaders/cellBorder/shader.frag");
 	}
-}
-
-void LabelSelectionPainter::initVao( void ) {
-	
-	glGenVertexArrays(2, &_vao[0]);
-	glGenBuffers (2, &_vbo[0]);
-
-	glBindVertexArray(_vao[BOX]);	 
-		glBindBuffer(GL_ARRAY_BUFFER, _vbo[BOX]);
-			glEnableVertexAttribArray(_b_shader_ptr->getAttributeLocation("vVertex"));
-			glVertexAttribPointer (_b_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, 0, 0);	
-		glBindBuffer (GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-
-	glBindVertexArray(_vao[LINES]);	 
-		glBindBuffer(GL_ARRAY_BUFFER, _vbo[LINES]);
-			glEnableVertexAttribArray(_l_shader_ptr->getAttributeLocation("vVertex"));
-			glVertexAttribPointer (_l_shader_ptr->getAttributeLocation("vVertex"), 4, GL_FLOAT, GL_FALSE, 0, 0);	
-		glBindBuffer (GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-
 }
 
 void LabelSelectionPainter::sortLabels(vector<Label>* unsorted) {
@@ -282,4 +319,49 @@ float LabelSelectionPainter::scale(float normedVal, bool linearMode, float expon
 
 float LabelSelectionPainter::mix(float x, float y, float a) {
 	return (x * (1.0f-a) + y * a);
+}
+
+
+void LabelSelectionPainter::initVao( void ) {
+	
+	glGenVertexArrays(3, &_vao[0]);
+	glGenBuffers(4, &_vbo[0]);
+
+	glBindVertexArray(_vao[BOX]);	 
+		glBindBuffer(GL_ARRAY_BUFFER, _vbo[BOX]);
+			glEnableVertexAttribArray(_b_shader_ptr->getAttributeLocation("vVertex"));
+			glVertexAttribPointer (_b_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, 0, 0);	
+		glBindBuffer (GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	glBindVertexArray(_vao[LINES]);	 
+		glBindBuffer(GL_ARRAY_BUFFER, _vbo[LINES]);
+			glEnableVertexAttribArray(_l_shader_ptr->getAttributeLocation("vVertex"));
+			glVertexAttribPointer (_l_shader_ptr->getAttributeLocation("vVertex"), 4, GL_FLOAT, GL_FALSE, 0, 0);	
+		glBindBuffer (GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	//cell shader
+
+	float quad[8] = { -1.0f, 1.0f,    -1.0f, -1.0f,		 1.0f, 1.0f, 	 1.0f, -1.0f};
+	float texture[8] = { 0.0f, 1.0f,     0.0f,  0.0f,      1.0f, 1.0f,     1.0f,  0.0f};
+
+	glBindBuffer(GL_ARRAY_BUFFER, _vbo[CELL_BORDER + VERTEX]);
+		glBufferData (GL_ARRAY_BUFFER, 8 * sizeof(float), &quad[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, _vbo[CELL_BORDER + TEX]);
+		glBufferData (GL_ARRAY_BUFFER, 8 * sizeof(float), &texture[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	
+
+	glBindVertexArray(_vao[CELL_BORDER]);	 
+		glBindBuffer(GL_ARRAY_BUFFER, _vbo[CELL_BORDER + VERTEX]);
+			glEnableVertexAttribArray(_c_shader_ptr->getAttributeLocation("vVertex"));
+			glVertexAttribPointer (_c_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, 0, 0);	
+		glBindBuffer(GL_ARRAY_BUFFER, _vbo[CELL_BORDER + TEX]);			
+			glEnableVertexAttribArray(_c_shader_ptr->getAttributeLocation("vTex"));
+			glVertexAttribPointer (_c_shader_ptr->getAttributeLocation("vTex"), 2, GL_FLOAT, GL_FALSE, 0, 0);	
+		glBindBuffer (GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
 }
