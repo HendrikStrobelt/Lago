@@ -17,29 +17,44 @@ vec2 getTexCoordinates(vec2 screenCoordinates) {
 	return ((screenCoordinates + 1.0) / 2.0);
 }
 
+bool borderTest(vec2 screenCoords) {
+	float stepX = 2.0f / width;
+	float stepY = 2.0f / height;
+	
+	if (screenCoords.x > (1.0f - stepX) || screenCoords.x < (-1.0f + stepX) || 
+		screenCoords.y > (1.0f - stepY) || screenCoords.y < (-1.0f + stepY)) {
+		//failed border pos
+		return false;
+	} else {
+		return true;
+	}
+}
+
 void main(void) 
 {
 	int i = 0;
 	
 	if (gLabelID[i] != -1) {
+		if (gl_PositionIn[i].x < 1.0f && gl_PositionIn[i].x > -1.0f &&
+		    gl_PositionIn[i].y < 1.0f && gl_PositionIn[i].y > -1.0f) {
+		
+			float tStepX = (1.0f / width) * 3;
+			float tStepY = (1.0f / height) * 3;
 
-		float tStepX = (1.0f / width) * 3;
-		float tStepY = (1.0f / height) * 3;
+			vec2 mouseVal = texture(fieldTex, compareTexCoord).rg;
+			vec2 pointVal = texture(fieldTex, getTexCoordinates(gl_PositionIn[i].xy)).rg;
 
-		vec2 mouseVal = texture(fieldTex, compareTexCoord).rg;
-		vec2 pointVal = texture(fieldTex, getTexCoordinates(gl_PositionIn[i].xy)).rg;
+			vec2 c0 = abs(mouseVal - pointVal);
 
-		vec2 c0 = abs(mouseVal - pointVal);
+			if (c0.x < tStepX && c0.y < tStepY) { //near equality
+				gl_Position = gl_PositionIn[i];
+				labelID = gLabelID[i];
+				EmitVertex();
 
-		if (c0.x < tStepX && c0.y < tStepY) { //near equality
-			gl_Position = gl_PositionIn[i];
-			labelID = gLabelID[i];
-			EmitVertex();
-
-			//finish
-			EndPrimitive();
+				//finish
+				EndPrimitive();
+			}
 		}
-
 	}
 }
 
