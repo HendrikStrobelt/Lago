@@ -56,8 +56,6 @@ void VisAdjusting::takeOver( void ) {
 	_visPainter = new VisPainter(_r->_windowWidth, _r->_windowHeight);
 	_visPainter->renderVis(_r->_newData, _r->_hasEdges);
 	_r->_newData->_vis = _visPainter->detachResult();
-	
-	_r->updateLabels(_r->_newData);
 }
 
 void VisAdjusting::changePanning(int xMouseMove, int yMouseMove) {

@@ -3,6 +3,7 @@
 #include "../context/Context.hpp"
 #include "../helper/GraphVizCom.hpp"
 #include "../GlobalConstants.hpp"
+#include <algorithm>
 
 LabelPainter::LabelPainter( void ) {
 	_renderer[4] = new TextRenderer("C://Windows//fonts//times.ttf", 28);
@@ -22,15 +23,61 @@ LabelPainter::~LabelPainter( void ) {
 //public stuff
 
 void LabelPainter::clear( void ) {
+	_labels.clear();
+	clearRenderer();
+}
+
+void LabelPainter::updateMVP(glm::mat4 MVP) {
+	changeLabels(MVP);
+}
+
+void LabelPainter::addLabel(glm::mat4 MVP, Label l) {
+	bool notIn = true;
+	
+	for (int i = 0; i < _labels.size(); i++) {
+		if (_labels[i].id == l.id) {
+			notIn = false;
+		}
+	}	
+	if (notIn) {
+		_labels.push_back(l);
+		changeLabels(MVP);
+	}
+}
+
+void LabelPainter::removeLabel(glm::mat4 MVP, Label l) {
+	for (int i = 0; i < _labels.size(); i++) {
+		if (_labels[i].id == l.id) {
+			_labels.erase(_labels.begin() + i);
+			break;
+		}
+	}
+	changeLabels(MVP);
+}
+
+
+void LabelPainter::renderLabels(int xShift, int yShift) {
+	for (int i = 0; i < 5; i++) {
+		_renderer[i]->renderText(xShift, yShift);
+	}
+}
+
+
+//private
+
+void LabelPainter::clearRenderer( void ) {
 	int w,h;
 	context::getWindowSize(&w, &h);
+
 	for (int i = 0; i < 5; i++) {
 		_renderer[i]->clearTextStorage();
 		_renderer[i]->resize(w, h);
 	}
 }
 
-void LabelPainter::changeLabels(glm::mat4 MVP, const vector<Label>* sortedLabels) {
+void LabelPainter::changeLabels(glm::mat4 MVP) {
+	clearRenderer();
+	sortLabels(&_labels);
 	vector<Label> topX;
 
 	int w,h;
@@ -46,13 +93,13 @@ void LabelPainter::changeLabels(glm::mat4 MVP, const vector<Label>* sortedLabels
 	vector<int> y_topX;
 
 	//select top x labels
-	while (topX.size() < context::_options._labelCount && i < sortedLabels->size()) {
-		glm::vec4 labelPos(sortedLabels->at(i).x, sortedLabels->at(i).y, 0.0f, 1.0f);
+	while (topX.size() < context::_options._labelCount && i < _labels.size()) {
+		glm::vec4 labelPos(_labels[i].x, _labels[i].y, 0.0f, 1.0f);
 		labelPos = MVP2 * labelPos;
 
 		if (labelPos.x >= 0.0f && labelPos.x <= 1.0f && labelPos.y >= 0.0f && labelPos.y <= 1.0f) {
 			//inside
-			topX.push_back(sortedLabels->at(i));
+			topX.push_back(_labels[i]);
 			x_topX.push_back(labelPos.x * (float)w);
 			y_topX.push_back(labelPos.y * (float)h);
 		}
@@ -122,15 +169,6 @@ void LabelPainter::changeLabels(glm::mat4 MVP, const vector<Label>* sortedLabels
 }
 
 
-void LabelPainter::renderLabels(int xShift, int yShift) {
-	for (int i = 0; i < 5; i++) {
-		_renderer[i]->renderText(xShift, yShift);
-	}
-}
-
-
-//private
-
 float LabelPainter::scale(float normedVal, bool linearMode, float exponent, float pointsX[], float pointsY[]) {
 	if (linearMode) {
 		if (normedVal == 1.0f) {
@@ -160,4 +198,15 @@ float LabelPainter::scale(float normedVal, bool linearMode, float exponent, floa
 
 float LabelPainter::mix(float x, float y, float a) {
 	return (x * (1.0f-a) + y * a);
+}
+
+
+void LabelPainter::sortLabels(vector<Label>* unsorted) {
+	struct labelCompare {
+		bool operator() (Label l1, Label l2) {
+			return (l1.weight > l2.weight);
+		}
+	} comparator;
+
+	sort(unsorted->begin(), unsorted->end(), comparator);
 }

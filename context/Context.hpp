@@ -36,7 +36,8 @@ namespace context {
 		void tick( void );
 
 		//setters
-		void rightClick(int x, int y);//TMP
+		void rightClick(int x, int y);
+		void labelClick(bool add, int id);
 
 		void setSideExponent(int newSideExponent);
 		void setZoomExponent(int newZoomExponent);

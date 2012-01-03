@@ -33,7 +33,7 @@ namespace graphVizCom {
 		_commands.str("");
 
 		_commands << "graph{ \n";
-		_commands << "graph [overlap=\"prism\" overlap_scaling=\"0\" sep=\"+0\"] \n";
+		_commands << "graph [overlap=\"vpsc\" overlap_scaling=\"0\" sep=\"+0\"] \n";
 	}
 
 	void add(int centerX, int centerY, int width, int height) {

@@ -186,8 +186,9 @@ bool DataReader::readNextNode(vector<Node>* nodes, vector<Label>* labels) {
 		if (hasNodeLabels() && labels != NULL) {
 			l.x = n.x;
 			l.y = n.y;
+			l.id = labels->size();
+			n.labelID = labels->size();
 			labels->push_back(l);
-			n.labelID = labels->size() - 1;
 		}
 		nodes->push_back(n);
 		return true;

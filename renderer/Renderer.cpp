@@ -53,6 +53,15 @@ void Renderer::rightClick(int x, int y) {
 	_labelSelectionPainter.setData(ids, _dCache.getIndexedLabels(), x, y);
 }
 
+void Renderer::labelClick(bool add, int id) {
+	Label l = _dCache.getIndexedLabels()->at(id);
+	if (add) {
+		_labelPainter.addLabel(getStandardMVP(), l);
+	} else {
+		_labelPainter.removeLabel(getStandardMVP(), l);
+	}
+}
+
 
 //private methods that can be used by the states
 
@@ -86,11 +95,6 @@ void Renderer::setNewData(string nodeFile, string edgeFile) {
 	_cellLabelGetter = new CellLabelGetter(_nodeVBO, _dCache.getNodeStructureInfo()->getAllNodes(_dCache.getNodeStructureInfo()->getMaxDepth()));
 }	
 
-void Renderer::updateLabels(RenderData* rData) {
-	if (_dCache.hasLabels() && context::_options._showLabels) {
-		rData->_labelPainter.changeLabels(getStandardMVP(), _dCache.getIndexedLabels());
-	}
-}
 
 glm::mat4 Renderer::getStandardMVP( void ) {
 	glm::mat4 P = cameraHelper::calculateProjection(_dCache.getNodeStructureInfo(), context::_zoomFactor);
@@ -136,7 +140,7 @@ void Renderer::renderLabelSelection(RenderData* rData, int xMove, int yMove) {
 
 void Renderer::renderLabels(RenderData* rData, int xMove, int yMove) {
 	if (_dCache.hasLabels() && 	context::_options._showLabels)  {
-		rData->_labelPainter.renderLabels(xMove, yMove);
+		_labelPainter.renderLabels(xMove, yMove);
 	}
 }
 
@@ -188,6 +192,7 @@ void Renderer::changeData(string nodeFile, string edgeFile) {
 	setNewData(nodeFile, edgeFile);
 	context::_pixelSize = cameraHelper::getPixelSize(_dCache.getNodeStructureInfo(), context::_zoomFactor);
 	_labelSelectionPainter.clear();
+	_labelPainter.clear();
 	_state->changeData(nodeFile, edgeFile);
 }
 

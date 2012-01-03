@@ -32,7 +32,8 @@ class Renderer : public IRenderState {
 		Renderer( void );
 		~Renderer( void );
 
-		void rightClick(int x, int y);//TMP
+		void rightClick(int x, int y);
+		void labelClick(bool add, int id);
 
 		//State methods
 		void render( void );
@@ -78,10 +79,10 @@ class Renderer : public IRenderState {
 		TextureExaminer _textureExaminer;
 		LabelSelectionPainter _labelSelectionPainter;
 		CellLabelGetter* _cellLabelGetter;
+		LabelPainter _labelPainter;
 		//
 
 		void setNewData(string nodeFile, string edgeFile="");
-		void updateLabels(RenderData* rData);
 		glm::mat4 getStandardMVP( void );
 
 		void setState(IRenderState* state);

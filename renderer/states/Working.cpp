@@ -40,6 +40,7 @@ void Working::work( void ) {
 		}
 
 		_r->_labelSelectionPainter.changePanning(_r->_mouseMoveX, _r->_mouseMoveY);
+		_r->_labelPainter.updateMVP(_r->getStandardMVP());
 		_r->setState(_r->_visAdjust);
 	}
 }

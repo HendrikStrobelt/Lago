@@ -94,6 +94,10 @@ namespace context {
 		_renderer->rightClick(x, y);
 	}
 
+	void labelClick(bool add, int id) {
+		_renderer->labelClick(add, id);
+	}
+
 	void setSideExponent(int newSideExponent) {
 		_sideExponent = newSideExponent;
 		if (_sideExponent < 0) {

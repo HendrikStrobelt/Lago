@@ -6,7 +6,7 @@
 #include <glm\gtc\type_ptr.hpp>
 #include "../context/Context.hpp"
 #include "../text/PreparedText.hpp"
-
+#include "../helper/MouseHandler.hpp"
 
 
 GLSLShader* LabelSelectionPainter::_l_shader_ptr = NULL;
@@ -227,6 +227,7 @@ void LabelSelectionPainter::sortLabels(vector<Label>* unsorted) {
 void LabelSelectionPainter::prepareTextRenderer(int* retXSize, int* retYSize, vector<float>* retYAnchor, vector<Label>* sortedLabels) {
 	vector<Label> topX;
 
+	mouseHandler::clearLB();
 	int windowW,windowH;
 	context::getWindowSize(&windowW, &windowH);
 	int i = 0;
@@ -292,6 +293,16 @@ void LabelSelectionPainter::prepareTextRenderer(int* retXSize, int* retYSize, ve
 
 		_renderer[rI]->setCenter(off[rI], x, y);
 		off[rI]++;
+
+		//update click listener
+		float left = x - ((float) w / (float) windowW) / 2.0f;
+		float right = x + ((float) w / (float) windowW) / 2.0f;
+		float bottom = y - ((float) h / (float) windowH) / 2.0f;
+		float up = y + ((float) h / (float) windowH) / 2.0f;
+
+		mouseHandler::registerLB(bottom, left, up, right, topX[i].id);
+
+	
 	}
 
 	*retYSize = yOff;
