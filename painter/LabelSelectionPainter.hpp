@@ -16,9 +16,10 @@ class LabelSelectionPainter {
 		~LabelSelectionPainter( void );
 
 		void clear( void );
+		void resize(int w, int h);		
 		void changePanning(int xShift, int yShift);
 		void setData(vector<int>* ids, const vector<Label>* indexedLabels, int mouseX, int mouseY);
-		void renderSelection(glm::mat4 MVP, GLuint evalTex, int xShift, int yShift);
+		void renderSelection(glm::mat4 MVP, GLuint evalTex, int xShift, int yShift, int xMove=0, int yMove=0);
 
 		//static clean up
 		static void cleanUp( void );

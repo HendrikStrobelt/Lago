@@ -20,6 +20,7 @@ void VisAdjusting::render( void ) {
 	maxVals[0] = _r->_newData->_maxValuesN[2];
 	maxVals[1] = _r->_newData->_maxValuesE[1];
 	_r->renderHUD(-1.0f, maxVals);
+	_r->renderLabelSelection(_r->_newData);
 }
 
 void VisAdjusting::renderGauss( void ) { /* nothing to do */ }

@@ -16,6 +16,7 @@ void Idle::render( void ) {
 	maxVals[0] = _r->_currentData->_maxValuesN[2];
 	maxVals[1] = _r->_currentData->_maxValuesE[1];
 	_r->renderHUD(-1.0f, maxVals);
+	_r->renderLabelSelection(_r->_currentData);
 }
 
 void Idle::renderGauss( void ) {

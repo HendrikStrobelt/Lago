@@ -16,6 +16,7 @@ GLSLShader* LabelSelectionPainter::_c_shader_ptr = NULL;
 LabelSelectionPainter::LabelSelectionPainter( void ) {
 	createShader();
 	initVao();
+
 	_renderer[4] = new TextRenderer("C://Windows//fonts//times.ttf", 28);
 	_renderer[3] = new TextRenderer("C://Windows//fonts//times.ttf", 20);
 	_renderer[2] = new TextRenderer("C://Windows//fonts//times.ttf", 16);
@@ -41,6 +42,13 @@ void LabelSelectionPainter::cleanUp( void ) {
 
 
 //public stuff
+
+void LabelSelectionPainter::resize(int w, int h) {
+	for (int i = 0; i < 5; i++) {
+		_renderer[i]->clearTextStorage();
+		_renderer[i]->resize(w, h);
+	}
+}
 
 void LabelSelectionPainter::clear( void ) {
 	_active = false;
@@ -114,7 +122,7 @@ void LabelSelectionPainter::setData(vector<int>* ids, const vector<Label>* index
 	delete ids;
 }
 
-void LabelSelectionPainter::renderSelection(glm::mat4 MVP, GLuint evalTex, int xShift, int yShift) {
+void LabelSelectionPainter::renderSelection(glm::mat4 MVP, GLuint evalTex, int xShift, int yShift, int xMove, int yMove) {
 	if (_active) {
 		int w,h;
 		context::getWindowSize(&w, &h);
@@ -147,7 +155,7 @@ void LabelSelectionPainter::renderSelection(glm::mat4 MVP, GLuint evalTex, int x
 						glUniform1i(_c_shader_ptr->getUniformLocation("height"), h);
 						glUniform1i(_c_shader_ptr->getUniformLocation("colorScheme"), 0);
 						glUniform1i(_c_shader_ptr->getUniformLocation("evalField"), 1);
-						glUniform2f(_c_shader_ptr->getUniformLocation("move"), (float)xShift/(float)w*2.0f, -(float)yShift/(float)h*2.0f);
+						glUniform2f(_c_shader_ptr->getUniformLocation("move"), (float)(xShift+xMove)/(float)w*2.0f, -(float)(yShift+yMove)/(float)h*2.0f);
 						glUniform2f(_c_shader_ptr->getUniformLocation("mouseCoords"), _clickX, _clickY);
 						glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); 
 					_c_shader_ptr->unUse();

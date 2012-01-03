@@ -126,10 +126,12 @@ void Renderer::renderHUD(float progress, float maxVals[]) {
 	if (maxVals[0] > 0.0f) {
 		_scalingBars.renderScaleBars(maxVals, _hasEdges);
 	}
+}
 
+void Renderer::renderLabelSelection(RenderData* rData, int xMove, int yMove) {
 	int xShift, yShift;
 	mouseHandler::getPressMovement(&xShift, &yShift);
-	_labelSelectionPainter.renderSelection(getStandardMVP(), _currentData->_evalField, xShift, yShift);
+	_labelSelectionPainter.renderSelection(getStandardMVP(), rData->_evalField, xShift, yShift, xMove, yMove);
 }
 
 void Renderer::renderLabels(RenderData* rData, int xMove, int yMove) {
@@ -173,7 +175,6 @@ void Renderer::takeOver( void ) {
 }
 
 void Renderer::changePanning(int xMouseMove, int yMouseMove) {
-	_labelSelectionPainter.changePanning(xMouseMove, yMouseMove);
 	_state->changePanning(xMouseMove, yMouseMove);
 }
 
@@ -198,6 +199,7 @@ void Renderer::changeSideLength( void ) {
 void Renderer::changeWindow( void ) {
 	context::getWindowSize(&_windowWidth, &_windowHeight);
 	context::_pixelSize = cameraHelper::getPixelSize(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+	_labelSelectionPainter.resize(_windowWidth, _windowHeight);
 	_labelSelectionPainter.clear();
 	_state->changeWindow();
 }
