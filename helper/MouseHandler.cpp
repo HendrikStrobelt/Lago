@@ -13,6 +13,7 @@ namespace mouseHandler {
 	};
 
 	vector<ClickBox> _buttons;
+	vector<ClickBox> _labels;
 
 	//private vars
 	context::DummyContextListener _contextListener;
@@ -102,6 +103,9 @@ namespace mouseHandler {
 
 	//click functionality
 
+	void registerLabel(float bottom, float left, float up, float right, int lbVal) {
+		_labels.push_back(ClickBox(bottom, left, up, right, lbVal));
+	}
 
 	void registerLB(float bottom, float left, float up, float right, int lbVal) {
 		_buttons.push_back(ClickBox(bottom, left, up, right, lbVal));
@@ -109,6 +113,10 @@ namespace mouseHandler {
 
 	void clearLB( void ) {
 		_buttons.clear();
+	}
+
+	void clearLabel( void ) {
+		_labels.clear();
 	}
 
 
@@ -122,6 +130,17 @@ namespace mouseHandler {
 					hit = true;
 					context::labelClick(true, _buttons[i].lbVal);
 					break;
+			}
+		}
+
+		if (!hit) {
+			for (int i = 0; i < _labels.size(); i++) {
+				if (   x > _labels[i].left && x < _labels[i].right
+					&& y > _labels[i].bottom && y < _labels[i].up) {
+						hit = true;
+						context::labelClick(false, _labels[i].lbVal);
+						break;
+				}
 			}
 		}
 				

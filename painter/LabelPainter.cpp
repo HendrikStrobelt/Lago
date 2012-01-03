@@ -3,6 +3,7 @@
 #include "../context/Context.hpp"
 #include "../helper/GraphVizCom.hpp"
 #include "../GlobalConstants.hpp"
+#include "../helper/MouseHandler.hpp"
 #include <algorithm>
 
 LabelPainter::LabelPainter( void ) {
@@ -77,95 +78,116 @@ void LabelPainter::clearRenderer( void ) {
 
 void LabelPainter::changeLabels(glm::mat4 MVP) {
 	clearRenderer();
-	sortLabels(&_labels);
-	vector<Label> topX;
+	mouseHandler::clearLabel();
 
-	int w,h;
-	context::getWindowSize(&w, &h);
-	int i = 0;
+	if (_labels.size() > 0) {
+		sortLabels(&_labels);
+		vector<Label> topX;
 
-	glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 0.0f));
-	glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 1.0f));
+		int windowW,windowH;
+		context::getWindowSize(&windowW, &windowH);
+		int i = 0;
 
-	glm::mat4 MVP2 = S * T * MVP; // transforms world to 0..1-0..1 coordinates
+		glm::mat4 T = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 0.0f));
+		glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 1.0f));
 
-	vector<int> x_topX;
-	vector<int> y_topX;
+		glm::mat4 MVP2 = S * T * MVP; // transforms world to 0..1-0..1 coordinates
 
-	//select top x labels
-	while (topX.size() < context::_options._labelCount && i < _labels.size()) {
-		glm::vec4 labelPos(_labels[i].x, _labels[i].y, 0.0f, 1.0f);
-		labelPos = MVP2 * labelPos;
+		vector<int> x_topX;
+		vector<int> y_topX;
 
-		if (labelPos.x >= 0.0f && labelPos.x <= 1.0f && labelPos.y >= 0.0f && labelPos.y <= 1.0f) {
-			//inside
-			topX.push_back(_labels[i]);
-			x_topX.push_back(labelPos.x * (float)w);
-			y_topX.push_back(labelPos.y * (float)h);
+		//select top x labels
+		while (topX.size() < context::_options._labelCount && i < _labels.size()) {
+			glm::vec4 labelPos(_labels[i].x, _labels[i].y, 0.0f, 1.0f);
+			labelPos = MVP2 * labelPos;
+
+			if (labelPos.x >= 0.0f && labelPos.x <= 1.0f && labelPos.y >= 0.0f && labelPos.y <= 1.0f) {
+				//inside
+				topX.push_back(_labels[i]);
+				x_topX.push_back(labelPos.x * (float)windowW);
+				y_topX.push_back(labelPos.y * (float)windowH);
+			}
+
+			i++;
 		}
 
-		i++;
-	}
+		if (topX.size() > 0) {
+			float maxW = topX.front().weight;
+			float minW = topX.back().weight;
+			float div = maxW - minW;
 
-	float maxW = topX.front().weight;
-	float minW = topX.back().weight;
-	float div = maxW - minW;
+			vector<int> topX2RenderIndex;
 
-	vector<int> topX2RenderIndex;
+			//add them to the correct renderer
+			for (int i = 0; i < topX.size(); i++) {
 
-	//add them to the correct renderer
-	for (int i = 0; i < topX.size(); i++) {
-
-		float normedVal;
-
-		if (div != 0) {
-			normedVal = (topX[i].weight - minW)  / div;
-		} else {
-			normedVal = 0.5f;
-		}
+				float normedVal;
+	
+				if (div != 0) {
+					normedVal = (topX[i].weight - minW)  / div;
+				} else {
+					normedVal = 0.5f;
+				}
 		
-		ScaleOptions* so = &context::_scaleOptions[2];
-		float pointsX[4] = {so->_controlPoints[0][0], so->_controlPoints[1][0], so->_controlPoints[2][0], so->_controlPoints[3][0]};
-		float pointsY[4] = {so->_controlPoints[0][1], so->_controlPoints[1][1], so->_controlPoints[2][1], so->_controlPoints[3][1]};
+				ScaleOptions* so = &context::_scaleOptions[2];
+				float pointsX[4] = {so->_controlPoints[0][0], so->_controlPoints[1][0], so->_controlPoints[2][0], so->_controlPoints[3][0]};
+				float pointsY[4] = {so->_controlPoints[0][1], so->_controlPoints[1][1], so->_controlPoints[2][1], so->_controlPoints[3][1]};
+	
+				float scaled = scale(normedVal, so->_linearMode, so->_exponent, pointsX, pointsY);
 
-		float scaled = scale(normedVal, so->_linearMode, so->_exponent, pointsX, pointsY);
+				int index = min(4, (int)floor(scaled * 5.0f));
+				_renderer[index]->addText(topX[i].text, normedVal);
+				topX2RenderIndex.push_back(index);
+			}	
+				
+			//calculate new positions
+			vector<graphVizCom::MovedBox>* newPos = NULL;
 
-		int index = min(4, (int)floor(scaled * 5.0f));
-		_renderer[index]->addText(topX[i].text, normedVal);
-		topX2RenderIndex.push_back(index);
-	}
+			if (USE_GRAPHVIZ) {
+				graphVizCom::prepare();
 
-	//calculate new positions
-	vector<graphVizCom::MovedBox>* newPos = NULL;
+				int off[5] = {0,0,0,0,0};
+				for (int i = 0; i < topX.size(); i++) {
+					int rI = topX2RenderIndex[i];
+					PreparedText* label = _renderer[rI]->getTexts()->at(off[rI]);
+					graphVizCom::add(x_topX[i], y_topX[i], label->_textPixWidth, label->_textPixHeight);
+					off[rI]++;
+				}
+				newPos = graphVizCom::transmit();
 
-	if (USE_GRAPHVIZ) {
-		graphVizCom::prepare();
+				for (int i = 0; i < newPos->size(); i++) {
+					x_topX[newPos->at(i).id] =  newPos->at(i).x;
+					y_topX[newPos->at(i).id] =  newPos->at(i).y;
+				}
+			}
+	
+			//set new positions
+			int off[5] = {0,0,0,0,0};
+			for (int i = 0; i < topX.size(); i++) {
+				int rI = topX2RenderIndex[i];
 
-		int off[5] = {0,0,0,0,0};
-		for (int i = 0; i < topX.size(); i++) {
-			int rI = topX2RenderIndex[i];
-			PreparedText* label = _renderer[rI]->getTexts()->at(off[rI]);
-			graphVizCom::add(x_topX[i], y_topX[i], label->_textPixWidth, label->_textPixHeight);
-			off[rI]++;
+				float x = (float)x_topX[i] / (float)windowW;
+				float y =  (float)y_topX[i] / (float)windowH;
+
+				_renderer[rI]->setCenter(off[rI], x, y);
+
+				float w = _renderer[rI]->getTexts()->at(off[rI])->_textPixWidth;
+				float h = _renderer[rI]->getTexts()->at(off[rI])->_textPixHeight;
+
+				//update click listener
+				float left = x - ((float) w / (float) windowW) / 2.0f;
+				float right = x + ((float) w / (float) windowW) / 2.0f;
+				float bottom = y - ((float) h / (float) windowH) / 2.0f;
+				float up = y + ((float) h / (float) windowH) / 2.0f;
+
+				mouseHandler::registerLabel(bottom, left, up, right, topX[i].id);
+
+				off[rI]++;
+			}
+	
+			delete newPos;
 		}
-		newPos = graphVizCom::transmit();
-
-		for (int i = 0; i < newPos->size(); i++) {
-			x_topX[newPos->at(i).id] =  newPos->at(i).x;
-			y_topX[newPos->at(i).id] =  newPos->at(i).y;
-		}
 	}
-
-	//set new positions
-	int off[5] = {0,0,0,0,0};
-	for (int i = 0; i < topX.size(); i++) {
-		int rI = topX2RenderIndex[i];
-		_renderer[rI]->setCenter(off[rI], (float)x_topX[i] / (float)w, (float)y_topX[i] / (float)h);
-		off[rI]++;
-	}
-
-
-	delete newPos;
 }
 
 
