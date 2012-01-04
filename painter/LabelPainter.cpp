@@ -82,7 +82,7 @@ void LabelPainter::changeLabels(glm::mat4 MVP) {
 
 	if (_labels.size() > 0) {
 		sortLabels(&_labels);
-		vector<Label> topX;
+		vector<Label> viewLabels;
 
 		int windowW,windowH;
 		context::getWindowSize(&windowW, &windowH);
@@ -96,14 +96,14 @@ void LabelPainter::changeLabels(glm::mat4 MVP) {
 		vector<int> x_topX;
 		vector<int> y_topX;
 
-		//select top x labels
-		while (topX.size() < context::_options._labelCount && i < _labels.size()) {
+		//select view labels
+		while (i < _labels.size()) {
 			glm::vec4 labelPos(_labels[i].x, _labels[i].y, 0.0f, 1.0f);
 			labelPos = MVP2 * labelPos;
 
 			if (labelPos.x >= 0.0f && labelPos.x <= 1.0f && labelPos.y >= 0.0f && labelPos.y <= 1.0f) {
 				//inside
-				topX.push_back(_labels[i]);
+				viewLabels.push_back(_labels[i]);
 				x_topX.push_back(labelPos.x * (float)windowW);
 				y_topX.push_back(labelPos.y * (float)windowH);
 			}
@@ -111,20 +111,20 @@ void LabelPainter::changeLabels(glm::mat4 MVP) {
 			i++;
 		}
 
-		if (topX.size() > 0) {
-			float maxW = topX.front().weight;
-			float minW = topX.back().weight;
+		if (viewLabels.size() > 0) {
+			float maxW = viewLabels.front().weight;
+			float minW = viewLabels.back().weight;
 			float div = maxW - minW;
 
 			vector<int> topX2RenderIndex;
 
 			//add them to the correct renderer
-			for (int i = 0; i < topX.size(); i++) {
+			for (int i = 0; i < viewLabels.size(); i++) {
 
 				float normedVal;
 	
 				if (div != 0) {
-					normedVal = (topX[i].weight - minW)  / div;
+					normedVal = (viewLabels[i].weight - minW)  / div;
 				} else {
 					normedVal = 0.5f;
 				}
@@ -136,7 +136,7 @@ void LabelPainter::changeLabels(glm::mat4 MVP) {
 				float scaled = scale(normedVal, so->_linearMode, so->_exponent, pointsX, pointsY);
 
 				int index = min(4, (int)floor(scaled * 5.0f));
-				_renderer[index]->addText(topX[i].text, normedVal);
+				_renderer[index]->addText(viewLabels[i].text, normedVal);
 				topX2RenderIndex.push_back(index);
 			}	
 				
@@ -147,7 +147,7 @@ void LabelPainter::changeLabels(glm::mat4 MVP) {
 				graphVizCom::prepare();
 
 				int off[5] = {0,0,0,0,0};
-				for (int i = 0; i < topX.size(); i++) {
+				for (int i = 0; i < viewLabels.size(); i++) {
 					int rI = topX2RenderIndex[i];
 					PreparedText* label = _renderer[rI]->getTexts()->at(off[rI]);
 					graphVizCom::add(x_topX[i], y_topX[i], label->_textPixWidth, label->_textPixHeight);
@@ -163,7 +163,7 @@ void LabelPainter::changeLabels(glm::mat4 MVP) {
 	
 			//set new positions
 			int off[5] = {0,0,0,0,0};
-			for (int i = 0; i < topX.size(); i++) {
+			for (int i = 0; i < viewLabels.size(); i++) {
 				int rI = topX2RenderIndex[i];
 
 				float x = (float)x_topX[i] / (float)windowW;
@@ -180,7 +180,7 @@ void LabelPainter::changeLabels(glm::mat4 MVP) {
 				float bottom = y - ((float) h / (float) windowH) / 2.0f;
 				float up = y + ((float) h / (float) windowH) / 2.0f;
 
-				mouseHandler::registerLabel(bottom, left, up, right, topX[i].id);
+				mouseHandler::registerLabel(bottom, left, up, right, viewLabels[i].id);
 
 				off[rI]++;
 			}

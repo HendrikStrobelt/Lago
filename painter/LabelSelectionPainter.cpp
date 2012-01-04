@@ -127,7 +127,7 @@ void LabelSelectionPainter::renderSelection(glm::mat4 MVP, GLuint evalTex, int x
 		int w,h;
 		context::getWindowSize(&w, &h);
 
-		//lines
+		//lines || points
 		glm::mat4 MVP_S = glm::translate(glm::mat4(1.0f), glm::vec3((float)xShift / (float)w * 2.0f, -(float)yShift / (float)h * 2.0f, 0.0f));
 		MVP_S = MVP_S * MVP;
 
@@ -136,6 +136,8 @@ void LabelSelectionPainter::renderSelection(glm::mat4 MVP, GLuint evalTex, int x
 		glBindVertexArray(_vao[LINES]);
 			glBindTexture(GL_TEXTURE_2D, context::_options._labelScheme);
 				_l_shader_ptr->use();			
+					glUniform1i(_l_shader_ptr->getUniformLocation("width"), w);
+					glUniform1i(_l_shader_ptr->getUniformLocation("height"), h);
 					glUniform1i(_l_shader_ptr->getUniformLocation("colorScheme"), 0);
 					glUniformMatrix4fv(_l_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(MVP_S));
 					glDrawArrays(GL_POINTS, 0, _lines); 
@@ -200,6 +202,8 @@ void LabelSelectionPainter::createShader( void ) {
 		unis.clear();
 		unis.push_back("MVP");
 		unis.push_back("colorScheme");
+		unis.push_back("width");
+		unis.push_back("height");
 		_l_shader_ptr = new GLSLShader(attribs, unis, "shaders/labelLines/shader.vert", "shaders/labelLines/shader.frag", "shaders/labelLines/shader.gem");
 
 		unis.clear();
