@@ -18,6 +18,10 @@ namespace mouseHandler {
 	//private vars
 	context::DummyContextListener _contextListener;
 	bool _leftDown;
+	bool _pressMovement;
+
+	int _xClickStart;
+	int _yClickStart;
 	int _xPressStart;
 	int _yPressStart;
 
@@ -38,34 +42,35 @@ namespace mouseHandler {
 	}
 
 	void getPressMovement(int* xMove, int* yMove) {
-		if (!_leftDown) {
+
+		 int xPos, yPos;
+ 		 glfwGetMousePos(&xPos, &yPos);
+
+		 if (_leftDown && !_pressMovement) {
+			 float movement  = sqrt((float)(xPos-_xClickStart)*(xPos-_xClickStart) + (yPos-_yClickStart)*(yPos-_yClickStart));
+			 if (movement > 6.0f) {
+				 //moved far enough
+				 _pressMovement = true;
+				 _xPressStart = xPos;
+				 _yPressStart = yPos;
+			 }
+		 }
+
+		 if (_pressMovement) {
+			*xMove = xPos - _xPressStart;
+			*yMove = yPos - _yPressStart;
+		 } else {
 			*xMove = 0;
 			*yMove = 0;
-		} else {
-			int x,y;
-			glfwGetMousePos(&x, &y);
-			
-			*xMove = x - _xPressStart;
-			*yMove = y - _yPressStart;
-		}
+		 }
 	}
 
 	//private
 	void mouseClick(int button, int action) {
 		if (action == GLFW_PRESS) {
 			if (button == GLFW_MOUSE_BUTTON_LEFT) {
-				int xPos, yPos, w, h;
-				glfwGetMousePos(&xPos, &yPos);
-				glfwGetWindowSize(&w, &h);
-
-				bool registeredClick = testClick((float)xPos / (float)w, 1.0f - (float)yPos / (float)h);
-
-				if (!registeredClick) {
-					//start panning
-					_leftDown = true;
-					_xPressStart = xPos;
-					_yPressStart = yPos;
-				}
+				glfwGetMousePos(&_xClickStart, &_yClickStart);
+				_leftDown = true;
 			}
 		} else 
 		if (action == GLFW_RELEASE) {
@@ -73,14 +78,21 @@ namespace mouseHandler {
 			glfwGetMousePos(&x, &y);
 			
 			if (button == GLFW_MOUSE_BUTTON_LEFT) {
-				if (_leftDown) {
-					_leftDown = false;
-	
-					int xMove = x - _xPressStart;
-					int yMove = y - _yPressStart;
-					if (xMove != 0 || yMove != 0) {
-						context::updateWorldTranslate(xMove, yMove);
+				if (_leftDown) {			
+					if (!_pressMovement) {
+						//could be a click
+						int w,h;
+						glfwGetWindowSize(&w, &h);					
+						testClick((float)x / (float)w, 1.0f - (float)y / (float)h);//reacts to clicks
+					} else {
+						int xMove = x - _xPressStart;
+						int yMove = y - _yPressStart;
+						if (xMove != 0 || yMove != 0) {
+							context::updateWorldTranslate(xMove, yMove);
+						}
 					}
+					_leftDown = false;
+					_pressMovement = false;
 				}
 			} else if (button == GLFW_MOUSE_BUTTON_RIGHT) {		
 				context::rightClick(x, y);
