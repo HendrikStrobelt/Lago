@@ -90,6 +90,10 @@ namespace context {
 
 	//SETTER
 
+	void emptyClick( void ) {
+		_renderer->emptyClick();
+	}
+
 	void rightClick(int x, int y) {
 		_renderer->rightClick(x, y);
 	}

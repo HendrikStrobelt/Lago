@@ -36,6 +36,7 @@ namespace context {
 		void tick( void );
 
 		//setters
+		void emptyClick( void );
 		void rightClick(int x, int y);
 		void labelClick(bool add, int id);
 

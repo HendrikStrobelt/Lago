@@ -83,7 +83,11 @@ namespace mouseHandler {
 						//could be a click
 						int w,h;
 						glfwGetWindowSize(&w, &h);					
-						testClick((float)x / (float)w, 1.0f - (float)y / (float)h);//reacts to clicks
+						bool click = testClick((float)x / (float)w, 1.0f - (float)y / (float)h);//reacts to clicks
+
+						if (!click) {
+							context::emptyClick();
+						}
 					} else {
 						int xMove = x - _xPressStart;
 						int yMove = y - _yPressStart;

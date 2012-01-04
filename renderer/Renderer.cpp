@@ -48,6 +48,10 @@ Renderer::~Renderer( void ) {
 
 //public
 
+void Renderer::emptyClick( void ) {
+	_labelSelectionPainter.clear();
+}
+
 void Renderer::rightClick(int x, int y) {
 	vector<int>* ids = _cellLabelGetter->getLabelIndices(x, y, _currentData->_evalField, getStandardMVP());
 	_labelSelectionPainter.setData(ids, _dCache.getIndexedLabels(), x, y);

@@ -32,6 +32,7 @@ class Renderer : public IRenderState {
 		Renderer( void );
 		~Renderer( void );
 
+		void emptyClick( void );
 		void rightClick(int x, int y);
 		void labelClick(bool add, int id);
 
