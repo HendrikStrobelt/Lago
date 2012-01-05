@@ -1,5 +1,6 @@
 #include "VisAdjusting.hpp"
 #include "../Renderer.hpp"
+#include "../RenderBlendData.hpp"
 
 VisAdjusting::VisAdjusting(Renderer* renderer) {
 	_r = renderer;
@@ -14,11 +15,26 @@ VisAdjusting::~VisAdjusting( void ) {
 //Interface methods
 
 void VisAdjusting::render( void ) {
-	_r->renderGraph(_r->_newData, 0.0f, 0.0f);
-	
+	IRenderData* rData;
+	RenderBlendData blendData(_r->_newData);		
+
+	if (_process < 1.0f) {
+		float max[3];
+
+		mixMaxVals(max, _r->_currentData->getNodeMaxAll(), _r->_newData->getNodeMaxAll(), _process);
+		blendData.setNodeMax(max);
+		mixMaxVals(max, _r->_currentData->getEdgeMaxAll(), _r->_newData->getEdgeMaxAll(), _process);
+		blendData.setEdgeMax(max);
+		rData = &blendData;
+	} else {
+		rData = _r->_newData;
+	}
+
 	float maxVals[2];
-	maxVals[0] = _r->_newData->_maxValuesN[2];
-	maxVals[1] = _r->_newData->_maxValuesE[1];
+	maxVals[0] = rData->getNodeMax();
+	maxVals[1] = rData->getEdgeMax();
+
+	_r->renderGraph(rData, 0.0f, 0.0f);
 	_r->renderHUD(-1.0f, maxVals);
 	_r->renderLabelSelection(_r->_newData);
 }
@@ -28,34 +44,41 @@ void VisAdjusting::renderEvalField( void ) { /* nothing to do */ }
 void VisAdjusting::renderLineField( void ) { /* nothing to do */ }
 
 void VisAdjusting::work( void ) {
-
-	//done
-	swap();
-	_r->setState(_r->_idle);
+	if (_process < 1.0f) {
+		_process += 0.01f;
+	} else {
+		//done
+		swap();
+		_r->setState(_r->_idle);
+	}
 }
 
 void VisAdjusting::takeOver( void ) {
 	_r->_mouseMoveX = 0;
 	_r->_mouseMoveY = 0;
+	_process = 0.0f;
 
 	//create valid set data in slot newData
-	if (_r->_newData->_gaussTex == -1) {
+	if (_r->_newData->getGaussTex() == -1) {
 		//new data is not complete steal from _currentData
-		_r->_newData->_evalField = _r->_currentData->_evalField;
-		_r->_currentData->_evalField = -1;
-		_r->_newData->_gaussTex = _r->_currentData->_gaussTex;
-		_r->_currentData->_gaussTex = -1;
-		_r->_newData->_lineField = _r->_currentData->_lineField;
-		_r->_currentData->_lineField = -1;
+		_r->_newData->setEvalField(_r->_currentData->getEvalField());
+		_r->_currentData->setEvalField(-1);
+		_r->_newData->setGaussTex(_r->_currentData->getGaussTex());
+		_r->_currentData->setGaussTex(-1);
+		_r->_newData->setLineField(_r->_currentData->getLineField());
+		_r->_currentData->setLineField(-1);
 	}
 
-	_r->calculateMaxValues(_r->_newData->_maxValuesN, _r->_newData->_gaussTex, _r->_windowWidth, _r->_windowHeight);
-	_r->calculateMaxValues(_r->_newData->_maxValuesE, _r->_newData->_lineField, _r->_windowWidth, _r->_windowHeight);
+	float tmp[3];
+	_r->calculateMaxValues(tmp, _r->_newData->getGaussTex(), _r->_windowWidth, _r->_windowHeight);
+	_r->_newData->setNodeMax(tmp);
+	_r->calculateMaxValues(tmp, _r->_newData->getLineField(), _r->_windowWidth, _r->_windowHeight);
+	_r->_newData->setEdgeMax(tmp);
 
 	delete _visPainter;
 	_visPainter = new VisPainter(_r->_windowWidth, _r->_windowHeight);
 	_visPainter->renderVis(_r->_newData, _r->_hasEdges);
-	_r->_newData->_vis = _visPainter->detachResult();
+	_r->_newData->setVis(_visPainter->detachResult());
 }
 
 void VisAdjusting::changePanning(int xMouseMove, int yMouseMove) {
@@ -96,4 +119,11 @@ void VisAdjusting::swap( void ) {
    	RenderData* swap = _r->_currentData;
    	_r->_currentData = _r->_newData;
    	_r->_newData = swap;
+}
+
+
+void VisAdjusting::mixMaxVals(float ret[], float curVals[], float newVals[], float process) {
+	for (int i = 0; i < 3; i++) {
+		ret[i] = curVals[i] * (1.0f - process) + newVals[i] * process;
+	}
 }

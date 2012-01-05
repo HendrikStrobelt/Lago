@@ -39,7 +39,7 @@ GLuint VisPainter::detachResult( void ) {
 	return _fbcRes->detachTexture();
 }
 
-void VisPainter::renderVis(RenderData* rData, bool withEdges) {
+void VisPainter::renderVis(IRenderData* rData, bool withEdges) {
 	if (!withEdges) {
 		glBindFramebuffer(GL_FRAMEBUFFER, _fbcRes->_fbo);
 			renderNodes(rData);
@@ -59,20 +59,20 @@ void VisPainter::renderVis(RenderData* rData, bool withEdges) {
 
 //privat
 
-void VisPainter::renderNodes(RenderData* rData)  {
+void VisPainter::renderNodes(IRenderData* rData)  {
 	glBlendFunc(GL_ONE, GL_ZERO);
 
 	int scaleMode = 0;
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, rData->_gaussTex);
+	glBindTexture(GL_TEXTURE_2D, rData->getGaussTex());
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, context::_options._nodeScheme);
 			glBindVertexArray(_vao);
 				_n_shader_ptr->use();			
 					glUniform1i(_n_shader_ptr->getUniformLocation("gaussTex"), 0);
 					glUniform1i(_n_shader_ptr->getUniformLocation("colorScheme"), 1);
-					glUniform1f(_n_shader_ptr->getUniformLocation("maxValue"), rData->_maxValuesN[2]);
+					glUniform1f(_n_shader_ptr->getUniformLocation("maxValue"), rData->getNodeMax());
 					glUniform1i(_n_shader_ptr->getUniformLocation("antiAlias"), context::_options._antiAlias);
 					glUniform1i(_n_shader_ptr->getUniformLocation("width"), _width);
 					glUniform1i(_n_shader_ptr->getUniformLocation("height"), _height);
@@ -91,12 +91,12 @@ void VisPainter::renderNodes(RenderData* rData)  {
 	glBindTexture(GL_TEXTURE_2D,  0);
 }
 
-void VisPainter::renderEdges(RenderData* rData, GLuint nodeTex) {
+void VisPainter::renderEdges(IRenderData* rData, GLuint nodeTex) {
 	glBlendFunc(GL_ONE, GL_ZERO);
 
 	int scaleMode = 1;	
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, rData->_lineField);
+	glBindTexture(GL_TEXTURE_2D, rData->getLineField());
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, nodeTex);
 			glActiveTexture(GL_TEXTURE2);
@@ -106,7 +106,7 @@ void VisPainter::renderEdges(RenderData* rData, GLuint nodeTex) {
 						glUniform1i(_e_shader_ptr->getUniformLocation("colorScheme"), 2);
 						glUniform1i(_e_shader_ptr->getUniformLocation("gaussTex"), 1);
 						glUniform1i(_e_shader_ptr->getUniformLocation("lineField"), 0);
-						glUniform1f(_e_shader_ptr->getUniformLocation("maxValue"), rData->_maxValuesE[1]);
+						glUniform1f(_e_shader_ptr->getUniformLocation("maxValue"), rData->getEdgeMax());
 						glUniform1i(_e_shader_ptr->getUniformLocation("antiAlias"), context::_options._antiAlias);
 						glUniform1i(_e_shader_ptr->getUniformLocation("width"), _width);
 						glUniform1i(_e_shader_ptr->getUniformLocation("height"), _height);

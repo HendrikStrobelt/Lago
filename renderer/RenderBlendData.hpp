@@ -1,15 +1,16 @@
-#ifndef RENDER_DATA_H
-#define RENDER_DATA_H
+#ifndef RENDER_BLEND_DATA_H
+#define RENDER_BLEND_DATA_H
 
 #include "IRenderData.hpp"
+#include "RenderData.hpp"
 #include <GL/glew.h>
 #include <GL/glfw.h>
 
-class RenderData : public IRenderData {
-
+class RenderBlendData : public IRenderData {
+		
 	public:
-		RenderData( void );
-		~RenderData( void );
+		RenderBlendData(RenderData* rData);
+		~RenderBlendData( void );
 
 		//implement interface
 		void clear( void );
@@ -24,22 +25,14 @@ class RenderData : public IRenderData {
 		float* getEdgeMaxAll( void );
 
 		//add setters and members
-		void setGaussTex(GLuint tex);
-		void setEvalField(GLuint tex);
-		void setLineField(GLuint tex);
-		void setVis(GLuint tex);
 		void setNodeMax(float max[]);
 		void setEdgeMax(float max[]);
-
+		
 	private:
-		GLuint _gaussTex;
-		GLuint _evalField;
-		GLuint _lineField;
-		GLuint _vis;
+		RenderData* _rData;
 
 		float _maxValuesN[3];
 		float _maxValuesE[3];
-
 };
 
 

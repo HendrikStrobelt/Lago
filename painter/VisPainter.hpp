@@ -5,7 +5,7 @@
 #include <GL/glfw.h>
 #include <glm/glm.hpp>
 #include "../helper/GLSLShader.hpp"
-#include "../renderer/RenderData.hpp"
+#include "../renderer/IRenderData.hpp"
 #include "../helper/FrameBufferContainer.hpp"
 
 class VisPainter {
@@ -17,7 +17,7 @@ class VisPainter {
 		bool isDone( void );
 
 		GLuint detachResult( void );
-		void renderVis(RenderData* rData, bool withEdges);
+		void renderVis(IRenderData* rData, bool withEdges);
 		
 
 		//static clean up
@@ -30,8 +30,8 @@ class VisPainter {
 		static GLSLShader* _n_shader_ptr;
 		static GLSLShader* _e_shader_ptr;
 
-		void renderNodes(RenderData* rData);
-		void renderEdges(RenderData* rData, GLuint nodeTex);
+		void renderNodes(IRenderData* rData);
+		void renderEdges(IRenderData* rData, GLuint nodeTex);
 		void initVao( void );
 
 		bool _done;

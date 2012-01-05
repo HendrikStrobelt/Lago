@@ -28,8 +28,10 @@ class VisAdjusting : public IRenderState {
 
 	private:
 		void swap( void );
+		void mixMaxVals(float ret[], float curVals[], float newVals[], float process);
 
 		Renderer* _r;
+		float _process;
 		VisPainter* _visPainter;
 };
 
