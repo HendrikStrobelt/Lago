@@ -83,6 +83,7 @@ void VisAdjusting::takeOver( void ) {
 		_r->_currentData->setGaussTex(-1);
 		_r->_newData->setLineField(_r->_currentData->getLineField());
 		_r->_currentData->setLineField(-1);
+		_process = 1.0f; //blending is not usefull
 	}
 
 	float tmp[3];
@@ -95,6 +96,12 @@ void VisAdjusting::takeOver( void ) {
 	_visPainter = new VisPainter(_r->_windowWidth, _r->_windowHeight);
 	_visPainter->renderVis(_r->_newData, _r->_hasEdges);
 	_r->_newData->setVis(_visPainter->detachResult());
+
+	float maxChange = (abs(_r->_currentData->getEdgeMax() - _r->_newData->getEdgeMax()) / _r->_newData->getEdgeMax())  + 
+					  (abs(_r->_currentData->getNodeMax() - _r->_newData->getNodeMax()) / _r->_newData->getNodeMax());
+	if (maxChange < 0.01) {
+		_process = 1.0f;
+	}
 
 	_animationStart = context::getTime();
 }
