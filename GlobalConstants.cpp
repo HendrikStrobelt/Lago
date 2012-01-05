@@ -44,6 +44,10 @@ int START_MAX_LABELS = 20;
 //ordering tool
 bool ORDER_LABELS = false;
 
+//animation
+bool ANIMATION = true;
+float ANI_DURATION = 2.0f;
+
 std::string OL_START = "";
 std::string OL_PARAM = "";
 std::string OL_BOX_IDENTIFIER_START = "";

@@ -18,7 +18,7 @@ void RenderData::clear( void ) {
 	if (_lineField != -1) {
 		glDeleteTextures(1, &_lineField);
 	}
-	if (_lineField != -1) {
+	if (_vis != -1) {
 		glDeleteTextures(1, &_vis);
 	}
 

@@ -8,9 +8,16 @@ RenderBlendData::RenderBlendData(RenderData* rData) {
 
 RenderBlendData::~RenderBlendData( void ) {
 	clear();
+	glDeleteTextures(1, &_vis);
 }
 
 void RenderBlendData::clear( void ) {
+	if (_vis != -1) {
+		glDeleteTextures(1, &_vis);
+	}
+
+	_vis = -1;
+
 	 _maxValuesN[0] = -1;
 	 _maxValuesN[1] = -1;
 	 _maxValuesN[2] = -1;
@@ -33,8 +40,10 @@ GLuint RenderBlendData::getLineField( void ) {
 	return _rData->getLineField();
 }
 
+
+
 GLuint RenderBlendData::getVis( void ) {
-	return _rData->getVis();
+	return _vis;
 }
 
 float RenderBlendData::getNodeMax( void ) {
@@ -57,7 +66,9 @@ float* RenderBlendData::getEdgeMaxAll( void ) {
 }
 
 
-
+void RenderBlendData::setVis(GLuint tex) {
+	_vis = tex;
+}
 
 void RenderBlendData::setNodeMax(float max[]) {
 	_maxValuesN[0] = max[0];

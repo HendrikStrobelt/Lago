@@ -15,7 +15,7 @@ void Idle::render( void ) {
 	float maxVals[2];
 	maxVals[0] = _r->_currentData->getNodeMax();
 	maxVals[1] = _r->_currentData->getEdgeMax();
-	_r->renderHUD(-1.0f, maxVals);
+	_r->renderHUD(-1.0f, 0, maxVals);
 	_r->renderLabelSelection(_r->_currentData);
 }
 

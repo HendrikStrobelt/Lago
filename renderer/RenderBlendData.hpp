@@ -27,9 +27,12 @@ class RenderBlendData : public IRenderData {
 		//add setters and members
 		void setNodeMax(float max[]);
 		void setEdgeMax(float max[]);
-		
+		void setVis(GLuint tex);
+
+
 	private:
 		RenderData* _rData;
+		GLuint _vis;
 
 		float _maxValuesN[3];
 		float _maxValuesE[3];

@@ -14,8 +14,12 @@ InitialWork::~InitialWork( void ) {
 }
 
 void InitialWork::render( void ) {
+	int bars = 1;
+	if (_r->_hasEdges) {
+		bars = 3;
+	}
 	float maxVals[]  = {-1.0f, -1.0f};
-	_r->renderHUD(_worker->_progress, maxVals);
+	_r->renderHUD(_worker->_progress, bars, maxVals);
 }
 
 void InitialWork::renderGauss( void ) { /*do nothing*/ };

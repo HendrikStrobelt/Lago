@@ -32,6 +32,7 @@ class VisAdjusting : public IRenderState {
 
 		Renderer* _r;
 		float _process;
+		double _animationStart;
 		VisPainter* _visPainter;
 };
 

@@ -122,13 +122,9 @@ void Renderer::renderGraph(IRenderData* rData, int xMove, int yMove) {
 	renderLabels(rData, mouseMoveX, -mouseMoveY);
 }
 
-void Renderer::renderHUD(float progress, float maxVals[]) {
+void Renderer::renderHUD(float progress, int pBars, float maxVals[]) {
 	if (progress >= 0.0f) {
-		if (_hasEdges) {
-			_progressBar.renderBar(progress, 3);
-		} else {
-			_progressBar.renderBar(progress, 1);
-		}
+		_progressBar.renderBar(progress, pBars);
 	}
 
 	if (maxVals[0] > 0.0f) {

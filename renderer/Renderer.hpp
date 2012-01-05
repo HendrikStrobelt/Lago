@@ -90,7 +90,7 @@ class Renderer : public IRenderState {
 
 		void setState(IRenderState* state);
 		void renderGraph(IRenderData* rData, int xMove=0, int yMove=0);
-		void renderHUD(float progress, float maxVals[]);
+		void renderHUD(float progress, int pBars, float maxVals[]);
 		void renderLabelSelection(IRenderData* rData, int xMove=0, int yMove=0);
 		void renderLabels(IRenderData* rData, int xMove, int yMove);
 		void renderTexture(GLuint tex, float max[], float xMove=0.0f, float yMove=0.0f);

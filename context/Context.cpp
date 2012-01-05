@@ -88,6 +88,10 @@ namespace context {
 		return glfwGetMouseWheel();
 	}
 
+	double getTime( void ) {
+		return glfwGetTime();
+	}
+
 	//SETTER
 
 	void emptyClick( void ) {

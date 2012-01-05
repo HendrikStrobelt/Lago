@@ -14,10 +14,14 @@ Working::~Working( void ) {
 void Working::render( void ) {
 	_r->renderGraph(_r->_currentData, _r->_mouseMoveX, _r->_mouseMoveY);
 	
+	int bars = 1;
+	if (_r->_hasEdges) {
+		bars = 3;
+	}
 	float maxVals[2];
 	maxVals[0] = _r->_currentData->getNodeMax();
 	maxVals[1] = _r->_currentData->getEdgeMax();
-	_r->renderHUD(_worker->_progress, maxVals);
+	_r->renderHUD(_worker->_progress, bars, maxVals);
 	_r->renderLabelSelection(_r->_currentData, _r->_mouseMoveX, _r->_mouseMoveY);
 }
 

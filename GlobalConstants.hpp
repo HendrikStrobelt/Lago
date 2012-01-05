@@ -40,6 +40,11 @@ extern int OFF_ZOOM;  //2 times zoomed out
 extern int OFF_SHRINK; //calculated in a x times smaller field
 
 
+//animation
+extern bool ANIMATION;
+extern float ANI_DURATION;
+
+
 //labels
 extern int START_MAX_LABELS;
 

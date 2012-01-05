@@ -51,6 +51,7 @@ namespace context {
 		void getWindowSize(int* width, int* height);
 		void getMousePos(int* x, int* y);
 		int getMouseWheelValue( void );
+		double getTime( void );
 
 		//program getters
 		float getQuadSidelength(float aspectSide);

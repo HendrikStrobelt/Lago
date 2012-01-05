@@ -1,6 +1,7 @@
 #include "VisAdjusting.hpp"
 #include "../Renderer.hpp"
 #include "../RenderBlendData.hpp"
+#include "../../context/Context.hpp"
 
 VisAdjusting::VisAdjusting(Renderer* renderer) {
 	_r = renderer;
@@ -17,16 +18,26 @@ VisAdjusting::~VisAdjusting( void ) {
 void VisAdjusting::render( void ) {
 	IRenderData* rData;
 	RenderBlendData blendData(_r->_newData);		
+	float process;
+	int bars;
 
-	if (_process < 1.0f) {
+	if (ANIMATION && _process < 1.0f) {
 		float max[3];
 
 		mixMaxVals(max, _r->_currentData->getNodeMaxAll(), _r->_newData->getNodeMaxAll(), _process);
 		blendData.setNodeMax(max);
 		mixMaxVals(max, _r->_currentData->getEdgeMaxAll(), _r->_newData->getEdgeMaxAll(), _process);
 		blendData.setEdgeMax(max);
+		
+		_visPainter->renderVis(&blendData, _r->_hasEdges);
+		blendData.setVis(_visPainter->detachResult());
+		process = _process;
+		bars = 1;
+
 		rData = &blendData;
 	} else {
+		process = -1.0f;
+		bars = 0;
 		rData = _r->_newData;
 	}
 
@@ -35,7 +46,7 @@ void VisAdjusting::render( void ) {
 	maxVals[1] = rData->getEdgeMax();
 
 	_r->renderGraph(rData, 0.0f, 0.0f);
-	_r->renderHUD(-1.0f, maxVals);
+	_r->renderHUD(process, bars, maxVals);
 	_r->renderLabelSelection(_r->_newData);
 }
 
@@ -44,8 +55,9 @@ void VisAdjusting::renderEvalField( void ) { /* nothing to do */ }
 void VisAdjusting::renderLineField( void ) { /* nothing to do */ }
 
 void VisAdjusting::work( void ) {
-	if (_process < 1.0f) {
-		_process += 0.01f;
+	if (ANIMATION && _process < 1.0f) {
+		_process = (context::getTime() - _animationStart) / ANI_DURATION;
+		cout << _process << "\n";
 	} else {
 		//done
 		swap();
@@ -57,6 +69,11 @@ void VisAdjusting::takeOver( void ) {
 	_r->_mouseMoveX = 0;
 	_r->_mouseMoveY = 0;
 	_process = 0.0f;
+
+	if (_r->_currentData->getVis() == -1) {
+		//current data is not valid dataset change etc => no animation
+		_process = 1.0f;
+	}
 
 	//create valid set data in slot newData
 	if (_r->_newData->getGaussTex() == -1) {
@@ -79,6 +96,8 @@ void VisAdjusting::takeOver( void ) {
 	_visPainter = new VisPainter(_r->_windowWidth, _r->_windowHeight);
 	_visPainter->renderVis(_r->_newData, _r->_hasEdges);
 	_r->_newData->setVis(_visPainter->detachResult());
+
+	_animationStart = context::getTime();
 }
 
 void VisAdjusting::changePanning(int xMouseMove, int yMouseMove) {
