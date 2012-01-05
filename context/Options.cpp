@@ -14,8 +14,8 @@ Options::Options( void ) {
 	_nodeScheme = -1;
 	_antiAlias = true;
 	_adaptiveScaleBars = true;
-	bool _showLabels = false;
-	int _labelCount = START_MAX_LABELS;
+	_showLabels = true;
+	_labelCount = START_MAX_LABELS;
 }
 
 void Options::init( void ) {

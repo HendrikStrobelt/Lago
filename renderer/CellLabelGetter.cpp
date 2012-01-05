@@ -1,0 +1,113 @@
+#include "CellLabelGetter.hpp"
+#include "../Node.hpp"
+#include "../context/Context.hpp"
+#include <glm\gtc\type_ptr.hpp>
+
+GLSLShader* CellLabelGetter::_shader_ptr = NULL;
+
+CellLabelGetter::CellLabelGetter(GLuint nodeVbo, int size) {
+	_size = size;
+	createShader();
+	initVao(nodeVbo);
+	glGenQueries(1, &_query);
+}
+
+CellLabelGetter::~CellLabelGetter( void ) {
+	glDeleteQueries(1, &_query);
+	glDeleteBuffers(1, &_capturedVBO);
+	glDeleteVertexArrays(1, &_dataVAO);
+}
+
+void CellLabelGetter::cleanUp() {
+	delete _shader_ptr;
+}
+
+
+vector<int>* CellLabelGetter::getLabelIndices(int mouseX, int mouseY, GLuint fieldTex, glm::mat4 MVP) {
+	int w,h;
+	context::getWindowSize(&w, &h);
+	float texX = (float)mouseX / (float)w;
+	float texY = (float)(h - mouseY) / (float) h;
+
+	glEnable(GL_RASTERIZER_DISCARD);		
+		glBindTexture(GL_TEXTURE_2D, fieldTex);
+			glBindVertexArray(_dataVAO);
+				_shader_ptr->use();		
+					glUniformMatrix4fv(_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
+					glUniform1i(_shader_ptr->getUniformLocation("fieldTex"), 0);
+					glUniform2f(_shader_ptr->getUniformLocation("compareTexCoord"), texX, texY);
+					glUniform1i(_shader_ptr->getUniformLocation("width"), w);
+					glUniform1i(_shader_ptr->getUniformLocation("height"), h);
+
+						glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, _capturedVBO); 
+						glBeginQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, _query); 
+							glBeginTransformFeedback(GL_POINTS);
+								glDrawArrays(GL_POINTS, 0, _size); 
+							glEndTransformFeedback();
+						glEndQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN); 			
+								
+				_shader_ptr->unUse();
+			glBindVertexArray(0);		
+		glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_RASTERIZER_DISCARD);
+		
+	GLuint count = 0;
+	glGetQueryObjectuiv(_query, GL_QUERY_RESULT, &count);
+
+	//map buffer
+	vector<int>* ret = new vector<int>;
+	ret->resize(count);
+
+	if (count > 0) {
+		glBindBuffer(GL_ARRAY_BUFFER, _capturedVBO);
+			GLvoid* vbo_buffer = glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
+				memcpy(&ret->at(0), vbo_buffer, count * sizeof(int));
+			glUnmapBuffer(GL_ARRAY_BUFFER); 
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+	return ret;
+}
+
+
+// private stuff
+
+
+void CellLabelGetter::createShader( void ) {
+	if (_shader_ptr == NULL) {
+		vector<string> unis;
+		vector<string> attribs;
+
+		attribs.push_back("vVertex");
+		attribs.push_back("vLabelID");
+		unis.push_back("MVP");
+		unis.push_back("fieldTex");
+		unis.push_back("compareTexCoord");
+		unis.push_back("width");
+		unis.push_back("height");
+
+		_shader_ptr = new GLSLShader("labelID", attribs, unis, "shaders/cellLabel/cellLabelGetter.vert", "shaders/cellLabel/cellLabelGetter.frag", "shaders/cellLabel/cellLabelGetter.gem");
+	}
+}
+
+void CellLabelGetter::initVao(GLuint vbo) {
+
+	glGenVertexArrays(1, &_dataVAO);
+	glGenBuffers(1, &_capturedVBO);
+
+	//Data
+	glBindVertexArray(_dataVAO);	 
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			glEnableVertexAttribArray(_shader_ptr->getAttributeLocation("vVertex"));
+			glVertexAttribPointer (_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, sizeof(PackedNode), 0);	
+			glEnableVertexAttribArray(_shader_ptr->getAttributeLocation("vLabelID"));
+			glVertexAttribIPointer(_shader_ptr->getAttributeLocation("vLabelID"), 1, GL_INT, sizeof(PackedNode), (void*)(2 * sizeof(float) + sizeof(short)));
+	glBindVertexArray(0);
+
+
+	//captured
+	glBindBuffer(GL_ARRAY_BUFFER, _capturedVBO);
+		glBufferData (GL_ARRAY_BUFFER, _size * sizeof(int), NULL, GL_DYNAMIC_READ);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+}

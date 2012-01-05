@@ -20,6 +20,7 @@ void VisAdjusting::render( void ) {
 	maxVals[0] = _r->_newData->_maxValuesN[2];
 	maxVals[1] = _r->_newData->_maxValuesE[1];
 	_r->renderHUD(-1.0f, maxVals);
+	_r->renderLabelSelection(_r->_newData);
 }
 
 void VisAdjusting::renderGauss( void ) { /* nothing to do */ }
@@ -55,8 +56,6 @@ void VisAdjusting::takeOver( void ) {
 	_visPainter = new VisPainter(_r->_windowWidth, _r->_windowHeight);
 	_visPainter->renderVis(_r->_newData, _r->_hasEdges);
 	_r->_newData->_vis = _visPainter->detachResult();
-	
-	_r->updateLabels(_r->_newData);
 }
 
 void VisAdjusting::changePanning(int xMouseMove, int yMouseMove) {

@@ -3,10 +3,37 @@
 #include <iostream>
 
 
+GLSLShader::GLSLShader(string transformFeedbackVar, vector<string> attributes, vector<string> uniforms, string vertShader, string fragShader, string gemShader) {
+	_transformFeedback = true;
+	_transformFeedbackVar = transformFeedbackVar;
+
+	_shaders[VERTEX_SHADER] = 0;
+	_shaders[FRAGMENT_SHADER] = 0;
+	_shaders[GEOMETRY_SHADER] = 0;
+
+	load(GL_VERTEX_SHADER, vertShader);
+	load(GL_FRAGMENT_SHADER, fragShader);
+	if (!gemShader.empty()) {
+		load(GL_GEOMETRY_SHADER, gemShader);
+	}
+
+	createAndLinkProgram();
+		
+	use();	
+		for (unsigned int i = 0; i < attributes.size(); i++) {
+			_attributeMap[attributes[i]] = glGetAttribLocation(_program, attributes[i].c_str());	
+		}
+		for (unsigned int i = 0; i < uniforms.size(); i++) {
+			_uniformMap[uniforms[i]] = glGetUniformLocation(_program, uniforms[i].c_str());
+		}
+	unUse();	
+}
+ 
 GLSLShader::GLSLShader(vector<string> attributes, vector<string> uniforms, string vertShader, string fragShader, string gemShader) {
 	_shaders[VERTEX_SHADER] = 0;
 	_shaders[FRAGMENT_SHADER] = 0;
 	_shaders[GEOMETRY_SHADER] = 0;
+	_transformFeedback = false;
 
 	load(GL_VERTEX_SHADER, vertShader);
 	load(GL_FRAGMENT_SHADER, fragShader);
@@ -63,6 +90,13 @@ void GLSLShader::createAndLinkProgram( void ) {
 	
 	//add output variable for color
 	glBindFragDataLocation(_program, 0, "fragColor");
+
+	if (_transformFeedback) {
+		//add output for transform feedback
+		GLchar const * outs[1];
+		outs[0] = _transformFeedbackVar.c_str();
+		glTransformFeedbackVaryings(_program, 1, outs, GL_SEPARATE_ATTRIBS); 
+	}
 
 	//link and check whether the program links fine
 	GLint status;

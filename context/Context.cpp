@@ -90,6 +90,18 @@ namespace context {
 
 	//SETTER
 
+	void emptyClick( void ) {
+		_renderer->emptyClick();
+	}
+
+	void rightClick(int x, int y) {
+		_renderer->rightClick(x, y);
+	}
+
+	void labelClick(bool add, int id) {
+		_renderer->labelClick(add, id);
+	}
+
 	void setSideExponent(int newSideExponent) {
 		_sideExponent = newSideExponent;
 		if (_sideExponent < 0) {

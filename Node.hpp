@@ -8,9 +8,10 @@ struct Node {
 	float x;
 	float y;
 	short depth;
+	int labelID;
 	float weight;
-	Node( void ) : weight(1.0f) {};
-	Node(float px, float py, float pweight) : x(px), y(py), weight(pweight) {};
+	Node( void ) : weight(1.0f), labelID(-1) {};
+	Node(float px, float py, float pweight) : x(px), y(py), weight(pweight), labelID(-1) {};
 };
 
 
@@ -19,9 +20,10 @@ struct Node {
 		float x;
 		float y;
 		short depth;
+		int labelID;
 		float weight;
-		PackedNode( void ) : weight(1.0f) {};
-		PackedNode(Node n) : x(n.x), y(n.y), depth(n.depth), weight(n.weight) {};
+		PackedNode( void ) : weight(1.0f), labelID(-1) {};
+		PackedNode(Node n) : x(n.x), y(n.y), depth(n.depth), weight(n.weight), labelID(n.labelID) {};
 	};
 #pragma pack(pop)
 

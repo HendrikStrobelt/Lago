@@ -1,11 +1,11 @@
-#ifndef GRAPH_VIZ_COM_H
-#define GRAPH_VIZ_COM_H
+#ifndef LABEL_ORDER_COM_H
+#define LABEL_ORDER_COM_H
 
 using namespace std;
 
 #include <vector>
 
-namespace graphVizCom {
+namespace labelOrderCom {
 
 	struct MovedBox{
 		int id;

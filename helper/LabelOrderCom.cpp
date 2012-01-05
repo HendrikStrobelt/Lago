@@ -1,4 +1,4 @@
-#include "GraphVizCom.hpp"
+#include "LabelOrderCom.hpp"
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -10,7 +10,7 @@
 
 using namespace std;
 
-namespace graphVizCom {
+namespace labelOrderCom {
 
 	//private
 	vector<string> split(string line);
@@ -32,16 +32,16 @@ namespace graphVizCom {
 		_centerY = 0.0f;
 		_commands.str("");
 
-		_commands << "graph{ \n";
-		_commands << "graph [overlap=\"prism\" overlap_scaling=\"0\" sep=\"+0\"] \n";
+		_commands << OL_START;
+		_commands << OL_PARAM;
 	}
 
 	void add(int centerX, int centerY, int width, int height) {
-		_commands << _nr;
-		_commands << " [pos=\"" << centerX*72.0f << "," << centerY*72.0f << "\", ";
-		_commands << "width=\"" << ((float)width) << "\", ";
-		_commands << "height=\"" << ((float)height) << "\" ";
-		_commands << "shape=\"box\" fixedsize=\"true\"] \n";
+		_commands << OL_BOX_IDENTIFIER_START << _nr << OL_BOX_IDENTIFIER_END;
+		_commands << OL_BOX_CENTER_START << centerX*72.0f << OL_BOX_CENTER_DELIM << centerY*72.0f << OL_BOX_CENTER_END;
+		_commands << OL_BOX_WIDTH_START << ((float)width) << OL_BOX_WIDTH_END;
+		_commands << OL_BOX_HEIGHT_START << ((float)height) << OL_BOX_HEIGHT_END;
+		_commands << OL_ADDITIONAL_BOX_PARAMETERS;
 		_nr++;
 		_centerX += centerX;
 		_centerY += centerY;
@@ -52,9 +52,9 @@ namespace graphVizCom {
 		vector<MovedBox>* ret = new vector<MovedBox>();
 
 		try {
-			exec_stream_t es("C:\\Program Files (x86)\\Graphviz 2.28\\bin\\neato.exe", "-Tplain -n" );
+			exec_stream_t es(ORDERING_TOOL_PATH, ORDERING_TOOL_PARAMETERS);
 
-			_commands << "} \n";
+			_commands << OL_END;
 			es.in() << _commands.str();
 			es.close_in();
 		
@@ -64,7 +64,7 @@ namespace graphVizCom {
 			MovedBox tmp;
 			string line;
 			while(getline(es.out(), line).good() ) {
-				if (line.length() > 4 && line.substr(0, 4) == "node") {
+				if (line.length() > 4 && line.substr(0, 4) == OL_RETURN_START) {
 					vector<string> tokens = split(line);
 					
 					tmp.id = ((int)(floor(atof(tokens[1].c_str()))));

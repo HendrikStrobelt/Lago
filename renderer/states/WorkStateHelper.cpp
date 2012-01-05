@@ -35,7 +35,8 @@ bool WorkStateHelper::isDone( void ) {
 				_fieldEvaluator[OFF]->isDone() &&
 				_pc[DIVIDED_LINES]->isDone());
 	} else {
-		return _pc[GAUSS_VIEW]->isDone();
+		return _pc[GAUSS_VIEW]->isDone() &&
+			   _fieldEvaluator[VIEW]->isDone();
 	}
 }
 
@@ -60,15 +61,18 @@ void WorkStateHelper::work( void ) {
 			_progress = 2.0f + _pc[DIVIDED_LINES]->renderNextPart();
 		}
 	} else {
-		_progress = _pc[GAUSS_VIEW]->renderNextPart();
+		if (!_pc[GAUSS_VIEW]->isDone()) {
+			_progress = _pc[GAUSS_VIEW]->renderNextPart();
+		} else {
+			_fieldEvaluator[VIEW]->evaluate(_pc[GAUSS_VIEW]->getWorkingTexture());
+		}
 	}
 }
 
 void WorkStateHelper::takeOver( void ) {
 	
 	resetAll();
-	glm::mat4 P = cameraHelper::calculateProjection(_r->_dCache.getNodeStructureInfo(), context::_zoomFactor);
-	glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
+	glm::mat4 MVP = _r->getStandardMVP();
 
 	int joinDepth = _r->_dCache.getNodeStructureInfo()->getJoinDepth(context::_pixelSize);
 	int nodeElements = _r->_dCache.getNodeStructureInfo()->getAllNodes(joinDepth);
@@ -77,6 +81,9 @@ void WorkStateHelper::takeOver( void ) {
 	_gaussPainter[VIEW] = new GaussPainter(_r->_nodeVBO, _r->_windowWidth, _r->_windowHeight, nodeElements);
 	_gaussPainter[VIEW]->setBaseVars(MVP, sideLength, joinDepth);
 	
+	//field eval
+	_fieldEvaluator[VIEW] = new FieldEvaluation(_r->_windowWidth, _r->_windowHeight);
+
 	_pc[GAUSS_VIEW] = new PainterCommander(_gaussPainter[VIEW], POINT_INIT_STEP);
 
 	if (_r->_hasEdges) {
@@ -92,7 +99,6 @@ void WorkStateHelper::takeOver( void ) {
 		_pc[GAUSS_OFF] = new PainterCommander(_gaussPainter[OFF], POINT_INIT_STEP);
 
 		//field eval
-		_fieldEvaluator[VIEW] = new FieldEvaluation(_r->_windowWidth, _r->_windowHeight);
 		_fieldEvaluator[OFF] = new FieldEvaluation((_r->_windowWidth / OFF_SHRINK), (_r->_windowHeight / OFF_SHRINK));
 
 		if (EDGE_HIERARCHY_FLAT) {

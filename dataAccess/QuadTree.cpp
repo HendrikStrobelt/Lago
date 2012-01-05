@@ -230,6 +230,7 @@ void QuadTree::finalizeNode(QuadTreeMetaNode* m, Node* n, bool isLeaf, int depth
 	n->depth = depth;
 	if (!isLeaf) {
 		n->depth = 0.0f - n->depth; //inner nodes can be identified by negative depths
+		n->labelID = -1;
 	}
 }
 

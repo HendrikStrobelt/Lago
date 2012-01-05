@@ -16,6 +16,7 @@ void Idle::render( void ) {
 	maxVals[0] = _r->_currentData->_maxValuesN[2];
 	maxVals[1] = _r->_currentData->_maxValuesE[1];
 	_r->renderHUD(-1.0f, maxVals);
+	_r->renderLabelSelection(_r->_currentData);
 }
 
 void Idle::renderGauss( void ) {
@@ -24,11 +25,9 @@ void Idle::renderGauss( void ) {
 }
 
 void Idle::renderEvalField( void ) {
-	if (_r->_hasEdges) {
-		float maxVals[3];
-		_r->calculateMaxValues(maxVals, _r->_currentData->_evalField, _r->_windowWidth, _r->_windowHeight);
-		_r->renderTexture(_r->_currentData->_evalField, maxVals);
-	}
+	float maxVals[3];
+	_r->calculateMaxValues(maxVals, _r->_currentData->_evalField, _r->_windowWidth, _r->_windowHeight);
+	_r->renderTexture(_r->_currentData->_evalField, maxVals);
 }
 
 void Idle::renderLineField( void ) {

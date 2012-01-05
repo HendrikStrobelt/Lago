@@ -10,6 +10,7 @@
 Renderer::Renderer( void ) {
 	_currentData = new RenderData;
 	_newData = new RenderData;
+	_cellLabelGetter = NULL;
 
 	glGenBuffers(1, &_nodeVBO);
 	glGenBuffers(1, &_edgeVBO);
@@ -41,10 +42,30 @@ Renderer::~Renderer( void ) {
 	delete _initalWork;
 	delete _working;
 	delete _visAdjust;
+	delete _cellLabelGetter;
 }
 
 
 //public
+
+void Renderer::emptyClick( void ) {
+	_labelSelectionPainter.clear();
+}
+
+void Renderer::rightClick(int x, int y) {
+	vector<int>* ids = _cellLabelGetter->getLabelIndices(x, y, _currentData->_evalField, getStandardMVP());
+	_labelSelectionPainter.setData(ids, _dCache.getIndexedLabels(), x, y);
+}
+
+void Renderer::labelClick(bool add, int id) {
+	Label l = _dCache.getIndexedLabels()->at(id);
+	if (add) {
+		_labelPainter.addLabel(getStandardMVP(), l);
+	} else {
+		_labelPainter.removeLabel(getStandardMVP(), l);
+	}
+}
+
 
 //private methods that can be used by the states
 
@@ -55,6 +76,8 @@ void Renderer::setState(IRenderState* state) {
 
 void Renderer::setNewData(string nodeFile, string edgeFile) {
 	_dCache.loadDataSet(nodeFile, edgeFile);
+
+	delete _cellLabelGetter;
 
 	int nodeCount;
 	const PackedNode* packedNodes = _dCache.getPackedNodes(&nodeCount);
@@ -72,14 +95,16 @@ void Renderer::setNewData(string nodeFile, string edgeFile) {
 	} else {
 		_hasEdges = false;
 	}
+
+	_cellLabelGetter = new CellLabelGetter(_nodeVBO, _dCache.getNodeStructureInfo()->getAllNodes(_dCache.getNodeStructureInfo()->getMaxDepth()));
 }	
 
-void Renderer::updateLabels(RenderData* rData) {
-	if (_dCache.hasLabels() && context::_options._showLabels) {
-		glm::mat4 P = cameraHelper::calculateProjection(_dCache.getNodeStructureInfo(), context::_zoomFactor);
-		glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
-		rData->_labelPainter.changeLabels(MVP, _dCache.getSortedLabels());
-	}
+
+glm::mat4 Renderer::getStandardMVP( void ) {
+	glm::mat4 P = cameraHelper::calculateProjection(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+	glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
+
+	return MVP;
 }
 
 void Renderer::renderGraph(RenderData* rData, int xMove, int yMove) {
@@ -111,9 +136,15 @@ void Renderer::renderHUD(float progress, float maxVals[]) {
 	}
 }
 
+void Renderer::renderLabelSelection(RenderData* rData, int xMove, int yMove) {
+	int xShift, yShift;
+	mouseHandler::getPressMovement(&xShift, &yShift);
+	_labelSelectionPainter.renderSelection(getStandardMVP(), rData->_evalField, xShift, yShift, xMove, yMove);
+}
+
 void Renderer::renderLabels(RenderData* rData, int xMove, int yMove) {
 	if (_dCache.hasLabels() && 	context::_options._showLabels)  {
-		rData->_labelPainter.renderLabels(xMove, yMove);
+		_labelPainter.renderLabels(xMove, yMove);
 	}
 }
 
@@ -157,22 +188,28 @@ void Renderer::changePanning(int xMouseMove, int yMouseMove) {
 
 void Renderer::changeZoom( void ) {
  	context::_pixelSize = cameraHelper::getPixelSize(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+	_labelSelectionPainter.clear();
 	_state->changeZoom();
 }
 
 void Renderer::changeData(string nodeFile, string edgeFile) {
 	setNewData(nodeFile, edgeFile);
 	context::_pixelSize = cameraHelper::getPixelSize(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+	_labelSelectionPainter.clear();
+	_labelPainter.clear();
 	_state->changeData(nodeFile, edgeFile);
 }
 
 void Renderer::changeSideLength( void ) {
+	_labelSelectionPainter.clear();
 	_state->changeSideLength();
 }
 
 void Renderer::changeWindow( void ) {
 	context::getWindowSize(&_windowWidth, &_windowHeight);
 	context::_pixelSize = cameraHelper::getPixelSize(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+	_labelSelectionPainter.resize(_windowWidth, _windowHeight);
+	_labelSelectionPainter.clear();
 	_state->changeWindow();
 }
 
