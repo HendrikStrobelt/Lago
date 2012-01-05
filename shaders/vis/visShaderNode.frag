@@ -14,7 +14,21 @@ uniform vec4 pointsX;
 uniform vec4 pointsY;
 uniform float exponent;
 
+in vec2 fOldTexCoords;
+uniform bool blend;
+uniform sampler2D oldGaussTex;
+uniform float process;
+
 out vec4 fragColor;
+
+
+float getOldTextureValue() {	
+	if (fOldTexCoords.x < 0.0f || fOldTexCoords.x > 1.0f || fOldTexCoords.y < 0.0f || fOldTexCoords.y > 1.0f) {
+		return 0.0f;
+	} else {
+	    return texture(oldGaussTex, fOldTexCoords).b;
+	}
+}
 
 float scale(float normedVal) {
 	if (linearMode) {

@@ -57,7 +57,6 @@ void VisAdjusting::renderLineField( void ) { /* nothing to do */ }
 void VisAdjusting::work( void ) {
 	if (ANIMATION && _process < 1.0f) {
 		_process = (context::getTime() - _animationStart) / ANI_DURATION;
-		cout << _process << "\n";
 	} else {
 		//done
 		swap();
