@@ -5,6 +5,8 @@
 #include <string>
 using namespace std;
 
+#define MAX_LABEL_LENGTH 30
+
 struct Label {
 	float x;
 	float y;

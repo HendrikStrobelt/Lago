@@ -1,49 +1,69 @@
 #ifndef GLOBAL_CONSTANTS_H
 #define GLOBAL_CONSTANTS_H
 
+#include <string>
 
 //startoptions
-#define WINDOW_WIDTH 1500
-#define WINDOW_HEIGHT 750
+extern int WINDOW_WIDTH;
+extern int WINDOW_HEIGHT;
 
 //deactivate the cration of the EDGE_HIERARCHY
 //less storage consumption depending on data less speed
-#define EDGE_HIERARCHY_FLAT true   //EdgeHierarchy may have a defect with aggregated edges of a level
+extern bool EDGE_HIERARCHY_FLAT;   //EdgeHierarchy may have a defect with aggregated edges of a level
 								   //may also be just a visual effect not sure
 
 //min and max values for coordinates
-#define MIN_COORD -10000000
-#define MAX_COORD  10000000
+extern int MIN_COORD;
+extern int MAX_COORD;
 
 //gauss textures consts
-#define GAUSS_TEXTURE_PI 3.1415926535897
+extern double GAUSS_TEXTURE_PI;
 
 //painter commander
-#define POINT_INIT_STEP 1000
-#define PARTS_INIT_STEP 8
+extern int POINT_INIT_STEP;
+extern int PARTS_INIT_STEP;
 
 //texture examiner
-#define TE_KERNEL_SIZE 16
-#define TE_MAX_ITERATIONS 1
+extern int TE_KERNEL_SIZE;
+extern int TE_MAX_ITERATIONS;
 
 
 //zooom & quad exponent should be equal to enable direct zoom middle mouse button
-#define ZOOM_BASE 1.3
-#define SIDE_BASE 1.3
+extern float ZOOM_BASE;
+extern float SIDE_BASE;
 
 //dividedLines
-#define ANGLE_STEP 1 // 1..45 \in N
+extern int ANGLE_STEP; // 1..45 \in N
 
 //off rendering
-#define OFF_ZOOM 2  //2 times zoomed out
-#define OFF_SHRINK 1 //calculated in a x times smaller field
+extern int OFF_ZOOM;  //2 times zoomed out
+extern int OFF_SHRINK; //calculated in a x times smaller field
 
 
 //labels
-#define MAX_LABEL_LENGTH 30
-#define START_MAX_LABELS 20
+extern int START_MAX_LABELS;
 
-//graphviz
-#define USE_GRAPHVIZ true
+//ordering tool
+extern bool ORDER_LABELS;
+
+extern std::string OL_START;
+extern std::string OL_PARAM;
+extern std::string OL_BOX_IDENTIFIER_START;
+extern std::string OL_BOX_IDENTIFIER_END;
+extern std::string OL_BOX_CENTER_START;
+extern std::string OL_BOX_CENTER_DELIM;
+extern std::string OL_BOX_CENTER_END;
+extern std::string OL_BOX_WIDTH_START;
+extern std::string OL_BOX_WIDTH_END;
+extern std::string OL_BOX_HEIGHT_START;
+extern std::string OL_BOX_HEIGHT_END;
+extern std::string OL_ADDITIONAL_BOX_PARAMETERS;
+extern std::string OL_END;
+
+extern std::string OL_RETURN_START;
+//expected return mode   "OL_RETURN_START id x y"
+
+extern std::string ORDERING_TOOL_PATH;
+extern std::string ORDERING_TOOL_PARAMETERS;
 
 #endif

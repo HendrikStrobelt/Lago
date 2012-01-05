@@ -1,0 +1,3 @@
+http://www.freetype.org/license.html
+
+FreeType License

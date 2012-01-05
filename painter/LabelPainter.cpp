@@ -1,7 +1,7 @@
 #include "LabelPainter.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include "../context/Context.hpp"
-#include "../helper/GraphVizCom.hpp"
+#include "../helper/LabelOrderCom.hpp"
 #include "../GlobalConstants.hpp"
 #include "../helper/MouseHandler.hpp"
 #include <algorithm>
@@ -141,19 +141,19 @@ void LabelPainter::changeLabels(glm::mat4 MVP) {
 			}	
 				
 			//calculate new positions
-			vector<graphVizCom::MovedBox>* newPos = NULL;
+			vector<labelOrderCom::MovedBox>* newPos = NULL;
 
-			if (USE_GRAPHVIZ) {
-				graphVizCom::prepare();
+			if (ORDER_LABELS) {
+				labelOrderCom::prepare();
 
 				int off[5] = {0,0,0,0,0};
 				for (int i = 0; i < viewLabels.size(); i++) {
 					int rI = topX2RenderIndex[i];
 					PreparedText* label = _renderer[rI]->getTexts()->at(off[rI]);
-					graphVizCom::add(x_topX[i], y_topX[i], label->_textPixWidth, label->_textPixHeight);
+					labelOrderCom::add(x_topX[i], y_topX[i], label->_textPixWidth, label->_textPixHeight);
 					off[rI]++;
 				}
-				newPos = graphVizCom::transmit();
+				newPos = labelOrderCom::transmit();
 
 				for (int i = 0; i < newPos->size(); i++) {
 					x_topX[newPos->at(i).id] =  newPos->at(i).x;
