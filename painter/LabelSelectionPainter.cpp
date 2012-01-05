@@ -301,8 +301,8 @@ void LabelSelectionPainter::prepareTextRenderer(int* retXSize, int* retYSize, ve
 		//update click listener
 		float left = x - ((float) w / (float) windowW) / 2.0f;
 		float right = x + ((float) w / (float) windowW) / 2.0f;
-		float bottom = y - ((float) h / (float) windowH) / 2.0f;
-		float up = y + ((float) h / (float) windowH) / 2.0f;
+		float bottom = y - ((float) (h + Y_MARGIN / 2.0f) / (float) windowH) / 2.0f;
+		float up = y + ((float) (h + Y_MARGIN / 2.0f) / (float) windowH) / 2.0f;
 
 		mouseHandler::registerLB(bottom, left, up, right, topX[i].id);
 

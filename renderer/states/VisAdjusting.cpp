@@ -138,6 +138,12 @@ void VisAdjusting::changeVisParameter( void ) {
 }
 
 
+//public
+void VisAdjusting::cancelAnimation( void ) {
+	_process = 1.0f;
+}
+
+
 //private stuff
 void VisAdjusting::swap( void ) {
    	_r->_currentData->clear();

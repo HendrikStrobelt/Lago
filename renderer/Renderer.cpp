@@ -50,6 +50,7 @@ Renderer::~Renderer( void ) {
 
 void Renderer::emptyClick( void ) {
 	_labelSelectionPainter.clear();
+	_visAdjust->cancelAnimation();
 }
 
 void Renderer::rightClick(int x, int y) {
