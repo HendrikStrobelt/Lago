@@ -101,11 +101,12 @@ void main(void)
 
 			if (blend) {
 				float oldVal = getOldTextureValue((fOldTexCoord + texCoordMove));
+				float newVal = texture(gaussTex, (fTexCoord + texCoordMove)).b;
 				
 				if (oldVal < 0.0f) {
-					color += getColor(0.0f);
+					color += getColor(newVal);
 				} else {
-					float blendVal = mix(oldVal, texture(gaussTex, (fTexCoord + texCoordMove)).b, process);
+					float blendVal = mix(oldVal, newVal, process);
 					color += getColor(blendVal);
 				}
 			} else {
