@@ -18,10 +18,10 @@ VisAdjusting::~VisAdjusting( void ) {
 void VisAdjusting::render( void ) {
 	IRenderData* rData;
 	RenderBlendData blendData(_r->_newData);		
-	float process;
-	int bars;
+	float process = -1.0f;
+	int bars = 0;
 
-	if (ANIMATION && _process < 1.0f) {
+	if (context::_options._animation && _process < 1.0f) {
 		float max[3];
 
 		mixMaxVals(max, _r->_currentData->getNodeMaxAll(), _r->_newData->getNodeMaxAll(), _process);
@@ -29,15 +29,13 @@ void VisAdjusting::render( void ) {
 		mixMaxVals(max, _r->_currentData->getEdgeMaxAll(), _r->_newData->getEdgeMaxAll(), _process);
 		blendData.setEdgeMax(max);
 		
-		_visPainter->renderVis(&blendData, _r->_hasEdges);
+		_visPainter->renderVis(&blendData, _r->_hasEdges, true, _r->_currentData, _r->getStandardMVP(), _process);
 		blendData.setVis(_visPainter->detachResult());
 		process = _process;
 		bars = 1;
 
 		rData = &blendData;
 	} else {
-		process = -1.0f;
-		bars = 0;
 		rData = _r->_newData;
 	}
 
@@ -45,7 +43,7 @@ void VisAdjusting::render( void ) {
 	maxVals[0] = rData->getNodeMax();
 	maxVals[1] = rData->getEdgeMax();
 
-	_r->renderGraph(rData, 0.0f, 0.0f);
+	_r->renderGraph(rData);
 	_r->renderHUD(process, bars, maxVals);
 	_r->renderLabelSelection(_r->_newData);
 }
@@ -55,8 +53,8 @@ void VisAdjusting::renderEvalField( void ) { /* nothing to do */ }
 void VisAdjusting::renderLineField( void ) { /* nothing to do */ }
 
 void VisAdjusting::work( void ) {
-	if (ANIMATION && _process < 1.0f) {
-		_process = (context::getTime() - _animationStart) / ANI_DURATION;
+	if (context::_options._animation && _process < 1.0f) {
+		_process = (context::getTime() - _animationStart) / context::_options._aniDuration;
 	} else {
 		//done
 		swap();
@@ -97,9 +95,11 @@ void VisAdjusting::takeOver( void ) {
 	_visPainter->renderVis(_r->_newData, _r->_hasEdges);
 	_r->_newData->setVis(_visPainter->detachResult());
 
-	float maxChange = (abs(_r->_currentData->getEdgeMax() - _r->_newData->getEdgeMax()) / _r->_newData->getEdgeMax())  + 
-					  (abs(_r->_currentData->getNodeMax() - _r->_newData->getNodeMax()) / _r->_newData->getNodeMax());
-	if (maxChange < 0.01) {
+	float maxChange = max((abs(_r->_currentData->getEdgeMax() - _r->_newData->getEdgeMax()) / _r->_newData->getEdgeMax()), 
+					      (abs(_r->_currentData->getNodeMax() - _r->_newData->getNodeMax()) / _r->_newData->getNodeMax()));
+
+	if (maxChange < 0.01f && _r->_newData->getSideLength() == _r->_currentData->getSideLength()) {
+		//if it is only a small change & the side length is the same no animation is needed
 		_process = 1.0f;
 	}
 
@@ -142,7 +142,6 @@ void VisAdjusting::changeVisParameter( void ) {
 void VisAdjusting::cancelAnimation( void ) {
 	_process = 1.0f;
 }
-
 
 //private stuff
 void VisAdjusting::swap( void ) {

@@ -20,6 +20,8 @@ class IRenderData {
 		virtual float* getNodeMaxAll( void ) = 0;
 		virtual float* getEdgeMaxAll( void ) = 0;
 
+		virtual float* getBox( void ) = 0;
+		virtual float getSideLength( void ) = 0;
 	private:
 
 };

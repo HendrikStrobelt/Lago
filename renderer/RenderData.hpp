@@ -23,6 +23,9 @@ class RenderData : public IRenderData {
 		float* getNodeMaxAll( void );
 		float* getEdgeMaxAll( void );
 
+		float* getBox( void );
+		float getSideLength( void );
+
 		//add setters and members
 		void setGaussTex(GLuint tex);
 		void setEvalField(GLuint tex);
@@ -30,6 +33,8 @@ class RenderData : public IRenderData {
 		void setVis(GLuint tex);
 		void setNodeMax(float max[]);
 		void setEdgeMax(float max[]);
+		void setBox(float box[]);
+		void setSideLength(float length);
 
 	private:
 		GLuint _gaussTex;
@@ -39,7 +44,8 @@ class RenderData : public IRenderData {
 
 		float _maxValuesN[3];
 		float _maxValuesE[3];
-
+		float _box[4];
+		float _sideLength;
 };
 
 

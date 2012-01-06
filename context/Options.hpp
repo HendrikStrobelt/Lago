@@ -33,6 +33,9 @@ class Options : public IContextListener {
 		bool _showLabels;
 		int _labelCount;
 
+		bool _animation;
+		float _aniDuration;
+
 		bool _changedLocal;
 	
 

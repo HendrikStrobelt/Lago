@@ -24,6 +24,9 @@ class RenderBlendData : public IRenderData {
 		float* getNodeMaxAll( void );
 		float* getEdgeMaxAll( void );
 
+		float* getBox( void );
+		float getSideLength( void );
+
 		//add setters and members
 		void setNodeMax(float max[]);
 		void setEdgeMax(float max[]);

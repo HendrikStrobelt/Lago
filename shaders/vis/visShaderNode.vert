@@ -5,16 +5,16 @@ in vec2 vTex;
 
 out vec2 fTexCoord;
 
-in mat4 MVP;
-in vec4 vOldBox;
+uniform vec4 box;
+uniform mat4 MVP;
 uniform bool blend;
-out vec2 fOldTexCoords;
+out vec2 fOldTexCoord;
 
 
 
 vec2 getOldTexCoords(vec2 pos) {
-	vec2 leftBot = (MVP * vec4(vOldBox.xy, 0.0f, 1.0f)).xy;
-	vec2 rightUp = (MVP * vec4(vOldBox.zw, 0.0f, 1.0f)).xy;
+	vec2 leftBot = (MVP * vec4(box.xy, 0.0f, 1.0f)).xy;
+	vec2 rightUp = (MVP * vec4(box.zw, 0.0f, 1.0f)).xy;
 
 	float x = (pos.x - leftBot.x) / (rightUp.x - leftBot.x);
 	float y = (pos.y - leftBot.y) / (rightUp.y - leftBot.y);
@@ -28,8 +28,8 @@ void main()
    fTexCoord = vec2(vTex);
 
    if (blend) {
-		fOldTexCoords = getOldTexCoords(vVertex);
+		fOldTexCoord = getOldTexCoords(vVertex);
    } else {
-		fOldTexCoords = vec2(-1.0f,-1.0f);
+		fOldTexCoord = vec2(-1.0f,-1.0f);
    }
 }

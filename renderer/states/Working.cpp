@@ -1,6 +1,7 @@
 #include "Working.hpp"
 #include "../Renderer.hpp"
 #include "WorkStateHelper.hpp"
+#include "../../context/Context.hpp"
 
 Working::Working(Renderer* renderer) {
 	_r = renderer;
@@ -38,6 +39,13 @@ void Working::work( void ) {
 		//done change state
 		_r->_newData->setGaussTex(_worker->_pc[GAUSS_VIEW]->detachResult());
 		_r->_newData->setEvalField(_worker->_fieldEvaluator[VIEW]->detachResultTexture());
+		_r->_newData->setSideLength(context::_pixelSize * pow(SIDE_BASE, context::_sideExponent));
+
+		glm::mat4 MVPI = glm::inverse(_r->getStandardMVP());
+		glm::vec4 leftLow = MVPI * glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f);
+		glm::vec4 rightUp = MVPI * glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+		float box[] = {leftLow.x, leftLow.y, rightUp.x, rightUp.y};
+		_r->_newData->setBox(box);
 
 		if (_r->_hasEdges) {	
 			_r->_newData->setLineField(_worker->_linePainter->detachTexture());

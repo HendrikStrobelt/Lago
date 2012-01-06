@@ -40,7 +40,13 @@ GLuint RenderBlendData::getLineField( void ) {
 	return _rData->getLineField();
 }
 
+float* RenderBlendData::getBox( void ) {
+	return _rData->getBox();
+}
 
+float RenderBlendData::getSideLength( void ) {
+	return _rData->getSideLength();
+}
 
 GLuint RenderBlendData::getVis( void ) {
 	return _vis;
@@ -53,7 +59,6 @@ float RenderBlendData::getNodeMax( void ) {
 float RenderBlendData::getEdgeMax( void ) {
 	return _maxValuesE[1];
 }
-
 
 
 
