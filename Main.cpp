@@ -12,7 +12,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <vld.h>
+//#include <vld.h>
 
 
 #include "GlobalConstants.hpp"
