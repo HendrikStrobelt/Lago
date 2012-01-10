@@ -38,6 +38,10 @@ class Options : public IContextListener {
 
 		bool _changedLocal;
 	
+		bool _lock;
+		bool _overLock;
+		float _edgeMax;
+		float _nodeMax;
 
 	private:
 		string _nodeFile;

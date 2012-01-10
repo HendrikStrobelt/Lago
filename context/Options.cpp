@@ -18,6 +18,10 @@ Options::Options( void ) {
 	_labelCount = START_MAX_LABELS;
 	_animation = true;
 	_aniDuration = 2.0f;
+	_lock = false;
+	_overLock = false;
+	_edgeMax = 1.0f;
+	_nodeMax = 1.0f;
 }
 
 void Options::init( void ) {
@@ -44,6 +48,10 @@ string Options::toCommandString( void ) {
 	s << " labelCount$" << _labelCount;
 	s << " animation$" << _animation;
 	s << " aniDuration$" << _aniDuration;
+	s << " lockMax$" << _lock;
+	s << " nodeMax$" << _nodeMax;
+	s << " edgeMax$" << _edgeMax;
+	s << " overLock$" << _overLock;
 	return s.str();
 }
 
@@ -64,6 +72,7 @@ void Options::update(map<string, string> dataMap) {
 		//VIS PARAMETER
 		bool visChange = false;
 
+		//alias
 		if ((it = dataMap.find("antiAlias")) != dataMap.end()) {
 			bool aa;
 			if (it->second.compare("true") == 0) {
@@ -77,6 +86,7 @@ void Options::update(map<string, string> dataMap) {
 			}
 		}
 
+		//label
 		if ((it = dataMap.find("showLabels")) != dataMap.end()) {
 			bool showLabels;
 			if (it->second.compare("true") == 0) {
@@ -103,7 +113,7 @@ void Options::update(map<string, string> dataMap) {
 			}
 		}
 
-
+		//animation
 		if ((it = dataMap.find("animation")) != dataMap.end()) {
 			if (it->second.compare("true") == 0) {
 				_animation = true;
@@ -116,6 +126,42 @@ void Options::update(map<string, string> dataMap) {
 			_aniDuration = atof(it->second.c_str());
 		}
 
+		//max vals
+
+		if ((it = dataMap.find("lockMax")) != dataMap.end()) {
+			bool lock;
+			if (it->second.compare("true") == 0) {
+				lock = true;
+			} else {
+				lock = false;
+			}
+			if (lock != _lock) {
+				if (!lock) {//lock update is only necessary if we unlock
+					visChange = true; 
+				}
+				_lock = lock;
+			}
+		}
+
+		if ((it = dataMap.find("nodeMax")) != dataMap.end()) {
+			float nodeMax;
+			nodeMax = atof(it->second.c_str());
+			if (_nodeMax != _nodeMax) {
+				_nodeMax = nodeMax;
+				_lock = true;
+				visChange = true;
+			}
+		}
+
+		if ((it = dataMap.find("edgeMax")) != dataMap.end()) {
+			float edgeMax;
+			edgeMax = atof(it->second.c_str());
+			if (_edgeMax != _edgeMax) {
+				_edgeMax = edgeMax;
+				_lock = true;
+				visChange = true;
+			}
+		}
 
 		//vis ..end
 		if (visChange) {

@@ -86,9 +86,24 @@ void VisAdjusting::takeOver( void ) {
 
 	float tmp[3];
 	_r->calculateMaxValues(tmp, _r->_newData->getGaussTex(), _r->_windowWidth, _r->_windowHeight);
+	if (context::_options._lock) {
+		context::_options._overLock = (tmp[2] > context::_options._nodeMax);
+		tmp[2] = context::_options._nodeMax;
+	}
+	context::_options._nodeMax = tmp[2];
 	_r->_newData->setNodeMax(tmp);
-	_r->calculateMaxValues(tmp, _r->_newData->getLineField(), _r->_windowWidth, _r->_windowHeight);
-	_r->_newData->setEdgeMax(tmp);
+
+	if (_r->_hasEdges) {
+		_r->calculateMaxValues(tmp, _r->_newData->getLineField(), _r->_windowWidth, _r->_windowHeight);
+		if (context::_options._lock) {
+			context::_options._overLock = (context::_options._overLock || tmp[1] > context::_options._edgeMax);
+			tmp[1] = context::_options._edgeMax;
+		}
+		context::_options._edgeMax = tmp[1];
+		_r->_newData->setEdgeMax(tmp);
+	}
+
+	context::_options._changedLocal = true; //a bit brutal
 
 	delete _visPainter;
 	_visPainter = new VisPainter(_r->_windowWidth, _r->_windowHeight);
