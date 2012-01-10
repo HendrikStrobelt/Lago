@@ -14,7 +14,21 @@ uniform vec4 pointsX;
 uniform vec4 pointsY;
 uniform float exponent;
 
+in vec2 fOldTexCoord;
+uniform bool blend;
+uniform sampler2D oldGaussTex;
+uniform float process;
+
 out vec4 fragColor;
+
+
+float getOldTextureValue(vec2 texCoord) {	
+	if (texCoord.x < 0.0f || texCoord.x > 1.0f || texCoord.y < 0.0f || texCoord.y > 1.0f) {
+		return -1.0f;
+	} else {
+	    return texture(oldGaussTex, texCoord).b;
+	}
+}
 
 float scale(float normedVal) {
 	if (linearMode) {
@@ -46,8 +60,8 @@ float scale(float normedVal) {
 }
 
 
-vec3 getColor(vec2 texCoord) {
-   float normalized = texture(gaussTex, texCoord).b / maxValue;
+vec3 getColor(float texValue) {
+   float normalized = texValue / maxValue;
    float scaled = min(1.0, scale(normalized));
 
 	if (scaled < 0.0001f) { //background
@@ -60,10 +74,10 @@ vec3 getColor(vec2 texCoord) {
 
 void main(void)
 {
-	vec2 texCoord;
 
 	if (antiAlias) {
-		
+
+		vec2 texCoordMove;		
 		vec3 color;
 		float stepX = 1.0f / width;
 		float stepY = 1.0f / height;
@@ -72,27 +86,46 @@ void main(void)
 
 			switch (run) {
 				case 0:
-					texCoord = fTexCoord + vec2((stepX * 0.7133f), (stepY * 0.2318f));
+					texCoordMove = vec2((stepX * 0.7133f), (stepY * 0.2318f));
 				break;
 				case 1:
-					texCoord = fTexCoord + vec2((stepX * 0.2318f), (stepY * -0.7133f));				
+					texCoordMove = vec2((stepX * 0.2318f), (stepY * -0.7133f));				
 				break;
 				case 2:
-					texCoord = fTexCoord + vec2((stepX * -0.7133f), (stepY * -0.2318f));				
+					texCoordMove = vec2((stepX * -0.7133f), (stepY * -0.2318f));				
 				break;
 				case 3:
-					texCoord = fTexCoord + vec2((stepX * -0.2318f), (stepY * 0.7133f));				
+					texCoordMove = vec2((stepX * -0.2318f), (stepY * 0.7133f));				
 				break;
 			}
-		
-			color += getColor(texCoord);
+
+			if (blend) {
+				float oldVal = getOldTextureValue((fOldTexCoord + texCoordMove));
+				float newVal = texture(gaussTex, (fTexCoord + texCoordMove)).b;
+				
+				if (oldVal < 0.0f) {
+					color += getColor(newVal);
+				} else {
+					float blendVal = mix(oldVal, newVal, process);
+					color += getColor(blendVal);
+				}
+			} else {
+				color += getColor(texture(gaussTex, fTexCoord + texCoordMove).b);
+			}
+			
 
 		}
 
 		fragColor = vec4((color / vec3(4,4,4)), 1.0f);
 	} else {
-		texCoord = fTexCoord;
-		fragColor = vec4(getColor(texCoord), 1.0f);
+		if (blend) {
+			float blendVal = mix(getOldTextureValue(fOldTexCoord), texture(gaussTex, fTexCoord).b, process);
+			fragColor = vec4(getColor(blendVal), 1.0f);
+		} else {
+			fragColor = vec4(getColor(texture(gaussTex, fTexCoord).b), 1.0f);
+		}
+
+		
 	}
 }
 

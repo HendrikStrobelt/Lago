@@ -6,6 +6,7 @@
 
 #include "..\DataCache.hpp"
 #include "RenderData.hpp"
+#include "IRenderData.hpp"
 #include "IRenderState.hpp"
 #include "states\Idle.hpp"
 #include "states\InitialWork.hpp"
@@ -16,6 +17,7 @@
 #include "..\painter\DisplayConvertPainter.hpp"
 #include "..\painter\ScalingPainter.hpp"
 #include "..\painter\LabelSelectionPainter.hpp"
+#include "..\painter\LabelPainter.hpp"
 #include "TextureExaminer.hpp"
 #include "CellLabelGetter.hpp"
 
@@ -87,10 +89,10 @@ class Renderer : public IRenderState {
 		glm::mat4 getStandardMVP( void );
 
 		void setState(IRenderState* state);
-		void renderGraph(RenderData* rData, int xMove=0, int yMove=0);
-		void renderHUD(float progress, float maxVals[]);
-		void renderLabelSelection(RenderData* rData, int xMove=0, int yMove=0);
-		void renderLabels(RenderData* rData, int xMove, int yMove);
+		void renderGraph(IRenderData* rData, int xMove=0, int yMove=0);
+		void renderHUD(float progress, int pBars, float maxVals[]);
+		void renderLabelSelection(IRenderData* rData, int xMove=0, int yMove=0);
+		void renderLabels(IRenderData* rData, int xMove, int yMove);
 		void renderTexture(GLuint tex, float max[], float xMove=0.0f, float yMove=0.0f);
 		void calculateMaxValues(float result[], GLuint texture, int textureWidth, int textureHeight);
 };

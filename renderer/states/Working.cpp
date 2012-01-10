@@ -1,6 +1,7 @@
 #include "Working.hpp"
 #include "../Renderer.hpp"
 #include "WorkStateHelper.hpp"
+#include "../../context/Context.hpp"
 
 Working::Working(Renderer* renderer) {
 	_r = renderer;
@@ -14,10 +15,14 @@ Working::~Working( void ) {
 void Working::render( void ) {
 	_r->renderGraph(_r->_currentData, _r->_mouseMoveX, _r->_mouseMoveY);
 	
+	int bars = 1;
+	if (_r->_hasEdges) {
+		bars = 3;
+	}
 	float maxVals[2];
-	maxVals[0] = _r->_currentData->_maxValuesN[2];
-	maxVals[1] = _r->_currentData->_maxValuesE[1];
-	_r->renderHUD(_worker->_progress, maxVals);
+	maxVals[0] = _r->_currentData->getNodeMax();
+	maxVals[1] = _r->_currentData->getEdgeMax();
+	_r->renderHUD(_worker->_progress, bars, maxVals);
 	_r->renderLabelSelection(_r->_currentData, _r->_mouseMoveX, _r->_mouseMoveY);
 }
 
@@ -32,11 +37,18 @@ void Working::work( void ) {
 		_worker->work();
 	} else {
 		//done change state
-		_r->_newData->_gaussTex = _worker->_pc[GAUSS_VIEW]->detachResult();
-		_r->_newData->_evalField = _worker->_fieldEvaluator[VIEW]->detachResultTexture();
+		_r->_newData->setGaussTex(_worker->_pc[GAUSS_VIEW]->detachResult());
+		_r->_newData->setEvalField(_worker->_fieldEvaluator[VIEW]->detachResultTexture());
+		_r->_newData->setSideLength(context::_pixelSize * pow(SIDE_BASE, context::_sideExponent));
+
+		glm::mat4 MVPI = glm::inverse(_r->getStandardMVP());
+		glm::vec4 leftLow = MVPI * glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f);
+		glm::vec4 rightUp = MVPI * glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+		float box[] = {leftLow.x, leftLow.y, rightUp.x, rightUp.y};
+		_r->_newData->setBox(box);
 
 		if (_r->_hasEdges) {	
-			_r->_newData->_lineField = _worker->_linePainter->detachTexture();
+			_r->_newData->setLineField(_worker->_linePainter->detachTexture());
 		}
 
 		_r->_labelSelectionPainter.changePanning(_r->_mouseMoveX, _r->_mouseMoveY);

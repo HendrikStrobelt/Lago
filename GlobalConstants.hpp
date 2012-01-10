@@ -39,7 +39,6 @@ extern int ANGLE_STEP; // 1..45 \in N
 extern int OFF_ZOOM;  //2 times zoomed out
 extern int OFF_SHRINK; //calculated in a x times smaller field
 
-
 //labels
 extern int START_MAX_LABELS;
 

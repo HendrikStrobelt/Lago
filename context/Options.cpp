@@ -16,6 +16,8 @@ Options::Options( void ) {
 	_adaptiveScaleBars = true;
 	_showLabels = true;
 	_labelCount = START_MAX_LABELS;
+	_animation = true;
+	_aniDuration = 2.0f;
 }
 
 void Options::init( void ) {
@@ -40,6 +42,8 @@ string Options::toCommandString( void ) {
 	s << " labelCS$" << _colorSchemeLabel;
 	s << " showLabels$" << _showLabels;
 	s << " labelCount$" << _labelCount;
+	s << " animation$" << _animation;
+	s << " aniDuration$" << _aniDuration;
 	return s.str();
 }
 
@@ -99,10 +103,24 @@ void Options::update(map<string, string> dataMap) {
 			}
 		}
 
+
+		if ((it = dataMap.find("animation")) != dataMap.end()) {
+			if (it->second.compare("true") == 0) {
+				_animation = true;
+			} else {
+				_animation = false;
+			}
+		}
+
+		if ((it = dataMap.find("aniDuration")) != dataMap.end()) {
+			_aniDuration = atof(it->second.c_str());
+		}
+
+
+		//vis ..end
 		if (visChange) {
 			context::visParameterChange();
 		}
-
 
 		//DATA SET
 		string nFile, eFile;

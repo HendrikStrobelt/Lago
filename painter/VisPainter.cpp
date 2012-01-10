@@ -1,5 +1,6 @@
 #include "VisPainter.hpp"		
 #include "../context/Context.hpp"
+#include <glm/gtc/type_ptr.hpp>
 
 GLSLShader* VisPainter::_n_shader_ptr = NULL;
 GLSLShader* VisPainter::_e_shader_ptr = NULL;
@@ -39,14 +40,14 @@ GLuint VisPainter::detachResult( void ) {
 	return _fbcRes->detachTexture();
 }
 
-void VisPainter::renderVis(RenderData* rData, bool withEdges) {
+void VisPainter::renderVis(IRenderData* rData, bool withEdges, bool animation, IRenderData* oldData, glm::mat4 MVP, float process) {
 	if (!withEdges) {
 		glBindFramebuffer(GL_FRAMEBUFFER, _fbcRes->_fbo);
-			renderNodes(rData);
+			renderNodes(rData, animation, oldData, MVP, process);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	} else {
 		glBindFramebuffer(GL_FRAMEBUFFER, _fbcInter->_fbo);	
-			renderNodes(rData);
+			renderNodes(rData, animation, oldData, MVP, process);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, _fbcRes->_fbo);
@@ -59,44 +60,61 @@ void VisPainter::renderVis(RenderData* rData, bool withEdges) {
 
 //privat
 
-void VisPainter::renderNodes(RenderData* rData)  {
+void VisPainter::renderNodes(IRenderData* rData, bool animation, IRenderData* oldData, glm::mat4 MVP, float process)  {
 	glBlendFunc(GL_ONE, GL_ZERO);
 
 	int scaleMode = 0;
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, rData->_gaussTex);
+	glBindTexture(GL_TEXTURE_2D, rData->getGaussTex());
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, context::_options._nodeScheme);
-			glBindVertexArray(_vao);
-				_n_shader_ptr->use();			
-					glUniform1i(_n_shader_ptr->getUniformLocation("gaussTex"), 0);
-					glUniform1i(_n_shader_ptr->getUniformLocation("colorScheme"), 1);
-					glUniform1f(_n_shader_ptr->getUniformLocation("maxValue"), rData->_maxValuesN[2]);
-					glUniform1i(_n_shader_ptr->getUniformLocation("antiAlias"), context::_options._antiAlias);
-					glUniform1i(_n_shader_ptr->getUniformLocation("width"), _width);
-					glUniform1i(_n_shader_ptr->getUniformLocation("height"), _height);
-					float* cp = &(context::_scaleOptions[scaleMode]._controlPoints[0][0]);
-					glUniform1i(_n_shader_ptr->getUniformLocation("linearMode"), context::_scaleOptions[scaleMode]._linearMode);
-					glUniform4f(_n_shader_ptr->getUniformLocation("pointsX"), cp[0], cp[2], cp[4], cp[6]);
-					glUniform4f(_n_shader_ptr->getUniformLocation("pointsY"), cp[1], cp[3], cp[5], cp[7]);
-					glUniform1f(_n_shader_ptr->getUniformLocation("exponent"), context::_scaleOptions[scaleMode]._exponent);
-					//draw a textured quad over the whole screen
-					glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); 
-				_n_shader_ptr->unUse();
-			glBindVertexArray(0);
+			if (animation) {
+				glActiveTexture(GL_TEXTURE2);
+				glBindTexture(GL_TEXTURE_2D, oldData->getGaussTex());
+			}
+				glBindVertexArray(_vao);
+					_n_shader_ptr->use();		
+						if (animation) {
+							glUniform1i(_n_shader_ptr->getUniformLocation("blend"), true);
+							glUniformMatrix4fv(_n_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
+							glUniform1i(_n_shader_ptr->getUniformLocation("oldGaussTex"), 2);
+							glUniform1f(_n_shader_ptr->getUniformLocation("process"), process);
+							glUniform4f(_n_shader_ptr->getUniformLocation("box"), oldData->getBox()[0], oldData->getBox()[1], oldData->getBox()[2], oldData->getBox()[3]);
+						} else {
+							glUniform1i(_n_shader_ptr->getUniformLocation("blend"), false);
+						}
+						glUniform1i(_n_shader_ptr->getUniformLocation("gaussTex"), 0);
+						glUniform1i(_n_shader_ptr->getUniformLocation("colorScheme"), 1);
+						glUniform1f(_n_shader_ptr->getUniformLocation("maxValue"), rData->getNodeMax());
+						glUniform1i(_n_shader_ptr->getUniformLocation("antiAlias"), context::_options._antiAlias);
+						glUniform1i(_n_shader_ptr->getUniformLocation("width"), _width);
+						glUniform1i(_n_shader_ptr->getUniformLocation("height"), _height);
+						float* cp = &(context::_scaleOptions[scaleMode]._controlPoints[0][0]);
+						glUniform1i(_n_shader_ptr->getUniformLocation("linearMode"), context::_scaleOptions[scaleMode]._linearMode);
+						glUniform4f(_n_shader_ptr->getUniformLocation("pointsX"), cp[0], cp[2], cp[4], cp[6]);
+						glUniform4f(_n_shader_ptr->getUniformLocation("pointsY"), cp[1], cp[3], cp[5], cp[7]);
+						glUniform1f(_n_shader_ptr->getUniformLocation("exponent"), context::_scaleOptions[scaleMode]._exponent);
+						//draw a textured quad over the whole screen
+						glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); 
+					_n_shader_ptr->unUse();
+				glBindVertexArray(0);
+			if (animation) {
+				glActiveTexture(GL_TEXTURE2);
+				glBindTexture(GL_TEXTURE_2D, 0);
+			}
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D,  0);
 }
 
-void VisPainter::renderEdges(RenderData* rData, GLuint nodeTex) {
+void VisPainter::renderEdges(IRenderData* rData, GLuint nodeTex) {
 	glBlendFunc(GL_ONE, GL_ZERO);
 
 	int scaleMode = 1;	
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, rData->_lineField);
+	glBindTexture(GL_TEXTURE_2D, rData->getLineField());
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, nodeTex);
 			glActiveTexture(GL_TEXTURE2);
@@ -106,7 +124,7 @@ void VisPainter::renderEdges(RenderData* rData, GLuint nodeTex) {
 						glUniform1i(_e_shader_ptr->getUniformLocation("colorScheme"), 2);
 						glUniform1i(_e_shader_ptr->getUniformLocation("gaussTex"), 1);
 						glUniform1i(_e_shader_ptr->getUniformLocation("lineField"), 0);
-						glUniform1f(_e_shader_ptr->getUniformLocation("maxValue"), rData->_maxValuesE[1]);
+						glUniform1f(_e_shader_ptr->getUniformLocation("maxValue"), rData->getEdgeMax());
 						glUniform1i(_e_shader_ptr->getUniformLocation("antiAlias"), context::_options._antiAlias);
 						glUniform1i(_e_shader_ptr->getUniformLocation("width"), _width);
 						glUniform1i(_e_shader_ptr->getUniformLocation("height"), _height);
@@ -133,6 +151,7 @@ void VisPainter::createShader( void ) {
 
 		attribs.push_back("vTex");
 		attribs.push_back("vVertex");
+		attribs.push_back("vOldBox");
 		unis.push_back("maxValue");
 		unis.push_back("antiAlias");
 		unis.push_back("gaussTex");
@@ -146,7 +165,15 @@ void VisPainter::createShader( void ) {
 		unis.push_back("pointsY");
 		unis.push_back("exponent");
 
+		unis.push_back("blend");
+		unis.push_back("MVP");
+		unis.push_back("oldGaussTex");
+		unis.push_back("process");
+		unis.push_back("box");
+
 		_n_shader_ptr = new GLSLShader(attribs, unis, "shaders/vis/visShaderNode.vert", "shaders/vis/visShaderNode.frag");
+		attribs.erase(attribs.end() -1);
+		unis.erase(unis.end() - 5, unis.end());
 
 		unis.push_back("lineField");
 		_e_shader_ptr = new GLSLShader(attribs, unis, "shaders/vis/visShaderEdge.vert", "shaders/vis/visShaderEdge.frag");
@@ -158,7 +185,7 @@ void VisPainter::initVao( void ) {
 	float texture[8] = { 0.0f, 1.0f,     0.0f,  0.0f,      1.0f, 1.0f,     1.0f,  0.0f};
 
 	glGenVertexArrays(1, &_vao);
-	glGenBuffers (2, &_vbo[0]);
+	glGenBuffers(2, &_vbo[0]);
 
 	glBindBuffer (GL_ARRAY_BUFFER, _vbo[VERTEX]);
 		glBufferData (GL_ARRAY_BUFFER, 8 * sizeof(float), &textureQuad[0], GL_STATIC_DRAW);
@@ -167,15 +194,15 @@ void VisPainter::initVao( void ) {
 	glBindBuffer (GL_ARRAY_BUFFER, 0);
 
 	glBindVertexArray(_vao);	 
-		glBindBuffer (GL_ARRAY_BUFFER, _vbo[VERTEX]);
+		glBindBuffer(GL_ARRAY_BUFFER, _vbo[VERTEX]);
 			glEnableVertexAttribArray(_n_shader_ptr->getAttributeLocation("vVertex"));
-			glVertexAttribPointer (_n_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, 0, 0);
+			glVertexAttribPointer(_n_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, 0, 0);
 			glEnableVertexAttribArray(_e_shader_ptr->getAttributeLocation("vVertex"));
-			glVertexAttribPointer (_e_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, 0, 0);
-		glBindBuffer (GL_ARRAY_BUFFER, _vbo[TEX_COORDS]);
+			glVertexAttribPointer(_e_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, _vbo[TEX_COORDS]);
 			glEnableVertexAttribArray(_n_shader_ptr->getAttributeLocation("vTex"));
-			glVertexAttribPointer (_n_shader_ptr->getAttributeLocation("vTex"), 2, GL_FLOAT, GL_FALSE, 0, 0);
+			glVertexAttribPointer(_n_shader_ptr->getAttributeLocation("vTex"), 2, GL_FLOAT, GL_FALSE, 0, 0);
 			glEnableVertexAttribArray(_e_shader_ptr->getAttributeLocation("vTex"));
-			glVertexAttribPointer (_e_shader_ptr->getAttributeLocation("vTex"), 2, GL_FLOAT, GL_FALSE, 0, 0);
+			glVertexAttribPointer(_e_shader_ptr->getAttributeLocation("vTex"), 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glBindVertexArray(0);
 }

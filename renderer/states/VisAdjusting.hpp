@@ -26,10 +26,16 @@ class VisAdjusting : public IRenderState {
 		void changeWindow( void );
 		void changeVisParameter( void );
 
+		//public
+		void cancelAnimation( void );
+
 	private:
 		void swap( void );
+		void mixMaxVals(float ret[], float curVals[], float newVals[], float process);
 
 		Renderer* _r;
+		float _process;
+		double _animationStart;
 		VisPainter* _visPainter;
 };
 

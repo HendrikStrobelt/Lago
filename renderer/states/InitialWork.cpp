@@ -1,6 +1,7 @@
 #include "InitialWork.hpp"
 #include "../Renderer.hpp"
 #include "WorkStateHelper.hpp"
+#include "../../context/Context.hpp"
 
 #include <glm\glm.hpp>
 
@@ -14,8 +15,12 @@ InitialWork::~InitialWork( void ) {
 }
 
 void InitialWork::render( void ) {
+	int bars = 1;
+	if (_r->_hasEdges) {
+		bars = 3;
+	}
 	float maxVals[]  = {-1.0f, -1.0f};
-	_r->renderHUD(_worker->_progress, maxVals);
+	_r->renderHUD(_worker->_progress, bars, maxVals);
 }
 
 void InitialWork::renderGauss( void ) { /*do nothing*/ };
@@ -30,11 +35,18 @@ void InitialWork::work( void ) {
 	} else {
 
 		//done change state
-		_r->_newData->_gaussTex = _worker->_pc[GAUSS_VIEW]->detachResult();
-		_r->_newData->_evalField = _worker->_fieldEvaluator[VIEW]->detachResultTexture();
+		_r->_newData->setGaussTex(_worker->_pc[GAUSS_VIEW]->detachResult());
+		_r->_newData->setEvalField(_worker->_fieldEvaluator[VIEW]->detachResultTexture());
+		_r->_newData->setSideLength(context::_pixelSize * pow(SIDE_BASE, context::_sideExponent));
+
+		glm::mat4 MVPI = glm::inverse(_r->getStandardMVP());
+		glm::vec4 leftLow = MVPI * glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f);
+		glm::vec4 rightUp = MVPI * glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+		float box[] = {leftLow.x, leftLow.y, rightUp.x, rightUp.y};
+		_r->_newData->setBox(box);
 
 		if (_r->_hasEdges) {	
-			_r->_newData->_lineField = _worker->_linePainter->detachTexture();			
+			_r->_newData->setLineField(_worker->_linePainter->detachTexture());			
 		}
 
 		_r->setState(_r->_visAdjust);

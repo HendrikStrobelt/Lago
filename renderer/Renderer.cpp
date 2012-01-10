@@ -50,10 +50,11 @@ Renderer::~Renderer( void ) {
 
 void Renderer::emptyClick( void ) {
 	_labelSelectionPainter.clear();
+	_visAdjust->cancelAnimation();
 }
 
 void Renderer::rightClick(int x, int y) {
-	vector<int>* ids = _cellLabelGetter->getLabelIndices(x, y, _currentData->_evalField, getStandardMVP());
+	vector<int>* ids = _cellLabelGetter->getLabelIndices(x, y, _currentData->getEvalField(), getStandardMVP());
 	_labelSelectionPainter.setData(ids, _dCache.getIndexedLabels(), x, y);
 }
 
@@ -107,7 +108,7 @@ glm::mat4 Renderer::getStandardMVP( void ) {
 	return MVP;
 }
 
-void Renderer::renderGraph(RenderData* rData, int xMove, int yMove) {
+void Renderer::renderGraph(IRenderData* rData, int xMove, int yMove) {
 	int mouseMoveX, mouseMoveY;
 	mouseHandler::getPressMovement(&mouseMoveX, &mouseMoveY);
 
@@ -118,17 +119,13 @@ void Renderer::renderGraph(RenderData* rData, int xMove, int yMove) {
 	cameraHelper::mouseDist2StandardVolDist(&moveX, &moveY, mouseMoveX, mouseMoveY);
 	float maxValues[] = {1.0f, 1.0f, 1.0f}; //vis tex is already normalized
 
-	renderTexture(rData->_vis, maxValues, moveX, moveY);
+	renderTexture(rData->getVis(), maxValues, moveX, moveY);
 	renderLabels(rData, mouseMoveX, -mouseMoveY);
 }
 
-void Renderer::renderHUD(float progress, float maxVals[]) {
+void Renderer::renderHUD(float progress, int pBars, float maxVals[]) {
 	if (progress >= 0.0f) {
-		if (_hasEdges) {
-			_progressBar.renderBar(progress, 3);
-		} else {
-			_progressBar.renderBar(progress, 1);
-		}
+		_progressBar.renderBar(progress, pBars);
 	}
 
 	if (maxVals[0] > 0.0f) {
@@ -136,13 +133,13 @@ void Renderer::renderHUD(float progress, float maxVals[]) {
 	}
 }
 
-void Renderer::renderLabelSelection(RenderData* rData, int xMove, int yMove) {
+void Renderer::renderLabelSelection(IRenderData* rData, int xMove, int yMove) {
 	int xShift, yShift;
 	mouseHandler::getPressMovement(&xShift, &yShift);
-	_labelSelectionPainter.renderSelection(getStandardMVP(), rData->_evalField, xShift, yShift, xMove, yMove);
+	_labelSelectionPainter.renderSelection(getStandardMVP(), rData->getEvalField(), xShift, yShift, xMove, yMove);
 }
 
-void Renderer::renderLabels(RenderData* rData, int xMove, int yMove) {
+void Renderer::renderLabels(IRenderData* rData, int xMove, int yMove) {
 	if (_dCache.hasLabels() && 	context::_options._showLabels)  {
 		_labelPainter.renderLabels(xMove, yMove);
 	}
