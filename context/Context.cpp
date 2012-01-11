@@ -114,8 +114,8 @@ namespace context {
 		} else {
 			_options._lock = true;
 		}
-
 		_options._changedLocal = true;
+		_renderer->lockClick();
 	}
 
 	void setSideExponent(int newSideExponent) {

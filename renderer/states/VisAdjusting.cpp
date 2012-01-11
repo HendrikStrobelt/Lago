@@ -75,12 +75,10 @@ void VisAdjusting::takeOver( void ) {
 	//create valid set data in slot newData
 	if (_r->_newData->getGaussTex() == -1) {
 		//new data is not complete steal from _currentData
-		_r->_newData->setEvalField(_r->_currentData->getEvalField());
-		_r->_currentData->setEvalField(-1);
-		_r->_newData->setGaussTex(_r->_currentData->getGaussTex());
-		_r->_currentData->setGaussTex(-1);
-		_r->_newData->setLineField(_r->_currentData->getLineField());
-		_r->_currentData->setLineField(-1);
+   		_r->_newData->clear();
+   		RenderData* swap = _r->_newData;
+   		_r->_newData = _r->_currentData;
+   		_r->_currentData = swap;
 		_process = 1.0f; //blending is not usefull
 	}
 

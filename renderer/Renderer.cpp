@@ -53,6 +53,10 @@ void Renderer::emptyClick( void ) {
 	_visAdjust->cancelAnimation();
 }
 
+void Renderer::lockClick( void ) {
+	_visAdjust->cancelAnimation();
+}
+
 void Renderer::rightClick(int x, int y) {
 	vector<int>* ids = _cellLabelGetter->getLabelIndices(x, y, _currentData->getEvalField(), getStandardMVP());
 	_labelSelectionPainter.setData(ids, _dCache.getIndexedLabels(), x, y);
