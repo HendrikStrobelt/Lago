@@ -192,6 +192,7 @@ void Renderer::changeZoom( void ) {
 void Renderer::changeData(string nodeFile, string edgeFile) {
 	setNewData(nodeFile, edgeFile);
 	context::_pixelSize = cameraHelper::getPixelSize(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+	context::_options._lock = false;
 	_labelSelectionPainter.clear();
 	_labelPainter.clear();
 	_state->changeData(nodeFile, edgeFile);

@@ -48,10 +48,10 @@ string Options::toCommandString( void ) {
 	s << " labelCount$" << _labelCount;
 	s << " animation$" << _animation;
 	s << " aniDuration$" << _aniDuration;
-	s << " lockMax$" << _lock;
+	s << " lockMax$" << boolalpha << _lock;
 	s << " nodeMax$" << _nodeMax;
 	s << " edgeMax$" << _edgeMax;
-	s << " overLock$" << _overLock;
+	s << " overLock$" << boolalpha << _overLock;
 	return s.str();
 }
 
@@ -146,7 +146,7 @@ void Options::update(map<string, string> dataMap) {
 		if ((it = dataMap.find("nodeMax")) != dataMap.end()) {
 			float nodeMax;
 			nodeMax = atof(it->second.c_str());
-			if (_nodeMax != _nodeMax) {
+			if (abs(_nodeMax - nodeMax) > 0.0001f) {
 				_nodeMax = nodeMax;
 				_lock = true;
 				visChange = true;
@@ -156,7 +156,7 @@ void Options::update(map<string, string> dataMap) {
 		if ((it = dataMap.find("edgeMax")) != dataMap.end()) {
 			float edgeMax;
 			edgeMax = atof(it->second.c_str());
-			if (_edgeMax != _edgeMax) {
+			if (abs(_edgeMax - edgeMax) > 0.0001f) {
 				_edgeMax = edgeMax;
 				_lock = true;
 				visChange = true;
