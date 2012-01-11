@@ -74,12 +74,14 @@ void VisAdjusting::takeOver( void ) {
 
 	//create valid set data in slot newData
 	if (_r->_newData->getGaussTex() == -1) {
-		//new data is not complete steal from _currentData
-   		_r->_newData->clear();
-   		RenderData* swap = _r->_newData;
-   		_r->_newData = _r->_currentData;
-   		_r->_currentData = swap;
-		_process = 1.0f; //blending is not usefull
+		//copy valid data set to new data
+		_r->_newData->clear();
+		RenderData* cleared = _r->_newData;
+		_r->_newData = _r->_currentData;
+		_r->_currentData = cleared;
+		
+		//make a weak copy of the valid data in current data
+		_r->_newData->weakCopyData(_r->_currentData);
 	}
 
 	float tmp[3];

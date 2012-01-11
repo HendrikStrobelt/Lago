@@ -54,7 +54,9 @@ void Renderer::emptyClick( void ) {
 }
 
 void Renderer::lockClick( void ) {
-	_visAdjust->cancelAnimation();
+	if (context::_options._lock) {
+		_visAdjust->cancelAnimation(); //lock setting terminates animation
+	}
 }
 
 void Renderer::rightClick(int x, int y) {

@@ -1,6 +1,7 @@
 #include "RenderData.hpp"
 
 RenderData::RenderData( void ) {
+	_foreignTextures = false;
 	clear();
 }
 
@@ -8,19 +9,43 @@ RenderData::~RenderData( void ) {
 	clear();
 }
 
+void RenderData::weakCopyData(RenderData* target) {
+	target->clear();
+	for (int i = 0; i < 3; i++) {
+		target->_maxValuesN[i] = _maxValuesN[i];
+		target->_maxValuesE[i] = _maxValuesE[i];
+	}
+
+	for (int i = 0; i < 4; i++) {
+		target->_box[i] = _box[i];
+	}
+
+	target->_sideLength = _sideLength;
+
+	target->_gaussTex = _gaussTex;
+	target->_evalField = _evalField;
+	target->_lineField = _lineField;
+	target->_vis = _vis;
+
+	target->_foreignTextures = true;
+}
+
 void RenderData::clear( void ) {
-	if (_gaussTex != -1) {
-		glDeleteTextures(1, &_gaussTex);
+	if (!_foreignTextures) {
+		if (_gaussTex != -1) {
+			glDeleteTextures(1, &_gaussTex);
+		}
+		if (_evalField != -1) {
+			glDeleteTextures(1, &_evalField);
+		}
+		if (_lineField != -1) {
+			glDeleteTextures(1, &_lineField);
+		}
+		if (_vis != -1) {
+			glDeleteTextures(1, &_vis);
+		}
 	}
-	if (_evalField != -1) {
-		glDeleteTextures(1, &_evalField);
-	}
-	if (_lineField != -1) {
-		glDeleteTextures(1, &_lineField);
-	}
-	if (_vis != -1) {
-		glDeleteTextures(1, &_vis);
-	}
+	_foreignTextures = false;
 
 	 _gaussTex = -1;
 	 _evalField = -1;

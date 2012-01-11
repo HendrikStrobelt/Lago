@@ -11,6 +11,8 @@ class RenderData : public IRenderData {
 		RenderData( void );
 		~RenderData( void );
 
+		void weakCopyData(RenderData* target);
+
 		//implement interface
 		void clear( void );
 		GLuint getGaussTex( void );
@@ -46,6 +48,8 @@ class RenderData : public IRenderData {
 		float _maxValuesE[3];
 		float _box[4];
 		float _sideLength;
+
+		bool _foreignTextures;
 };
 
 
