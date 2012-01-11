@@ -3,8 +3,6 @@
 in vec2 vVertex;
 in vec2 vTex;
 
-uniform float yOffset;
-
 out vec2 vTexCoord;
 
 void main()

@@ -9,11 +9,14 @@ namespace mouseHandler {
 		float up;
 		float right;
 		int lbVal;
+		ClickBox( void ) : bottom(-1.0f), left(-1.0f), up(-1.0f), right(-1.0f) {};
 		ClickBox(float pBottom, float pLeft, float pUp, float pRight, int pLbVal) : bottom(pBottom), left(pLeft), up(pUp), right(pRight), lbVal(pLbVal) {};
 	};
 
 	vector<ClickBox> _buttons;
 	vector<ClickBox> _labels;
+	ClickBox _lock;
+	float _lockXShift;
 
 	//private vars
 	context::DummyContextListener _contextListener;
@@ -135,6 +138,15 @@ namespace mouseHandler {
 		_labels.clear();
 	}
 
+	void setLock(float bottom, float left, float up, float right, float xShift) {
+		_lock.bottom = bottom;
+		_lock.left = left;
+		_lock.up = up;
+		_lock.right = right;
+
+		_lockXShift = xShift;
+	}
+
 
 	//private
 	bool testClick(float x, float y) {
@@ -146,6 +158,19 @@ namespace mouseHandler {
 					hit = true;
 					context::labelClick(true, _buttons[i].lbVal);
 					break;
+			}
+		}
+
+		if (!hit) {
+			float s = 0.0f;
+			if (context::_renderer->_hasEdges) {
+				s = _lockXShift;
+			}
+
+			if (x > (_lock.left-s) && x < (_lock.right-s)
+				&& y > _lock.bottom && y < _lock.up) {
+					hit = true;
+					context::lockClick();
 			}
 		}
 

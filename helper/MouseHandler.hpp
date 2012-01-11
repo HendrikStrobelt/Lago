@@ -14,6 +14,8 @@ namespace mouseHandler {
 	//labels
 	void registerLabel(float bottom, float left, float up, float right, int lbVal); //label clicks hard coded functionality
 	void clearLabel( void );
+	//lock
+	void setLock(float bottom, float left, float up, float right, float xShift);
 
 };
 

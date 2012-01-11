@@ -106,6 +106,17 @@ namespace context {
 		_renderer->labelClick(add, id);
 	}
 
+	void lockClick( void ) {
+		if (_options._lock) {
+			_options._lock = false;
+			_renderer->changeVisParameter();
+		} else {
+			_options._lock = true;
+		}
+
+		_options._changedLocal = true;
+	}
+
 	void setSideExponent(int newSideExponent) {
 		_sideExponent = newSideExponent;
 		if (_sideExponent < 0) {

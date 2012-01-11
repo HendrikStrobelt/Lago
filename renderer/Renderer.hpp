@@ -52,6 +52,7 @@ class Renderer : public IRenderState {
 		void changeWindow( void );
 		void changeVisParameter( void );
 
+		bool _hasEdges;
 	private:
 
 		DataCache _dCache;
@@ -61,8 +62,6 @@ class Renderer : public IRenderState {
 		IRenderState* _state;
 		GLuint _nodeVBO;
 		GLuint _edgeVBO;
-
-		bool _hasEdges;
 
 		int _windowWidth;
 		int _windowHeight;

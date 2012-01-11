@@ -39,6 +39,7 @@ namespace context {
 		void emptyClick( void );
 		void rightClick(int x, int y);
 		void labelClick(bool add, int id);
+		void lockClick( void );
 
 		void setSideExponent(int newSideExponent);
 		void setZoomExponent(int newZoomExponent);
