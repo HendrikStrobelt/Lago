@@ -138,6 +138,7 @@ void Options::update(map<string, string> dataMap) {
 			if (lock != _lock) {
 				if (!lock) {//lock update is only necessary if we unlock
 					visChange = true; 
+					_overLock = false;
 				}
 				_lock = lock;
 			}
@@ -146,7 +147,7 @@ void Options::update(map<string, string> dataMap) {
 		if ((it = dataMap.find("nodeMax")) != dataMap.end()) {
 			float nodeMax;
 			nodeMax = atof(it->second.c_str());
-			if (abs(_nodeMax - nodeMax) > 0.0001f) {
+			if ((abs(_nodeMax - nodeMax)/_nodeMax) > 0.01f) {
 				_nodeMax = nodeMax;
 				_lock = true;
 				visChange = true;
@@ -156,7 +157,7 @@ void Options::update(map<string, string> dataMap) {
 		if ((it = dataMap.find("edgeMax")) != dataMap.end()) {
 			float edgeMax;
 			edgeMax = atof(it->second.c_str());
-			if (abs(_edgeMax - edgeMax) > 0.0001f) {
+			if ((abs(_edgeMax - edgeMax)/_edgeMax) > 0.01f) {
 				_edgeMax = edgeMax;
 				_lock = true;
 				visChange = true;

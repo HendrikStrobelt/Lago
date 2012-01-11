@@ -109,6 +109,7 @@ namespace context {
 	void lockClick( void ) {
 		if (_options._lock) {
 			_options._lock = false;
+			_options._overLock = false;
 			_renderer->changeVisParameter();
 		} else {
 			_options._lock = true;

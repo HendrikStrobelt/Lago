@@ -87,7 +87,7 @@ void VisAdjusting::takeOver( void ) {
 	float tmp[3];
 	_r->calculateMaxValues(tmp, _r->_newData->getGaussTex(), _r->_windowWidth, _r->_windowHeight);
 	if (context::_options._lock) {
-		context::_options._overLock = (tmp[2] > context::_options._nodeMax);
+		context::_options._overLock = (((tmp[2] - context::_options._nodeMax) / context::_options._nodeMax) > 0.01f);
 		tmp[2] = context::_options._nodeMax;
 	}
 	context::_options._nodeMax = tmp[2];
@@ -96,7 +96,7 @@ void VisAdjusting::takeOver( void ) {
 	if (_r->_hasEdges) {
 		_r->calculateMaxValues(tmp, _r->_newData->getLineField(), _r->_windowWidth, _r->_windowHeight);
 		if (context::_options._lock) {
-			context::_options._overLock = (context::_options._overLock || tmp[1] > context::_options._edgeMax);
+			context::_options._overLock = (context::_options._overLock || (((tmp[1] - context::_options._edgeMax) / context::_options._edgeMax) > 0.01f));
 			tmp[1] = context::_options._edgeMax;
 		}
 		context::_options._edgeMax = tmp[1];
