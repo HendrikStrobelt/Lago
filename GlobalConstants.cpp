@@ -7,7 +7,7 @@ int WINDOW_HEIGHT = 750;
 
 //deactivate the cration of the EDGE_HIERARCHY
 //less storage consumption depending on data less speed
-bool EDGE_HIERARCHY_FLAT = true;   //EdgeHierarchy may have a defect with aggregated edges of a level
+bool EDGE_HIERARCHY_FLAT = false;   //EdgeHierarchy may have a defect with aggregated edges of a level
 								   //may also be just a visual effect not sure
 
 //min and max values for coordinates

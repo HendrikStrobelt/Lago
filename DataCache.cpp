@@ -134,8 +134,6 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 
 	_nodeStructureInfo = qt.getNodeStructureInfoContainer(); //fast
 	cout << " (tree height " << _nodeStructureInfo->getMaxDepth() << ")" << "\n";
-	cout << "     extracting needed informations" << "\n";
-	_packedNodes = qt.getPackedTree(&_nCount);
 
 	bool writeEdges = false;
 	if (!edgeFile.empty()) {
@@ -164,7 +162,7 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 
 		_edgeStructureInfo = eh.getEdgeStructureInfoContainer(); //fast
 		cout << " (hierarchy height " << _edgeStructureInfo->getMaxDepth() << ")" << "\n";
-		cout << "     extracting needed informations" << "\n";
+		cout << "     extracting needed edge informations" << "\n";
 		_packedEdges = eh.getPackedHierarchy(&_eCount);
 
 
@@ -179,6 +177,9 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 			}
 		}
 	}
+
+	cout << "     extracting needed node informations" << "\n";
+	_packedNodes = qt.getPackedTree(&_nCount);
 
 	bool writeLabels = false;
 	if (dr.hasNodeLabels()) {
