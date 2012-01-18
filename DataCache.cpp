@@ -103,6 +103,9 @@ string DataCache::getDumpName(string nodeFile, string edgeFile) {
 	if (!edgeFile.empty()) {
 		path edgePath(edgeFile);
 		dumpName.append(edgePath.filename().stem().string());
+		if (!EDGE_HIERARCHY_FLAT) {
+			dumpName.append("_H");
+		}
 	}
 	dumpName.append(".hgv");
 
