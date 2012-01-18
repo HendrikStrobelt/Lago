@@ -6,9 +6,9 @@ int WINDOW_WIDTH = 1500;
 int WINDOW_HEIGHT = 750;
 
 //deactivate the cration of the EDGE_HIERARCHY
-//less storage consumption depending on data less speed
-bool EDGE_HIERARCHY_FLAT = false;   //EdgeHierarchy may have a defect with aggregated edges of a level
-								   //may also be just a visual effect not sure
+//less storage consumption theoretical increase in speed but
+//seems to be contra productive
+bool EDGE_HIERARCHY_FLAT = true;
 
 //min and max values for coordinates
 int MIN_COORD = -10000000;
