@@ -120,10 +120,10 @@ void main(void)
 			vec3 dir = normalize(vec3((coords2 - coords1), 0));
 			dir = dir * vec3(sideFactor, 1, 1); //strech it back
 
-			float alpha = round(degrees(acos(dot(dir, vec3(1, 0, 0)) / length(dir))));
+			int alpha = int(round(degrees(acos(dot(dir, vec3(1, 0, 0)) / length(dir)))));
 
-			if (alpha == 180.0f) {
-				alpha = 0.0f;
+			if (alpha == 180) {
+				alpha = 0;
 			}
 
 			if (alpha >= lowerBorder && alpha < (lowerBorder + 4 * stepWidth)) {
