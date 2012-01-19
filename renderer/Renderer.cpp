@@ -14,6 +14,7 @@ Renderer::Renderer( void ) {
 
 	glGenBuffers(1, &_nodeVBO);
 	glGenBuffers(1, &_edgeVBO);
+	glGenBuffers(1, &_edgeProcessedVBO);
 	context::getWindowSize(&_windowWidth, &_windowHeight);
 
 	//load initial data
@@ -35,6 +36,7 @@ Renderer::Renderer( void ) {
 Renderer::~Renderer( void ) {
 	glDeleteBuffers(1, &_nodeVBO);
 	glDeleteBuffers(1, &_edgeVBO);
+	glDeleteBuffers(1, &_edgeProcessedVBO);
 
 	delete _currentData;
 	delete _newData;
@@ -98,7 +100,10 @@ void Renderer::setNewData(string nodeFile, string edgeFile) {
 		const PackedEdge* packedEdges = _dCache.getPackedEdges(&edgeCount);
 		glBindBuffer(GL_ARRAY_BUFFER, _edgeVBO);
 			glBufferData(GL_ARRAY_BUFFER, edgeCount * sizeof(PackedEdge), packedEdges, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, _edgeProcessedVBO);
+			glBufferData(GL_ARRAY_BUFFER, edgeCount * sizeof(ProcessedEdge), NULL, GL_DYNAMIC_COPY);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	} else {
 		_hasEdges = false;
 	}

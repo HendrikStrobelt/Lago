@@ -19,7 +19,7 @@ double GAUSS_TEXTURE_PI = 3.1415926535897;
 
 //painter commander
 int POINT_INIT_STEP = 1000;
-int PARTS_INIT_STEP = 8;
+int PARTS_INIT_STEP = 15;
 
 //texture examiner
 int TE_KERNEL_SIZE = 16;

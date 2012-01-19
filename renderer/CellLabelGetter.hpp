@@ -31,7 +31,7 @@ class CellLabelGetter {
 		GLuint _dataVAO;
 		GLuint _capturedVBO;
 
-				GLuint _vbo;
+		GLuint _vbo;
 
 };
 

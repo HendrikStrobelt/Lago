@@ -63,6 +63,7 @@ class Renderer : public IRenderState {
 		IRenderState* _state;
 		GLuint _nodeVBO;
 		GLuint _edgeVBO;
+		GLuint _edgeProcessedVBO;
 
 		int _windowWidth;
 		int _windowHeight;

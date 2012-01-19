@@ -13,7 +13,7 @@ using namespace std;
 class GLSLShader {
 	public:
 		GLSLShader(vector<string> attributes, vector<string> uniforms, string vertShader, string fragShader, string gemShader="");
-		GLSLShader(string transformFeedbackVar, vector<string> attributes, vector<string> uniforms, string vertShader, string fragShader, string gemShader="");
+		GLSLShader(vector<string> transformFeedbackVars, vector<string> attributes, vector<string> uniforms, string vertShader, string fragShader, string gemShader="");
 		~GLSLShader(void);	
 	
 		void use( void );
@@ -28,7 +28,7 @@ class GLSLShader {
 
 		enum ShaderType {VERTEX_SHADER, FRAGMENT_SHADER, GEOMETRY_SHADER};
 		bool _transformFeedback;
-		string _transformFeedbackVar;
+		vector<string> _transformFeedbackVars;
 		GLuint	_program;
 		GLuint _shaders[3];
 		map<string,GLuint> _attributeMap;

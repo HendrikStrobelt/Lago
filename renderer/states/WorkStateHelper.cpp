@@ -58,6 +58,10 @@ void WorkStateHelper::work( void ) {
 			glViewport(0,0, _r->_windowWidth, (GLsizei) _r->_windowHeight);
 		} else 
 		if (!_pc[DIVIDED_LINES]->isDone()) {
+			if (!_edgesPreprocessed) {
+				_edgesPreprocessed = true;
+				_linePainter->preprocessElements();
+			}
 			_progress = 2.0f + _pc[DIVIDED_LINES]->renderNextPart();
 		}
 	} else {
@@ -87,6 +91,7 @@ void WorkStateHelper::takeOver( void ) {
 	_pc[GAUSS_VIEW] = new PainterCommander(_gaussPainter[VIEW], POINT_INIT_STEP);
 
 	if (_r->_hasEdges) {
+		_edgesPreprocessed = false;
 		int edgeElements = _r->_dCache.getEdgeStructureInfo()->getAllEdges(joinDepth);
 		
 		//gauss off
@@ -106,7 +111,7 @@ void WorkStateHelper::takeOver( void ) {
 		}
 
 		//line painter
-		_linePainter = new DividedLinePainter(_r->_edgeVBO, _r->_windowWidth, _r->_windowHeight, edgeElements);
+		_linePainter = new DividedLinePainter(_r->_edgeVBO, _r->_edgeProcessedVBO, _r->_windowWidth, _r->_windowHeight, edgeElements);
 		_linePainter->setBaseVars(MVP, _fieldEvaluator[VIEW]->getWorkingTexture(), _fieldEvaluator[OFF]->getWorkingTexture(), (OFF_ZOOM * OFF_SHRINK), joinDepth);
 
 		_pc[DIVIDED_LINES] = new PainterCommander(_linePainter, PARTS_INIT_STEP);

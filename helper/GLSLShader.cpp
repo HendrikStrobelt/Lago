@@ -3,9 +3,9 @@
 #include <iostream>
 
 
-GLSLShader::GLSLShader(string transformFeedbackVar, vector<string> attributes, vector<string> uniforms, string vertShader, string fragShader, string gemShader) {
+GLSLShader::GLSLShader(vector<string> transformFeedbackVars, vector<string> attributes, vector<string> uniforms, string vertShader, string fragShader, string gemShader) {
 	_transformFeedback = true;
-	_transformFeedbackVar = transformFeedbackVar;
+	_transformFeedbackVars = transformFeedbackVars;
 
 	_shaders[VERTEX_SHADER] = 0;
 	_shaders[FRAGMENT_SHADER] = 0;
@@ -93,9 +93,13 @@ void GLSLShader::createAndLinkProgram( void ) {
 
 	if (_transformFeedback) {
 		//add output for transform feedback
-		GLchar const * outs[1];
-		outs[0] = _transformFeedbackVar.c_str();
-		glTransformFeedbackVaryings(_program, 1, outs, GL_SEPARATE_ATTRIBS); 
+		GLchar const** outs = new GLchar const*[_transformFeedbackVars.size()];
+		
+		for (int i = 0; i < _transformFeedbackVars.size(); i++) {
+			outs[i] = _transformFeedbackVars[i].c_str();
+		}
+
+		glTransformFeedbackVaryings(_program, _transformFeedbackVars.size(), outs, GL_INTERLEAVED_ATTRIBS); 
 	}
 
 	//link and check whether the program links fine
