@@ -7,7 +7,6 @@ flat in int fPos;
 
 void main(void)
 {
-
 	if (fPos == 0) {
 		fragColor = vec4(fWeight, 0.0f, 0.0f, 0.0f);   
 	} else 

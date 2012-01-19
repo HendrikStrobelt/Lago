@@ -5,155 +5,45 @@ layout(points) in;
 layout(line_strip, max_vertices = 2) out;
 
 in vec4 gVertex2[];
-in int gDepth[];
+in int gAlpha[];
 in float gWeight[];
 
-uniform sampler2D evalField;
-uniform sampler2D offEvalField;
-uniform float offZoomFactor;
-uniform int desiredDepth;
 uniform float lowerBorder;
 uniform float stepWidth;
-uniform float sideFactor;
-uniform int width;
-uniform int height;
 
 flat out float fWeight;
 flat out int fPos;
 
-
-
-vec2 getTexCoordinates(vec2 screenCoordinates) {
-	return ((screenCoordinates + 1.0) / 2.0);
-}
-
-vec2 getTexCoordinatesOff(vec2 screenCoordinates) {
-	return (((screenCoordinates / offZoomFactor) + 1.0) / 2.0);
-}
-
-bool borderTest(vec2 screenCoords) {
-	float stepX = 2.0f / width;
-	float stepY = 2.0f / height;
-	
-	if (screenCoords.x > (1.0f - stepX) || screenCoords.x < (-1.0f + stepX) || 
-		screenCoords.y > (1.0f - stepY) || screenCoords.y < (-1.0f + stepY)) {
-		//failed border pos
-		return false;
-	} else {
-		return true;
-	}
-}
-
-
-vec2 getCoords(vec2 pos) {
-
-	//cut at factor 2 for all (4x zoomed should be rendered smaller not have a higher radius)
-	if (!(pos.x < -2.0f || pos.x > 2.0f || pos.y < -2.0f || pos.y > 2.0f)) {
-
-		vec2 texCoords = getTexCoordinates(pos);
-		vec2 newPos = texture(evalField, texCoords).xy;
-
-		if (!borderTest(newPos) || texCoords.x > 1.0f || texCoords.x < 0.0f || texCoords.y > 1.0f || texCoords.y < 0.0f) {
-			//either border test failed or not inside try lookup in next texture
-
-			vec2 texCoordsOff = getTexCoordinatesOff(pos);
-			if (!(texCoordsOff.x > 1.0f || texCoordsOff.x < 0.0f || texCoordsOff.y > 1.0f || texCoordsOff.y < 0.0f)) {
-				//this time inside the texture fine
-				newPos = texture(offEvalField, texCoordsOff).xy * offZoomFactor;
-
-				if (newPos.x < -1.0f || newPos.x > 1.0f || newPos.y < -1.0f || newPos.y > 1.0f) {
-					//new pos not visible render
-					return newPos;
-				} else {
-					//newPos is in the visible area but can be slightly displaced because of the lower resolution
-					//therefore correct the value with a 2nd lookup
-					return texture(evalField, getTexCoordinates(newPos)).xy;
-				}
-			} else {
-				//to far away
-				return pos;
-			}
-
-		} else {
-			//in inner texture everything ok
-			return newPos;
-		}
-	} else {
-		return pos;
-	}
-}
-
-
 void main(void) 
 {
 	int i = 0;
-	float stepX = 2.0f / width;
-	float stepY = 2.0f / height;
 
-
-	float edgeWeight = 0.0f;
-
-	if (  (abs(gDepth[i]) <= desiredDepth) &&  //leaf or inner node we wish to display
-	      ((abs(gDepth[i]) == desiredDepth) || (gDepth[i] > 0)) ) { //joinDepth level or leaf node
-	        
-			edgeWeight = gWeight[i];
-	}
-
-
-	if (edgeWeight > 0) {  //draw the edge
-
-		vec2 coords1 = getCoords(gl_PositionIn[i].xy);
-		vec2 coords2 = getCoords(gVertex2[i].xy);
-
-		if ((abs(coords1.x-coords2.x) > stepX * 4) ||
-		    (abs(coords1.y-coords2.y) > stepY * 4)) {
-														
-
-			if (coords1.y > coords2.y) {
-				vec2 tmp = coords2;
-				coords2 = coords1;
-				coords1 = tmp;
-			}
-
-			//oe coords1.y <= coords2.y test angle
-
-			vec3 dir = normalize(vec3((coords2 - coords1), 0));
-			dir = dir * vec3(sideFactor, 1, 1); //strech it back
-
-			int alpha = int(round(degrees(acos(dot(dir, vec3(1, 0, 0)) / length(dir)))));
-
-			if (alpha == 180) {
-				alpha = 0;
-			}
-
-			if (alpha >= lowerBorder && alpha < (lowerBorder + 4 * stepWidth)) {
-
-				int pos;
-				if (alpha < (lowerBorder + stepWidth)) {
-					pos = 0;
-				} else
-				if (alpha < (lowerBorder + 2 * stepWidth)) {
-					pos = 1;
-				} else 
-				if (alpha < (lowerBorder + 3 * stepWidth)) {
-					pos = 2;
-				} else {
-					pos = 3;
-				}
-
-				gl_Position = vec4(coords1, 0, 1);
-				fWeight = edgeWeight;
-				fPos = pos;
-				EmitVertex();
-
-				gl_Position = vec4(coords2, 0, 1);
-				fWeight = edgeWeight;
-				fPos = pos;
-				EmitVertex();
-
-				//finish
-				EndPrimitive();
-			}
+    if (gAlpha[i] >= lowerBorder && gAlpha[i] < (lowerBorder + 4 * stepWidth)) {
+	
+		int pos;
+		if (gAlpha[i] < (lowerBorder + stepWidth)) {
+			pos = 0;
+		} else
+		if (gAlpha[i] < (lowerBorder + 2 * stepWidth)) {
+			pos = 1;
+		} else 
+		if (gAlpha[i] < (lowerBorder + 3 * stepWidth)) {
+			pos = 2;
+		} else {
+			pos = 3;
 		}
+
+		gl_Position = gl_PositionIn[i];
+		fWeight = gWeight[i];
+		fPos = pos;
+		EmitVertex();
+
+		gl_Position = gVertex2[i];
+		fWeight = gWeight[i];
+		fPos = pos;
+		EmitVertex();
+
+		//finish
+		EndPrimitive();
 	}
 }

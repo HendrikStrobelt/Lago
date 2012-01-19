@@ -12,10 +12,11 @@ using namespace std;
 class DividedLinePainter : public ISplitablePainter {
 
 	public:
-		DividedLinePainter(GLuint edgeVBO, int width, int height, int vboElements);
+		DividedLinePainter(GLuint edgeVBO, GLuint processedEdgeVBO, int width, int height, int vboElements);
 		~DividedLinePainter( void );
 
 		void setBaseVars(glm::mat4 MVP, GLuint fieldTex, GLuint offFieldTex, int offZoomFactor, int edgeDepth);
+		void preprocessElements( void );
 
 		//interface methods
 		int getElementCount( void );
@@ -28,14 +29,15 @@ class DividedLinePainter : public ISplitablePainter {
 		static void cleanUp( void );
 
 	private:
-		enum VAO {RENDER, UNITE};
+		enum VAO {RENDER, UNITE, PREPROCESS};
 		enum VBO {UNITE_VERTEX, UNITE_TEX};
 
 		static GLSLShader* _r_shader_ptr;
 		static GLSLShader* _u_shader_ptr;
+		static GLSLShader* _p_shader_ptr;
 		static void createShader( void );
 		
-		void initVao(GLuint edgeVBO);
+		void initVao(GLuint edgeVBO, GLuint preprocessedEdgeVBO);
 
 		GLuint _renderTexture;
 		GLuint _uniteTextures[2];
@@ -45,6 +47,7 @@ class DividedLinePainter : public ISplitablePainter {
 		int _width;
 		int _height;
 		int _vboElements;
+		int _vboProcessedElements;
 
 		glm::mat4 _MVP;
 		GLuint _fieldTex;
@@ -54,8 +57,9 @@ class DividedLinePainter : public ISplitablePainter {
 
 		FrameBufferContainer* _fbc;
 
-
-		GLuint _vao[2];
+		GLuint _query;
+		GLuint _processedEdgeVBO;
+		GLuint _vao[3];
 		GLuint _vbo[2];
 };
 

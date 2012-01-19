@@ -4,17 +4,19 @@
 
 GLSLShader* DividedLinePainter::_r_shader_ptr = NULL;
 GLSLShader* DividedLinePainter::_u_shader_ptr = NULL;
+GLSLShader* DividedLinePainter::_p_shader_ptr = NULL;
 
-DividedLinePainter::DividedLinePainter(GLuint edgeVBO, int width, int height, int elementCount) {
+DividedLinePainter::DividedLinePainter(GLuint edgeVBO, GLuint processedEdgeVBO, int width, int height, int elementCount) {
 	_sideFactor = (float)width / (float)height;
 	_width = width;
 	_height = height;
 	_vboElements = elementCount;
+	glGenQueries(1, &_query);
 
 	_fbc = NULL;
 
 	createShader();
-	initVao(edgeVBO);
+	initVao(edgeVBO, processedEdgeVBO);
 }
 
 void DividedLinePainter::setBaseVars(glm::mat4 MVP, GLuint fieldTex, GLuint offFieldTex, int offZoomFactor, int edgeDepth) {
@@ -50,16 +52,61 @@ DividedLinePainter::~DividedLinePainter( void ) {
 	delete _fbc;
 	glDeleteTextures(1, &_uniteTextures[(_uniteSwitch % 2)]);
 	glDeleteTextures(1, &_renderTexture);
-	glDeleteVertexArrays(2, &_vao[0]);
+	glDeleteQueries(1, &_query);
+	glDeleteVertexArrays(3, &_vao[0]);
 	glDeleteBuffers(2, &_vbo[0]);
 }
 
 void DividedLinePainter::cleanUp( void ) {
 	delete _r_shader_ptr;
 	delete _u_shader_ptr;
+	delete _p_shader_ptr;
 }
 
 //publics
+
+void DividedLinePainter::preprocessElements( void ) {
+
+	glEnable(GL_RASTERIZER_DISCARD);		
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, _fieldTex);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, _offFieldTex);
+				glBindVertexArray(_vao[PREPROCESS]);
+					_p_shader_ptr->use();	
+						glUniform1f(_p_shader_ptr->getUniformLocation("sideFactor"), _sideFactor);
+						glUniform1i(_p_shader_ptr->getUniformLocation("desiredDepth"), _edgeDepth);
+						glUniform1f(_p_shader_ptr->getUniformLocation("offZoomFactor"), _offZoomFactor);
+						glUniform1i(_p_shader_ptr->getUniformLocation("width"), _width);
+						glUniform1i(_p_shader_ptr->getUniformLocation("height"), _height);
+						glUniform1i(_p_shader_ptr->getUniformLocation("evalField"), 0);
+						glUniform1i(_p_shader_ptr->getUniformLocation("offEvalField"), 1);
+						glUniformMatrix4fv(_p_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(_MVP));
+
+							glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, _processedEdgeVBO); 
+							glBeginQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, _query); 
+								glBeginTransformFeedback(GL_POINTS);
+									glDrawArrays(GL_POINTS, 0, _vboElements);
+								glEndTransformFeedback();
+							glEndQuery(GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN); 			
+
+					_p_shader_ptr->unUse();
+				glBindVertexArray(0);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_RASTERIZER_DISCARD);
+		
+	GLuint count;
+	glGetQueryObjectuiv(_query, GL_QUERY_RESULT, &count);
+	_vboProcessedElements = count;
+
+
+	vector<ProcessedEdge> ret;
+	ret.resize(count);
+
+}
 
 GLuint DividedLinePainter::getWorkingTexture( void ) {
 	return _fbc->_fboOutTex;
@@ -99,29 +146,13 @@ void DividedLinePainter::processElements(int start, int count) {
 			glStencilFunc(GL_ALWAYS, 0x01, 0xFF);
 			glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, _fieldTex);
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, _offFieldTex);
-					glBindVertexArray(_vao[RENDER]);
-						_r_shader_ptr->use();	
-							glUniform1f(_r_shader_ptr->getUniformLocation("sideFactor"), _sideFactor);
-							glUniform1f(_r_shader_ptr->getUniformLocation("stepWidth"), stepWidth);
-							glUniform1f(_r_shader_ptr->getUniformLocation("lowerBorder"), lowerBorder);
-							glUniform1i(_r_shader_ptr->getUniformLocation("desiredDepth"), _edgeDepth);
-							glUniform1f(_r_shader_ptr->getUniformLocation("offZoomFactor"), _offZoomFactor);
-							glUniform1i(_r_shader_ptr->getUniformLocation("width"), _width);
-							glUniform1i(_r_shader_ptr->getUniformLocation("height"), _height);
-							glUniform1i(_r_shader_ptr->getUniformLocation("evalField"), 0);
-							glUniform1i(_r_shader_ptr->getUniformLocation("offEvalField"), 1);
-							glUniformMatrix4fv(_r_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(_MVP));
-							glDrawArrays(GL_POINTS, 0, _vboElements);
-						_r_shader_ptr->unUse();
-					glBindVertexArray(0);
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, 0);
+			glBindVertexArray(_vao[RENDER]);
+				_r_shader_ptr->use();	
+					glUniform1f(_r_shader_ptr->getUniformLocation("stepWidth"), stepWidth);
+					glUniform1f(_r_shader_ptr->getUniformLocation("lowerBorder"), lowerBorder);
+					glDrawArrays(GL_POINTS, 0, _vboProcessedElements);
+				_r_shader_ptr->unUse();
+			glBindVertexArray(0);
 		
 			//switch textures
 			_fbc->setAttachment0NoDeleteNoBind(_uniteTextures[(_uniteSwitch % 2)]);
@@ -162,24 +193,45 @@ void DividedLinePainter::processElements(int start, int count) {
 void DividedLinePainter::createShader( void ) {
 	if (_r_shader_ptr == NULL) {
 		vector<string> attribs;
+		vector<string> unis;
+		vector<string> transFeeds;
+
+		transFeeds.push_back("out_c1");
+		transFeeds.push_back("out_c2");
+		transFeeds.push_back("out_alpha");
+		transFeeds.push_back("out_weight");
+
 		attribs.push_back("vVertex1");
 		attribs.push_back("vVertex2");
 		attribs.push_back("vDepth");
 		attribs.push_back("vWeight");
-		vector<string> unis;
+
 		unis.push_back("MVP");
 		unis.push_back("evalField");
 		unis.push_back("offEvalField");
 		unis.push_back("offZoomFactor");
 		unis.push_back("desiredDepth");
-		unis.push_back("lowerBorder");
-		unis.push_back("stepWidth");
 		unis.push_back("sideFactor");
 		unis.push_back("width");
 		unis.push_back("height");
 
+		_p_shader_ptr = new GLSLShader(transFeeds, attribs, unis, "shaders/climbingLines/preprocess.vert",
+			"shaders/climbingLines/preprocess.frag", "shaders/climbingLines/preprocess.gem");
+		//////////
+		attribs.clear();
+		unis.clear();
+
+		attribs.push_back("vVertex1");
+		attribs.push_back("vVertex2");
+		attribs.push_back("vAlpha");
+		attribs.push_back("vWeight");
+
+		unis.push_back("lowerBorder");
+		unis.push_back("stepWidth");
+
 		_r_shader_ptr = new GLSLShader(attribs, unis, "shaders/climbingLines/dividedClimbing.vert",
 			"shaders/climbingLines/dividedClimbing.frag", "shaders/climbingLines/dividedClimbing.gem");
+		/////////////////
 
 		unis.clear();
 		attribs.clear();
@@ -195,21 +247,36 @@ void DividedLinePainter::createShader( void ) {
 }
 
 
-void DividedLinePainter::initVao(GLuint edgeVBO) {
+void DividedLinePainter::initVao(GLuint edgeVBO, GLuint processedEdgeVBO) {
 
-	glGenVertexArrays(2, &_vao[0]);
+	_processedEdgeVBO = processedEdgeVBO;
+
+	glGenVertexArrays(3, &_vao[0]);
 	glGenBuffers(2, &_vbo[0]);
 
-	glBindVertexArray(_vao[RENDER]);	 
+	glBindVertexArray(_vao[PREPROCESS]);	 
 		glBindBuffer(GL_ARRAY_BUFFER, edgeVBO);
+				glEnableVertexAttribArray(_p_shader_ptr->getAttributeLocation("vVertex1"));
+				glVertexAttribPointer (_p_shader_ptr->getAttributeLocation("vVertex1"), 2, GL_FLOAT, GL_FALSE, sizeof(PackedEdge), 0);
+				glEnableVertexAttribArray(_p_shader_ptr->getAttributeLocation("vVertex2"));
+				glVertexAttribPointer (_p_shader_ptr->getAttributeLocation("vVertex2"), 2, GL_FLOAT, GL_FALSE, sizeof(PackedEdge),  (void*)(2 * sizeof(float)));
+				glEnableVertexAttribArray(_p_shader_ptr->getAttributeLocation("vDepth"));
+				glVertexAttribIPointer (_p_shader_ptr->getAttributeLocation("vDepth"), 1, GL_SHORT, sizeof(PackedEdge),  (void*)(4 * sizeof(float)));
+				glEnableVertexAttribArray(_p_shader_ptr->getAttributeLocation("vWeight"));
+				glVertexAttribPointer (_p_shader_ptr->getAttributeLocation("vWeight"), 1, GL_FLOAT, GL_FALSE, sizeof(PackedEdge),  (void*)((4 * sizeof(float) + sizeof(short))));
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	glBindVertexArray(_vao[RENDER]);	 
+		glBindBuffer(GL_ARRAY_BUFFER, _processedEdgeVBO);
 				glEnableVertexAttribArray(_r_shader_ptr->getAttributeLocation("vVertex1"));
-				glVertexAttribPointer (_r_shader_ptr->getAttributeLocation("vVertex1"), 2, GL_FLOAT, GL_FALSE, sizeof(PackedEdge), 0);
+				glVertexAttribPointer (_r_shader_ptr->getAttributeLocation("vVertex1"), 2, GL_FLOAT, GL_FALSE, sizeof(ProcessedEdge), 0);
 				glEnableVertexAttribArray(_r_shader_ptr->getAttributeLocation("vVertex2"));
-				glVertexAttribPointer (_r_shader_ptr->getAttributeLocation("vVertex2"), 2, GL_FLOAT, GL_FALSE, sizeof(PackedEdge),  (void*)(2 * sizeof(float)));
-				glEnableVertexAttribArray(_r_shader_ptr->getAttributeLocation("vDepth"));
-				glVertexAttribIPointer (_r_shader_ptr->getAttributeLocation("vDepth"), 1, GL_SHORT, sizeof(PackedEdge),  (void*)(4 * sizeof(float)));
+				glVertexAttribPointer (_r_shader_ptr->getAttributeLocation("vVertex2"), 2, GL_FLOAT, GL_FALSE, sizeof(ProcessedEdge),  (void*)(2 * sizeof(float)));
+				glEnableVertexAttribArray(_r_shader_ptr->getAttributeLocation("vAlpha"));
+				glVertexAttribIPointer (_r_shader_ptr->getAttributeLocation("vAlpha"), 1, GL_INT, sizeof(ProcessedEdge),  (void*)(4 * sizeof(float)));
 				glEnableVertexAttribArray(_r_shader_ptr->getAttributeLocation("vWeight"));
-				glVertexAttribPointer (_r_shader_ptr->getAttributeLocation("vWeight"), 1, GL_FLOAT, GL_FALSE, sizeof(PackedEdge),  (void*)((4 * sizeof(float) + sizeof(short))));
+				glVertexAttribPointer (_r_shader_ptr->getAttributeLocation("vWeight"), 1, GL_FLOAT, GL_FALSE, sizeof(ProcessedEdge),  (void*)((4 * sizeof(float) + sizeof(int))));
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 

@@ -35,4 +35,13 @@ struct Edge {
 	};
 #pragma pack(pop)
 
+struct ProcessedEdge { //GPU ONLY
+	float x1;
+	float y1;
+	float x2;
+	float y2;
+	int angel;
+	float weight;
+};
+
 #endif

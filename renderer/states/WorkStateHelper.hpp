@@ -27,8 +27,8 @@ class WorkStateHelper {
 		DividedLinePainter* _linePainter;
 
 	private:
+		bool _edgesPreprocessed;
 		Renderer* _r;
-
 		void resetAll( void );
 
 };

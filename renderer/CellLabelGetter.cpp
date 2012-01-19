@@ -77,6 +77,9 @@ void CellLabelGetter::createShader( void ) {
 	if (_shader_ptr == NULL) {
 		vector<string> unis;
 		vector<string> attribs;
+		vector<string> transFeed;
+		
+		transFeed.push_back("labelID");
 
 		attribs.push_back("vVertex");
 		attribs.push_back("vLabelID");
@@ -86,7 +89,7 @@ void CellLabelGetter::createShader( void ) {
 		unis.push_back("width");
 		unis.push_back("height");
 
-		_shader_ptr = new GLSLShader("labelID", attribs, unis, "shaders/cellLabel/cellLabelGetter.vert", "shaders/cellLabel/cellLabelGetter.frag", "shaders/cellLabel/cellLabelGetter.gem");
+		_shader_ptr = new GLSLShader(transFeed, attribs, unis, "shaders/cellLabel/cellLabelGetter.vert", "shaders/cellLabel/cellLabelGetter.frag", "shaders/cellLabel/cellLabelGetter.gem");
 	}
 }
 
