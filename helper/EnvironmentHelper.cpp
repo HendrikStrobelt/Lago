@@ -130,7 +130,7 @@ namespace envHelper {
 			exit(EXIT_FAILURE);
 		}
 
-		cout << "created OpenGL Context v";
+		cout << "created OpenGL Context";
 		cout << glfwGetWindowParam(GLFW_OPENGL_VERSION_MAJOR) << ".";
 		cout << glfwGetWindowParam(GLFW_OPENGL_VERSION_MINOR) << "\n";
 

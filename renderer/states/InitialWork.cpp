@@ -35,7 +35,7 @@ void InitialWork::work( void ) {
 	} else {
 
 		//done change state
-		GLuint n = _worker->_pc[GAUSS_VIEW]->detachResult();
+		_r->_newData->setGaussTex(_worker->_pc[GAUSS_VIEW]->detachResult());
 		_r->_newData->setEvalField(_worker->_fieldEvaluator[VIEW]->detachResultTexture());
 		_r->_newData->setSideLength(context::_pixelSize * pow(SIDE_BASE, context::_sideExponent));
 
