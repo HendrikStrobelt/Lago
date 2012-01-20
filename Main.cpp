@@ -30,8 +30,10 @@ void cleanUp( void );
 void initGlobalConstants( void );
 vector<string> split(string line);
 
-
 //private vars
+enum RENDER_MODE {GRAPH, DENSITY_FIELD, EVAL_FIELD, LINE_FIELD};
+RENDER_MODE _mode;
+
 context::DummyContextListener _contextListener;
 Connection _syncConnection;
 
@@ -47,6 +49,7 @@ int main( int argc, const char* argv[] ) {
 	mouseHandler::init();
 
 	_contextListener.activate(0,0,0,keyEnv, 0);
+	_mode = GRAPH;
 
 	glfwSetTime(0);	
 	glfwSetMouseWheel(0);
@@ -75,7 +78,14 @@ void render( void ) {
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	context::_renderer->work();
-	context::_renderer->render();
+
+	switch(_mode) {
+		case GRAPH:			context::_renderer->render();				break;
+		case DENSITY_FIELD: context::_renderer->renderGauss();			break;
+		case EVAL_FIELD:	context::_renderer->renderEvalField();		break;
+		case LINE_FIELD:	context::_renderer->renderLineField();		break;
+	}
+
 
 	static double lastSync;
 	if (glfwGetTime() > lastSync + 0.25) {
@@ -114,8 +124,19 @@ void keyEnv(int key, int action) {
 		if (key == GLFW_KEY_F1) {
 			//reconnect to gui if necessary
 			_syncConnection.connect();
+		} else 
+		if (key == GLFW_KEY_F5) {
+			_mode = GRAPH;
+		} else 
+		if (key == GLFW_KEY_F6) {
+			_mode = DENSITY_FIELD; //alias gauss
+		} else 
+		if (key == GLFW_KEY_F7) {
+			_mode = EVAL_FIELD;
+		} else 
+		if (key == GLFW_KEY_F8) {
+			_mode = LINE_FIELD;
 		}
-
 	}
 }
 
