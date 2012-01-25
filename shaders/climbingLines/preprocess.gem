@@ -57,14 +57,7 @@ vec2 getCoords(vec2 pos) {
 				//this time inside the texture fine
 				newPos = texture(offEvalField, texCoordsOff).xy * offZoomFactor;
 
-				if (newPos.x < -1.0f || newPos.x > 1.0f || newPos.y < -1.0f || newPos.y > 1.0f) {
-					//new pos not visible render
-					return newPos;
-				} else {
-					//newPos is in the visible area but can be slightly displaced because of the lower resolution
-					//therefore correct the value with a 2nd lookup
-					return texture(evalField, getTexCoordinates(newPos)).xy;
-				}
+				return newPos;
 			} else {
 				//to far away
 				return pos;

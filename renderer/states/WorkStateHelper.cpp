@@ -95,7 +95,7 @@ void WorkStateHelper::takeOver( void ) {
 		int edgeElements = _r->_dCache.getEdgeStructureInfo()->getAllEdges(joinDepth);
 		
 		//gauss off
-		float sideLengthOff = context::_pixelSize * (pow(SIDE_BASE, context::_sideExponent - 1));
+		float sideLengthOff = context::_pixelSize * (pow(SIDE_BASE, (context::_sideExponent - 1)));
 		glm::mat4 P2 = cameraHelper::calculateProjection(_r->_dCache.getNodeStructureInfo(), context::_zoomFactor / (OFF_ZOOM * OFF_SHRINK));
 		glm::mat4 MVP2 = glm::translate(P2, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
 
