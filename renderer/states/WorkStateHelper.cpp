@@ -95,11 +95,12 @@ void WorkStateHelper::takeOver( void ) {
 		int edgeElements = _r->_dCache.getEdgeStructureInfo()->getAllEdges(joinDepth);
 		
 		//gauss off
+		float sideLengthOff = context::_pixelSize * (pow(SIDE_BASE, context::_sideExponent - 1));
 		glm::mat4 P2 = cameraHelper::calculateProjection(_r->_dCache.getNodeStructureInfo(), context::_zoomFactor / (OFF_ZOOM * OFF_SHRINK));
 		glm::mat4 MVP2 = glm::translate(P2, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
 
 		_gaussPainter[OFF] = new GaussPainter(_r->_nodeVBO, (_r->_windowWidth / OFF_SHRINK), (_r->_windowHeight / OFF_SHRINK), nodeElements);
-		_gaussPainter[OFF]->setBaseVars(MVP2, sideLength, joinDepth);
+		_gaussPainter[OFF]->setBaseVars(MVP2, sideLengthOff, joinDepth);
 	
 		_pc[GAUSS_OFF] = new PainterCommander(_gaussPainter[OFF], POINT_INIT_STEP);
 

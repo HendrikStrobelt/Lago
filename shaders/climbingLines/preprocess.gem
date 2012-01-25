@@ -50,13 +50,9 @@ vec2 getCoords(vec2 pos) {
 	//cut at factor 2 for all (4x zoomed should be rendered smaller not have a higher radius)
 	if (!(pos.x < -2.0f || pos.x > 2.0f || pos.y < -2.0f || pos.y > 2.0f)) {
 
-		vec2 texCoords = getTexCoordinates(pos);
-		vec2 newPos = texture(evalField, texCoords).xy;
+		vec2 newPos;
+		vec2 texCoordsOff = getTexCoordinatesOff(pos);
 
-		if (!borderTest(newPos) || texCoords.x > 1.0f || texCoords.x < 0.0f || texCoords.y > 1.0f || texCoords.y < 0.0f) {
-			//either border test failed or not inside try lookup in next texture
-
-			vec2 texCoordsOff = getTexCoordinatesOff(pos);
 			if (!(texCoordsOff.x > 1.0f || texCoordsOff.x < 0.0f || texCoordsOff.y > 1.0f || texCoordsOff.y < 0.0f)) {
 				//this time inside the texture fine
 				newPos = texture(offEvalField, texCoordsOff).xy * offZoomFactor;
@@ -74,10 +70,6 @@ vec2 getCoords(vec2 pos) {
 				return pos;
 			}
 
-		} else {
-			//in inner texture everything ok
-			return newPos;
-		}
 	} else {
 		return pos;
 	}
