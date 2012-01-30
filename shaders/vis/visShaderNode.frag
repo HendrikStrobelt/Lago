@@ -66,7 +66,7 @@ vec3 getColor(float texValue) {
 
    if (scaled > 1.0f) {
 	   vec3 col = texture(colorScheme, vec2(1.0f, 0.5f)).rgb;
-	   return mix(col, vec3(1,(120.0f/255.0f),(120.0f/255.0f)), min(1.0, scaled - 1.0f));
+	   return mix(col, vec3(1,1,1), min(1.0, scaled - 1.0f));
    } else {
 		return texture(colorScheme, vec2(scaled, 0.5f)).rgb;
    }

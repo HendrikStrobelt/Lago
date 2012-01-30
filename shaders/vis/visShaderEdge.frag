@@ -88,11 +88,11 @@ vec4 getColor(vec2 texCoordCenter, vec2 texCoord, float stepX , float stepY) {
 
 		if (max > 1.0f) {
 	 	    vec4 col = texture(colorScheme, vec2(1.0, 0.5f));
-			influence = mix(col, vec4(1,(120.0f/255.0f),(120.0f/255.0f), 1.0f), min(1.0, max - 1.0f));
+			influence = mix(col, vec4(1,1,1, 1.0f), min(1.0, max - 1.0f));
 		} else {
 			influence = texture(colorScheme, vec2(max, 0.5f));
 		}
-		influence = texture(colorScheme, vec2(max, 0.5f));
+
 		//with influence mix them
 		vec3 col =  mix(oldResult, influence.rgb, influence.a);
 		
