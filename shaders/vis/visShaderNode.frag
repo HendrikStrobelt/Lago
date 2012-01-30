@@ -62,13 +62,15 @@ float scale(float normedVal) {
 
 vec3 getColor(float texValue) {
    float normalized = texValue / maxValue;
-   float scaled = min(1.0, scale(normalized));
+   float scaled = scale(normalized);
 
-	if (scaled < 0.0001f) { //background
-		scaled = 0.0f;
-	}
-
-	return texture(colorScheme, vec2(scaled, 0.5f)).rgb;
+   if (scaled > 1.0f) {
+	   vec3 col = texture(colorScheme, vec2(1.0f, 0.5f)).rgb;
+	   return mix(col, vec3(1,(120.0f/255.0f),(120.0f/255.0f)), min(1.0, scaled - 1.0f));
+   } else {
+		return texture(colorScheme, vec2(scaled, 0.5f)).rgb;
+   }
+	
 }
 
 
