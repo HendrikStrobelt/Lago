@@ -63,14 +63,16 @@ void LabelSelectionPainter::changePanning(int xShift, int yShift) {
 }
 
 void LabelSelectionPainter::setData(vector<int>* ids, const vector<Label>* indexedLabels, int mouseX, int mouseY) {
-	if (ids->size() > 0) {
-		int w,h;
-		context::getWindowSize(&w, &h);
 
-		//mouse update in 0..1 0/0 left down
-			_clickX = mouseX / (float)w;
-			_clickY = 1.0f - mouseY / (float)h;
-		//
+	int w,h;
+	context::getWindowSize(&w, &h);
+
+	//mouse update in 0..1 0/0 left down
+		_clickX = mouseX / (float)w;
+		_clickY = 1.0f - mouseY / (float)h;
+	//
+
+	if (ids->size() > 0) {
 
 		for (int i = 0; i < 5; i++) {
 			_renderer[i]->clearTextStorage();
@@ -123,9 +125,34 @@ void LabelSelectionPainter::setData(vector<int>* ids, const vector<Label>* index
 }
 
 void LabelSelectionPainter::renderSelection(glm::mat4 MVP, GLuint evalTex, int xShift, int yShift, int xMove, int yMove) {
+
+	int w,h;
+	context::getWindowSize(&w, &h);
+
+
+	//cellBorder
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindVertexArray(_vao[CELL_BORDER]);
+		glActiveTexture(GL_TEXTURE0);	
+		glBindTexture(GL_TEXTURE_2D, context::_options._labelScheme);
+			glActiveTexture(GL_TEXTURE1);	
+			glBindTexture(GL_TEXTURE_2D, evalTex);
+				_c_shader_ptr->use();		
+					glUniform1i(_c_shader_ptr->getUniformLocation("width"), w);
+					glUniform1i(_c_shader_ptr->getUniformLocation("height"), h);
+					glUniform1i(_c_shader_ptr->getUniformLocation("colorScheme"), 0);
+					glUniform1i(_c_shader_ptr->getUniformLocation("evalField"), 1);
+					glUniform2f(_c_shader_ptr->getUniformLocation("move"), (float)(xShift+xMove)/(float)w*2.0f, -(float)(yShift+yMove)/(float)h*2.0f);
+					glUniform2f(_c_shader_ptr->getUniformLocation("mouseCoords"), _clickX, _clickY);
+					glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); 
+				_c_shader_ptr->unUse();
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	glBindVertexArray(0);
+
 	if (_active) {
-		int w,h;
-		context::getWindowSize(&w, &h);
 
 		//lines || points
 		glm::mat4 MVP_S = glm::translate(glm::mat4(1.0f), glm::vec3((float)xShift / (float)w * 2.0f, -(float)yShift / (float)h * 2.0f, 0.0f));
@@ -142,28 +169,6 @@ void LabelSelectionPainter::renderSelection(glm::mat4 MVP, GLuint evalTex, int x
 					glUniformMatrix4fv(_l_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(MVP_S));
 					glDrawArrays(GL_POINTS, 0, _lines); 
 				_l_shader_ptr->unUse();
-			glBindTexture(GL_TEXTURE_2D, 0);
-		glBindVertexArray(0);
-
-		//cellBorder
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glBindVertexArray(_vao[CELL_BORDER]);
-			glActiveTexture(GL_TEXTURE0);	
-			glBindTexture(GL_TEXTURE_2D, context::_options._labelScheme);
-				glActiveTexture(GL_TEXTURE1);	
-				glBindTexture(GL_TEXTURE_2D, evalTex);
-					_c_shader_ptr->use();		
-						glUniform1i(_c_shader_ptr->getUniformLocation("width"), w);
-						glUniform1i(_c_shader_ptr->getUniformLocation("height"), h);
-						glUniform1i(_c_shader_ptr->getUniformLocation("colorScheme"), 0);
-						glUniform1i(_c_shader_ptr->getUniformLocation("evalField"), 1);
-						glUniform2f(_c_shader_ptr->getUniformLocation("move"), (float)(xShift+xMove)/(float)w*2.0f, -(float)(yShift+yMove)/(float)h*2.0f);
-						glUniform2f(_c_shader_ptr->getUniformLocation("mouseCoords"), _clickX, _clickY);
-						glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); 
-					_c_shader_ptr->unUse();
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);
 
