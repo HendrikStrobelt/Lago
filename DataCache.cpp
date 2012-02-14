@@ -111,11 +111,13 @@ string DataCache::getDumpName(string nodeFile, string edgeFile) {
 
 	return dumpName;
 }
-	
+#include <iostream>
 
 void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 	DataReader dr;
-	
+
+double nodeReading = glfwGetTime();
+
 	//load node data
 	dr.setNodeFile(nodeFile);
 	vector<Node> nodes;
@@ -128,16 +130,23 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 		read = dr.readNextNode(&nodes, labels);
 	}
 
+nodeReading = glfwGetTime() - nodeReading;
+
 	cout << " (total of " << nodes.size() << " nodes)" << "\n";
 	cout << "     creating QuadTree";
+
+double quadTreeConstruction = glfwGetTime();
 	QuadTree qt(&nodes);
+quadTreeConstruction = glfwGetTime() - quadTreeConstruction;
 
 	_nodeStructureInfo = qt.getNodeStructureInfoContainer(); //fast
 	cout << " (tree height " << _nodeStructureInfo->getMaxDepth() << ")" << "\n";
-
+double edgeReading;
 	bool writeEdges = false;
 	if (!edgeFile.empty()) {
 		//load edge data
+
+edgeReading = glfwGetTime();
 		writeEdges = true;
 		dr.setEdgeFile(edgeFile);
 		vector<ReferenceEdge> refEdges;
@@ -158,6 +167,8 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 
 		cout << " (total of " << edges.size() << " edges)" << "\n";
 		cout << "     creating EdgeHierarchy";
+
+edgeReading = glfwGetTime() - edgeReading;
 		EdgeHierarchy eh(&edges, &qt);
 
 		_edgeStructureInfo = eh.getEdgeStructureInfoContainer(); //fast
@@ -178,6 +189,7 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 		}
 	}
 
+double internWriting = glfwGetTime();
 	cout << "     extracting needed node informations" << "\n";
 	_packedNodes = qt.getPackedTree(&_nCount);
 
@@ -192,6 +204,14 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 
 	cout << "saving extracted node/edge data to _DataDump for faster access" << "\n";
 	writeToDump(getDumpName(nodeFile, edgeFile), writeEdges, writeLabels);
+
+internWriting = glfwGetTime() - internWriting;
+
+
+cout << "node r " << nodeReading << "\n";
+cout << "edge r " << edgeReading << "\n";
+cout << "qt cre " << quadTreeConstruction << "\n";
+cout << "writ i " << internWriting << "\n";
 }
 
 
