@@ -100,6 +100,17 @@ void render( void ) {
 void keyEnv(int key, int action) {
 
 	if (action == GLFW_RELEASE) {
+		if (key == GLFW_KEY_DEL) {
+			context::_renderer->_meassureCount = 0;
+			context::_renderer->_meassuring = 0;
+			context::_renderer->_time = 0;
+			context::_renderer->_timeSum = 0;
+		} else
+		if (key == GLFW_KEY_SPACE) {
+			context::_renderer->_meassuring = true;
+			context::_renderer->_time = glfwGetTime();
+			context::_renderer->changeZoom();
+		} else 
 		if (key == GLFW_KEY_ESC) {
 			context::_run = false;
 		} else 

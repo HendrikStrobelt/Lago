@@ -30,6 +30,11 @@ Renderer::Renderer( void ) {
 	_working = new Working(this);
 	_visAdjust = new VisAdjusting(this);
 
+	_meassuring = false;
+	_meassureCount = 0;
+	_time = 0.0;
+	_timeSum = 0.0;
+
 	setState(_initalWork);
 }
 
