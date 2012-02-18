@@ -40,7 +40,18 @@ void Idle::renderLineField( void ) {
 
 void Idle::work( void ) { /*nothing to do*/ }
 
-void Idle::takeOver( void ) { /*nothing to do*/ }
+void Idle::takeOver( void ) { 
+	if (_r->_meassuring) {
+		_r->_meassuring = false;
+		_r->_time = glfwGetTime() - _r->_time;
+		_r->_timeSum += _r->_time;
+		_r->_meassureCount++;
+
+		cout << "needed: " << _r->_time << "\n";
+		cout << "avg: " << (_r->_timeSum / _r->_meassureCount) << " " << _r->_meassureCount << "\n";
+		_r->_meassuring = false;
+	}
+}
 
 void Idle::changePanning(int xMouseMove, int yMouseMove) {
 	_r->_mouseMoveX = xMouseMove;

@@ -54,6 +54,11 @@ class Renderer : public IRenderState {
 		void changeVisParameter( void );
 
 		bool _hasEdges;
+
+		bool _meassuring;
+		int _meassureCount;
+		double _time;
+		double _timeSum;
 	private:
 
 		DataCache _dCache;
