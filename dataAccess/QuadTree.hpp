@@ -77,6 +77,7 @@ class QuadTree {
 		float _height;
 		int _maxDepth;
 
+		vector<Node> _nodes;
 		vector<vector<QuadTreeMetaNode> *> _metaVectors;
 		vector<vector<Node> *> _nodeVectors;
 		vector<int> _leafCount;

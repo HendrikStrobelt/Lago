@@ -69,11 +69,7 @@ int NodeStructureInfoContainer::getRenderNodes(int depth) const {
 }
 
 int NodeStructureInfoContainer::getAllNodes(int depth) const {
-	int nodes = 0;
-	for (int i = 0; i <= depth; i++) {
-		nodes += _allNodes[i];
-	}
-	return nodes;
+	return _allNodes[0];
 }
 
 

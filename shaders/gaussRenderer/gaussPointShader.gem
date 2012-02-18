@@ -18,11 +18,8 @@ void main(void)
 
 	float nodeWeight = 0.0f;
 
-	if ((abs(gDepth[i]) <= desiredDepth) &&  //leaf or inner node we wish to display
-	    (abs(gDepth[i]) == desiredDepth || gDepth[i] > 0)) { //joinDepth level or leaf node
-      
-			nodeWeight = gWeight[i];
-	}
+	nodeWeight = gWeight[i];
+
 
 	if (nodeWeight > 0) {  //draw nodes
 

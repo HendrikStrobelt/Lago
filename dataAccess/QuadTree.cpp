@@ -33,6 +33,7 @@ QuadTree::QuadTree(const vector<Node>* nodes) {
 
 	//insert further points
 	for (int i = 1; i < nodes->size(); i++) {
+		_nodes.push_back(nodes->at(i));
 		//point x,y   point w ...
 		insert(nodes->at(i), TravelIndex(0, 0, _left, _bottom, (_width / 2.0f), (_height / 2.0f)));
 	}
@@ -61,26 +62,18 @@ QuadTree::~QuadTree( void ) {
 NodeStructureInfoContainer* QuadTree::getNodeStructureInfoContainer( void ) {
 	vector<int> allNodes;
 	for (int i = 0; i < _nodeVectors.size(); i++) {
-		allNodes.push_back(_nodeVectors[i]->size());
+		allNodes.push_back(_nodes.size());
 	}
 	return new NodeStructureInfoContainer(_maxDepth, _width, _height, _left, _bottom, _leafCount, allNodes);
 }
 
 PackedNode* QuadTree::getPackedTree(int* size) {
-	int arraySize = 0;
-	for (int i = 0; i < _nodeVectors.size(); i++) {
-		arraySize += _nodeVectors[i]->size();
-	}
+	int arraySize = _nodes.size();
 	PackedNode* pn = new PackedNode[arraySize];
 	
-	int off = 0;
-	for (int i = 0; i < _nodeVectors.size(); i++) {
-		random_shuffle(_nodeVectors[i]->begin(), _nodeVectors[i]->end());
-		for (int j = 0; j < _nodeVectors[i]->size(); j++) {
-			pn[off + j] = _nodeVectors[i]->at(j);
-		}
-
-		off += _nodeVectors[i]->size();
+	random_shuffle(_nodes.begin(), _nodes.end());
+	for (int i = 0; i < _nodes.size(); i++) {
+		pn[i] = _nodes[i];
 	}
 
 	*size = arraySize;
