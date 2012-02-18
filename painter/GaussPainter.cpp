@@ -60,7 +60,7 @@ GLuint GaussPainter::getWorkingTexture( void ) {
 }	
 
 GLuint GaussPainter::detachTexture( void ) {
-	return _fbcPoint->detachTexture();//_fbc->detachTexture();
+	return _fbc->detachTexture();
 }
 
 void GaussPainter::preRenderGauss( void ) {
@@ -68,14 +68,14 @@ void GaussPainter::preRenderGauss( void ) {
 	glBlendFunc(GL_ONE, GL_ONE);
 		glBindVertexArray(_vao);
 			_point_shader_ptr->use();			
-				glUniform1i(_shader_ptr->getUniformLocation("desiredDepth"), _nodeDepth);
-				glUniformMatrix4fv(_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(_MVP));
+				glUniform1i(_point_shader_ptr->getUniformLocation("desiredDepth"), _nodeDepth);
+				glUniformMatrix4fv(_point_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(_MVP));
 				glDrawArrays(GL_POINTS, 0, _elementCount);
 			_point_shader_ptr->unUse();
 		glBindVertexArray(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	//_pointTexture = _fbcPoint->detachTexture();
+	_pointTexture = _fbcPoint->detachTexture();
 }
 
 
@@ -151,12 +151,12 @@ void GaussPainter::initVao(GLuint vbo) {
 
 	glBindVertexArray(_vao);	 
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-			glEnableVertexAttribArray(_shader_ptr->getAttributeLocation("vVertex"));
-			glVertexAttribPointer (_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, sizeof(PackedNode),  0);
-			glEnableVertexAttribArray(_shader_ptr->getAttributeLocation("vDepth"));
-			glVertexAttribIPointer(_shader_ptr->getAttributeLocation("vDepth"), 1, GL_SHORT, sizeof(PackedNode), (void*)(2 * sizeof(float)));
-			glEnableVertexAttribArray(_shader_ptr->getAttributeLocation("vWeight"));
-			glVertexAttribPointer (_shader_ptr->getAttributeLocation("vWeight"), 1, GL_FLOAT, GL_FALSE, sizeof(PackedNode), (void*)(2 * sizeof(float) + sizeof(short) + sizeof(int)));
+			glEnableVertexAttribArray(_point_shader_ptr->getAttributeLocation("vVertex"));
+			glVertexAttribPointer (_point_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, sizeof(PackedNode),  0);
+			glEnableVertexAttribArray(_point_shader_ptr->getAttributeLocation("vDepth"));
+			glVertexAttribIPointer(_point_shader_ptr->getAttributeLocation("vDepth"), 1, GL_SHORT, sizeof(PackedNode), (void*)(2 * sizeof(float)));
+			glEnableVertexAttribArray(_point_shader_ptr->getAttributeLocation("vWeight"));
+			glVertexAttribPointer(_point_shader_ptr->getAttributeLocation("vWeight"), 1, GL_FLOAT, GL_FALSE, sizeof(PackedNode), (void*)(2 * sizeof(float) + sizeof(short) + sizeof(int)));
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
