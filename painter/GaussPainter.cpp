@@ -7,23 +7,30 @@
 
 GLuint GaussPainter::_gaussTex = -1;
 GLSLShader* GaussPainter::_shader_ptr = NULL;
+GLSLShader* GaussPainter::_point_shader_ptr = NULL;
 
 GaussPainter::GaussPainter(GLuint nodeVBO, int width, int height, int elementCount) {	
 	_elementCount = elementCount;
 	_fbc = new FrameBufferContainer(width, height, GL_LINEAR);
+	_fbcPoint = new FrameBufferContainer(width, height);//nearest
 	createShader();
 	loadTexturesOnce();
 	initVao(nodeVBO);
+	initPointVao();
 }
 
 GaussPainter::~GaussPainter( void ) {
 	delete _fbc;
+	delete _fbcPoint;
 	glDeleteVertexArrays(1, &_vao);
+	glDeleteVertexArrays(1, &_pointVao);
+	glDeleteBuffers(1, &_pointVbo);
 }
 
 //static clean up
 void  GaussPainter::cleanUp( void ) {
 	delete _shader_ptr;
+	delete _point_shader_ptr;
 	glDeleteTextures(1, &_gaussTex);
 }
 
@@ -52,9 +59,24 @@ GLuint GaussPainter::detachTexture( void ) {
 	return _fbc->detachTexture();
 }
 
+void GaussPainter::preRenderGauss( void ) {
+	glBindFramebuffer(GL_FRAMEBUFFER, _fbcPoint->_fbo);
+	glBlendFunc(GL_ONE, GL_ONE);
+		glBindVertexArray(_vao);
+			_point_shader_ptr->use();			
+				glUniform1i(_shader_ptr->getUniformLocation("desiredDepth"), _nodeDepth);
+				glUniformMatrix4fv(_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(_MVP));
+				glDrawArrays(GL_POINTS, 0, _elementCount);
+			_point_shader_ptr->unUse();
+		glBindVertexArray(0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
 //private and static methods
 
 void GaussPainter::renderGauss(int start, int count) {
+
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbc->_fbo);
 		glBlendFunc(GL_ONE, GL_ONE);
 		if ((start + count) > _elementCount) {
@@ -96,6 +118,17 @@ void GaussPainter::createShader( void ) {
 	
 		_shader_ptr = new GLSLShader(attribs, unis, "shaders/gaussRenderer/gaussShader.vert",
 		"shaders/gaussRenderer/gaussShader.frag", "shaders/gaussRenderer/gaussShader.gem");
+
+		attribs.clear();
+		attribs.push_back("vVertex");
+		attribs.push_back("vDepth");
+		attribs.push_back("vWeight");
+		unis.clear();
+		unis.push_back("MVP");
+		unis.push_back("desiredDepth");
+
+		_point_shader_ptr = new GLSLShader(attribs, unis, "shaders/gaussRenderer/gaussPointShader.vert",
+		"shaders/gaussRenderer/gaussPointShader.frag", "shaders/gaussRenderer/gaussPointShader.gem");
 	}
 }
 
@@ -110,6 +143,18 @@ void GaussPainter::initVao(GLuint vbo) {
 			glVertexAttribIPointer(_shader_ptr->getAttributeLocation("vDepth"), 1, GL_SHORT, sizeof(PackedNode), (void*)(2 * sizeof(float)));
 			glEnableVertexAttribArray(_shader_ptr->getAttributeLocation("vWeight"));
 			glVertexAttribPointer (_shader_ptr->getAttributeLocation("vWeight"), 1, GL_FLOAT, GL_FALSE, sizeof(PackedNode), (void*)(2 * sizeof(float) + sizeof(short) + sizeof(int)));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+
+void GaussPainter::initPointVao( void ) {
+	glGenVertexArrays(1, &_pointVao);
+	glGenBuffers(1, &_pointVbo);
+
+	glBindVertexArray(_pointVao);	 
+		glBindBuffer(GL_ARRAY_BUFFER, _pointVbo);
+			glEnableVertexAttribArray(_shader_ptr->getAttributeLocation("vVertex"));
+		//	glVertexAttribPointer (_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, sizeof(rectangles),  0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }

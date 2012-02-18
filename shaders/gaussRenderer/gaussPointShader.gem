@@ -1,0 +1,36 @@
+#version 330
+#extension GL_EXT_geometry_shader4: enable
+
+layout(points) in;
+layout(points, max_vertices = 1) out;
+
+uniform int desiredDepth;
+
+in int gDepth[];
+in float gWeight[];
+
+flat out float fWeight;
+
+void main(void) 
+{
+	int i = 0;
+
+	float nodeWeight = 0.0f;
+
+	if ((abs(gDepth[i]) <= desiredDepth) &&  //leaf or inner node we wish to display
+	    (abs(gDepth[i]) == desiredDepth || gDepth[i] > 0)) { //joinDepth level or leaf node
+      
+			nodeWeight = gWeight[i];
+	}
+
+	if (nodeWeight > 0) {  //draw nodes
+
+		gl_Position = gl_PositionIn[i];
+		fWeight = nodeWeight;
+		EmitVertex();
+
+		//finish
+		EndPrimitive();
+
+	}
+}

@@ -88,7 +88,9 @@ void WorkStateHelper::takeOver( void ) {
 	//field eval
 	_fieldEvaluator[VIEW] = new FieldEvaluation(_r->_windowWidth, _r->_windowHeight);
 
+	_gaussPainter[VIEW]->preRenderGauss();
 	_pc[GAUSS_VIEW] = new PainterCommander(_gaussPainter[VIEW], POINT_INIT_STEP);
+
 
 	if (_r->_hasEdges) {
 		_edgesPreprocessed = false;

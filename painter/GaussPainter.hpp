@@ -8,6 +8,8 @@
 #include "ISplitablePainter.hpp"
 #include "../helper/FrameBufferContainer.hpp"
 
+#define MAX_VERTICES 256
+
 class GaussPainter : public ISplitablePainter {
 
 	public:
@@ -15,6 +17,7 @@ class GaussPainter : public ISplitablePainter {
 		~GaussPainter( void );
 	
 		void setBaseVars(glm::mat4 MVP, float quadSideLength, int nodeDepth);
+		void preRenderGauss();
 
 		//interface methods
 		int getElementCount( void );
@@ -28,15 +31,21 @@ class GaussPainter : public ISplitablePainter {
 
 	private:
 		static GLSLShader* _shader_ptr;
+		static GLSLShader* _point_shader_ptr;
 		static GLuint _gaussTex;
 		static void createShader( void );
 		static void loadTexturesOnce( void );
 		
 		void renderGauss(int start, int count);
 		void initVao(GLuint vbo);
+		void initPointVao( void );
 		int _elementCount;
 
 		FrameBufferContainer* _fbc;
+		FrameBufferContainer* _fbcPoint;
+
+		GLuint _pointVao;
+		GLuint _pointVbo;
 				
 		glm::mat4 _MVP;
 		float _quadSideLength;

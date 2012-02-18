@@ -94,6 +94,7 @@ void ProgressbarPainter::updateBarPosition(int w, int h) {
 }
 
 
+
 void ProgressbarPainter::createShader( void ) {
 	if (_shader_ptr == NULL) {
 		vector<string> unis;
