@@ -19,8 +19,6 @@ void main(void)
 {
 	int k = 0;
 
-	float nodeWeight = 1.0f;
-
 	for (int y = 0; y < 8; y++) {
 		for (int x = 0; x < 8; x++) {
 
@@ -38,25 +36,25 @@ void main(void)
 				//left upper
 				gl_Position = pos + vec4(-sides.x, sides.y, 0.0, 0.0);
 				vTexCoord = vec2(0.0, 0.0);
-				fWeight = nodeWeight;
+				fWeight = weight;
 				EmitVertex();
 
 				//left lower
 				gl_Position = pos + vec4(-sides.x, -sides.y, 0.0, 0.0);
 				vTexCoord = vec2(0.0, 1.0);
-				fWeight = nodeWeight;
+				fWeight = weight;
 				EmitVertex();
 
 				//right upper
 				gl_Position = pos + vec4(sides.x, sides.y, 0.0, 0.0);
 				vTexCoord = vec2(1.0, 0.0);
-				fWeight = nodeWeight;
+				fWeight = weight;
 				EmitVertex();
 
 				//right lower
 				gl_Position = pos + vec4(sides.x, -sides.y, 0.0, 0.0);
 				vTexCoord = vec2(1.0, 1.0);
-				fWeight = nodeWeight;
+				fWeight = weight;
 				EmitVertex();
 
 				//finish
