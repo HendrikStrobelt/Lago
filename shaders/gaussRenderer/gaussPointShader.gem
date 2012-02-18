@@ -5,11 +5,12 @@ layout(points) in;
 layout(points, max_vertices = 1) out;
 
 uniform int desiredDepth;
+uniform mat4 MVP;
 
 in int gDepth[];
 in float gWeight[];
 
-flat out float fWeight;
+flat out vec3 fPosWeight;
 
 void main(void) 
 {
@@ -25,8 +26,8 @@ void main(void)
 
 	if (nodeWeight > 0) {  //draw nodes
 
-		gl_Position = gl_PositionIn[i];
-		fWeight = nodeWeight;
+		gl_Position = MVP * gl_PositionIn[i];
+		fPosWeight = vec3(gl_PositionIn[i].xy * nodeWeight, nodeWeight);
 		EmitVertex();
 
 		//finish

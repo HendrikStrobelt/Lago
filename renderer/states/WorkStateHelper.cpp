@@ -83,21 +83,26 @@ void WorkStateHelper::takeOver( void ) {
 
 
 	float sideLength;
+	int pixel;
 	if (context::_sideExponent == 8) {
 		sideLength = context::_pixelSize * 8;
+		pixel = 8;
 	} else 
 	if (context::_sideExponent == 9) {
 		sideLength = context::_pixelSize * 16;
+		pixel = 16;
 	} else 
 	if (context::_sideExponent == 10) {
 		sideLength = context::_pixelSize * 32;
+		pixel = 32;
 	} else 
 	if (context::_sideExponent == 11) {
 		sideLength = context::_pixelSize * 64;
+		pixel = 64;
 	}
 
 	_gaussPainter[VIEW] = new GaussPainter(_r->_nodeVBO, _r->_windowWidth, _r->_windowHeight, nodeElements);
-	_gaussPainter[VIEW]->setBaseVars(MVP, sideLength, joinDepth);
+	_gaussPainter[VIEW]->setBaseVars(MVP, sideLength, pixel, joinDepth);
 	
 	//field eval
 	_fieldEvaluator[VIEW] = new FieldEvaluation(_r->_windowWidth, _r->_windowHeight);
@@ -115,8 +120,9 @@ void WorkStateHelper::takeOver( void ) {
 		glm::mat4 MVP2 = glm::translate(P2, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
 
 		_gaussPainter[OFF] = new GaussPainter(_r->_nodeVBO, (_r->_windowWidth / OFF_SHRINK), (_r->_windowHeight / OFF_SHRINK), nodeElements);
-		_gaussPainter[OFF]->setBaseVars(MVP2, sideLength, joinDepth);
-	
+		_gaussPainter[OFF]->setBaseVars(MVP2, sideLength, pixel, joinDepth);
+		_gaussPainter[VIEW]->preRenderGauss();
+
 		_pc[GAUSS_OFF] = new PainterCommander(_gaussPainter[OFF], POINT_INIT_STEP);
 
 		//field eval

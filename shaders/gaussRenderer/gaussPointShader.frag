@@ -2,9 +2,9 @@
 
 out vec4 fragColor;
 
-flat in float fWeight;
+flat in vec3 fPosWeight;
 
 void main(void)
 {
-	fragColor = vec4(0.0f , 0.0f, fWeight, 1.0f);
+	fragColor = vec4(fPosWeight, 1.0f);
 }

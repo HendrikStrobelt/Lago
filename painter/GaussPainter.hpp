@@ -16,7 +16,7 @@ class GaussPainter : public ISplitablePainter {
 		GaussPainter(GLuint nodeVBO, int width, int height, int elementCount);
 		~GaussPainter( void );
 	
-		void setBaseVars(glm::mat4 MVP, float quadSideLength, int nodeDepth);
+		void setBaseVars(glm::mat4 MVP, float quadSideLength, int pixelQuad, int nodeDepth);
 		void preRenderGauss();
 
 		//interface methods
@@ -43,6 +43,8 @@ class GaussPainter : public ISplitablePainter {
 
 		int _width;
 		int _height;
+		int _offWidth;
+		int _offHeight;
 		GLuint _pointTexture;
 
 		FrameBufferContainer* _fbc;

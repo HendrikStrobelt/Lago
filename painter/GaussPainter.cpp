@@ -1,6 +1,7 @@
 #include "GaussPainter.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
+#include <glm/gtc/matrix_transform.hpp> 
 #include "../helper/EnvironmentHelper.hpp"
 #include "../Node.hpp"
 
@@ -12,14 +13,13 @@ GLSLShader* GaussPainter::_point_shader_ptr = NULL;
 GaussPainter::GaussPainter(GLuint nodeVBO, int width, int height, int elementCount) {	
 	_elementCount = elementCount;
 	_fbc = new FrameBufferContainer(width, height, GL_LINEAR);
-	_fbcPoint = new FrameBufferContainer(width, height);//nearest
 	createShader();
 	loadTexturesOnce();
 	initVao(nodeVBO);
 
 	_width = width;
 	_height = height;
-	initPointVao();
+
 }
 
 GaussPainter::~GaussPainter( void ) {
@@ -49,10 +49,15 @@ void GaussPainter::processElements(int start, int count) {
 
 //public
 
-void GaussPainter::setBaseVars(glm::mat4 MVP, float quadSideLength, int nodeDepth) {
+void GaussPainter::setBaseVars(glm::mat4 MVP, float quadSideLength, int pixelQuad, int nodeDepth) {
 	_MVP = MVP;
 	_quadSideLength = quadSideLength;
 	_nodeDepth = nodeDepth;
+
+	_offWidth = _width + 2.0 * pixelQuad;
+	_offHeight = _height + 2.0 * pixelQuad;
+	_fbcPoint = new FrameBufferContainer(_offWidth, _offHeight);//nearest
+	initPointVao();
 }
 
 GLuint GaussPainter::getWorkingTexture( void ) {
@@ -64,12 +69,17 @@ GLuint GaussPainter::detachTexture( void ) {
 }
 
 void GaussPainter::preRenderGauss( void ) {
+	float scaleX = (float)_width / (float)_offWidth;
+	float scaleY = (float)_height / (float)_offHeight;
+
+	glm::mat4 MVP2 = glm::scale(_MVP, glm::vec3(scaleX,scaleY,1));
+
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbcPoint->_fbo);
 	glBlendFunc(GL_ONE, GL_ONE);
 		glBindVertexArray(_vao);
 			_point_shader_ptr->use();			
 				glUniform1i(_point_shader_ptr->getUniformLocation("desiredDepth"), _nodeDepth);
-				glUniformMatrix4fv(_point_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(_MVP));
+				glUniformMatrix4fv(_point_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(MVP2));
 				glDrawArrays(GL_POINTS, 0, _elementCount);
 			_point_shader_ptr->unUse();
 		glBindVertexArray(0);
@@ -97,8 +107,8 @@ void GaussPainter::renderGauss(int start, int count) {
 					_shader_ptr->use();			
 						glUniform1i(_shader_ptr->getUniformLocation("gaussTexture"), 0);
 						glUniform1i(_shader_ptr->getUniformLocation("pointTexture"), 1);
-						glUniform1i(_shader_ptr->getUniformLocation("width"), _width);
-						glUniform1i(_shader_ptr->getUniformLocation("height"), _height);
+						glUniform1i(_shader_ptr->getUniformLocation("width"), _offWidth);
+						glUniform1i(_shader_ptr->getUniformLocation("height"), _offHeight);
  						glUniformMatrix4fv(_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(_MVP));
 						glUniform1f(_shader_ptr->getUniformLocation("sideFactor"), _quadSideLength); 
 						glDrawArrays(GL_POINTS, start, count);
@@ -166,8 +176,8 @@ void GaussPainter::initPointVao() {
 	glGenBuffers(1, &_pointVbo);
 
 
-	int wQuads = ceil((float)_width / (float)EX_QUAD_SIDE);
-	int hQuads = ceil((float)_height / (float)EX_QUAD_SIDE);
+	int wQuads = ceil((float)_offWidth / (float)EX_QUAD_SIDE);
+	int hQuads = ceil((float)_offHeight / (float)EX_QUAD_SIDE);
 	_exQuads = wQuads * hQuads;
 
 	float* initPoints = new float[_exQuads * 2];
