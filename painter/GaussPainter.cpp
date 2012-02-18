@@ -72,7 +72,8 @@ void GaussPainter::preRenderGauss( void ) {
 	float scaleX = (float)_width / (float)_offWidth;
 	float scaleY = (float)_height / (float)_offHeight;
 
-	glm::mat4 MVP2 = glm::scale(_MVP, glm::vec3(scaleX,scaleY,1));
+	glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(scaleX,scaleY,1));
+	glm::mat4 MVP2 = S * _MVP;
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbcPoint->_fbo);
 	glBlendFunc(GL_ONE, GL_ONE);

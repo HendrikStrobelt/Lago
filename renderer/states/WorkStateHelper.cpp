@@ -121,7 +121,7 @@ void WorkStateHelper::takeOver( void ) {
 
 		_gaussPainter[OFF] = new GaussPainter(_r->_nodeVBO, (_r->_windowWidth / OFF_SHRINK), (_r->_windowHeight / OFF_SHRINK), nodeElements);
 		_gaussPainter[OFF]->setBaseVars(MVP2, sideLength, pixel, joinDepth);
-		_gaussPainter[VIEW]->preRenderGauss();
+		_gaussPainter[OFF]->preRenderGauss();
 
 		_pc[GAUSS_OFF] = new PainterCommander(_gaussPainter[OFF], POINT_INIT_STEP);
 
