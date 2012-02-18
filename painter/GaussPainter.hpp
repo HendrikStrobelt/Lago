@@ -8,7 +8,7 @@
 #include "ISplitablePainter.hpp"
 #include "../helper/FrameBufferContainer.hpp"
 
-#define MAX_VERTICES 256
+#define EX_QUAD_SIDE 8
 
 class GaussPainter : public ISplitablePainter {
 
@@ -41,6 +41,10 @@ class GaussPainter : public ISplitablePainter {
 		void initPointVao( void );
 		int _elementCount;
 
+		int _width;
+		int _height;
+		GLuint _pointTexture;
+
 		FrameBufferContainer* _fbc;
 		FrameBufferContainer* _fbcPoint;
 
@@ -50,6 +54,9 @@ class GaussPainter : public ISplitablePainter {
 		glm::mat4 _MVP;
 		float _quadSideLength;
 		int _nodeDepth;
+
+		int _exQuads;
+
 
 		GLuint _vao;
 };

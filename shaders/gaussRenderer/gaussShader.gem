@@ -2,14 +2,14 @@
 #extension GL_EXT_geometry_shader4: enable
 
 layout(points) in;
-layout(triangle_strip, max_vertices = 4) out;
+layout(triangle_strip, max_vertices = 256) out;
 
 uniform float sideFactor;
 uniform mat4 MVP;
-uniform int desiredDepth;
 
-in int gDepth[];
-in float gWeight[];
+uniform sampler2D pointTexture;
+uniform int width;
+uniform int height;
 
 flat out float fWeight;
 out vec2 vTexCoord;
@@ -17,46 +17,52 @@ out vec2 vTexCoord;
 
 void main(void) 
 {
-	int i = 0;
+	int k = 0;
 
-	float nodeWeight = 0.0f;
+	float nodeWeight = 1.0f;
 
-	if ((abs(gDepth[i]) <= desiredDepth) &&  //leaf or inner node we wish to display
-	    (abs(gDepth[i]) == desiredDepth || gDepth[i] > 0)) { //joinDepth level or leaf node
-      
-			nodeWeight = gWeight[i];
-	}
+	for (int y = 0; y < 8; y++) {
+		for (int x = 0; x < 8; x++) {
 
-	if (nodeWeight > 0) {  //draw nodes
 
-		vec4 sides = MVP * vec4(sideFactor, sideFactor, 0.0, 0.0);
+			vec2 texCoord = gl_PositionIn[k].xy + vec2(0.5f,0.5f) + vec2(x,y);
+			texCoord = texCoord / vec2(width, height);
 
-		//left upper
-		gl_Position = gl_PositionIn[i] + vec4(-sides.x, sides.y, 0.0, 0.0);
-		vTexCoord = vec2(0.0, 0.0);
-		fWeight = nodeWeight;
-		EmitVertex();
+			float weight = texture(pointTexture, texCoord).b;
 
-		//left lower
-		gl_Position = gl_PositionIn[i] + vec4(-sides.x, -sides.y, 0.0, 0.0);
-		vTexCoord = vec2(0.0, 1.0);
-		fWeight = nodeWeight;
-		EmitVertex();
+			if (weight > 0.0f) {
 
-		//right upper
-		gl_Position = gl_PositionIn[i] + vec4(sides.x, sides.y, 0.0, 0.0);
-		vTexCoord = vec2(1.0, 0.0);
-		fWeight = nodeWeight;
-		EmitVertex();
+				vec4 sides = MVP * vec4(sideFactor, sideFactor, 0.0, 0.0);
+				vec4 pos = vec4(texCoord, 0, 1);
 
-		//right lower
-		gl_Position = gl_PositionIn[i] + vec4(sides.x, -sides.y, 0.0, 0.0);
-		vTexCoord = vec2(1.0, 1.0);
-		fWeight = nodeWeight;
-		EmitVertex();
+				//left upper
+				gl_Position = pos + vec4(-sides.x, sides.y, 0.0, 0.0);
+				vTexCoord = vec2(0.0, 0.0);
+				fWeight = nodeWeight;
+				EmitVertex();
 
-		//finish
-		EndPrimitive();
+				//left lower
+				gl_Position = pos + vec4(-sides.x, -sides.y, 0.0, 0.0);
+				vTexCoord = vec2(0.0, 1.0);
+				fWeight = nodeWeight;
+				EmitVertex();
 
+				//right upper
+				gl_Position = pos + vec4(sides.x, sides.y, 0.0, 0.0);
+				vTexCoord = vec2(1.0, 0.0);
+				fWeight = nodeWeight;
+				EmitVertex();
+
+				//right lower
+				gl_Position = pos + vec4(sides.x, -sides.y, 0.0, 0.0);
+				vTexCoord = vec2(1.0, 1.0);
+				fWeight = nodeWeight;
+				EmitVertex();
+
+				//finish
+				EndPrimitive();
+
+			}
+		}
 	}
 }

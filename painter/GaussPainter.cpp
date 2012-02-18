@@ -16,6 +16,9 @@ GaussPainter::GaussPainter(GLuint nodeVBO, int width, int height, int elementCou
 	createShader();
 	loadTexturesOnce();
 	initVao(nodeVBO);
+
+	_width = width;
+	_height = height;
 	initPointVao();
 }
 
@@ -25,6 +28,7 @@ GaussPainter::~GaussPainter( void ) {
 	glDeleteVertexArrays(1, &_vao);
 	glDeleteVertexArrays(1, &_pointVao);
 	glDeleteBuffers(1, &_pointVbo);
+	glDeleteTextures(1, &_pointTexture);
 }
 
 //static clean up
@@ -36,7 +40,7 @@ void  GaussPainter::cleanUp( void ) {
 
 //interface methods
 int GaussPainter::getElementCount( void ) {
-	return _elementCount;
+	return _exQuads;
 }
 
 void GaussPainter::processElements(int start, int count) {
@@ -56,7 +60,7 @@ GLuint GaussPainter::getWorkingTexture( void ) {
 }	
 
 GLuint GaussPainter::detachTexture( void ) {
-	return _fbc->detachTexture();
+	return _fbcPoint->detachTexture();//_fbc->detachTexture();
 }
 
 void GaussPainter::preRenderGauss( void ) {
@@ -70,6 +74,8 @@ void GaussPainter::preRenderGauss( void ) {
 			_point_shader_ptr->unUse();
 		glBindVertexArray(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	//_pointTexture = _fbcPoint->detachTexture();
 }
 
 
@@ -79,20 +85,28 @@ void GaussPainter::renderGauss(int start, int count) {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbc->_fbo);
 		glBlendFunc(GL_ONE, GL_ONE);
-		if ((start + count) > _elementCount) {
-			count = _elementCount - start;
+		if ((start + count) > getElementCount()) {
+			count = getElementCount() - start;
 		}
 
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, _gaussTex);
-			glBindVertexArray(_vao);
-				_shader_ptr->use();			
-					glUniform1i(_shader_ptr->getUniformLocation("desiredDepth"), _nodeDepth);
-					glUniform1i(_shader_ptr->getUniformLocation("gaussTexture"), 0);
- 					glUniformMatrix4fv(_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(_MVP));
-					glUniform1f(_shader_ptr->getUniformLocation("sideFactor"), _quadSideLength); 
-					glDrawArrays(GL_POINTS, start, count);
-				_shader_ptr->unUse();
-			glBindVertexArray(0);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, _pointTexture);
+				glBindVertexArray(_pointVao);
+					_shader_ptr->use();			
+						glUniform1i(_shader_ptr->getUniformLocation("gaussTexture"), 0);
+						glUniform1i(_shader_ptr->getUniformLocation("pointTexture"), 1);
+						glUniform1i(_shader_ptr->getUniformLocation("width"), _width);
+						glUniform1i(_shader_ptr->getUniformLocation("height"), _height);
+ 						glUniformMatrix4fv(_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(_MVP));
+						glUniform1f(_shader_ptr->getUniformLocation("sideFactor"), _quadSideLength); 
+						glDrawArrays(GL_POINTS, start, count);
+					_shader_ptr->unUse();
+				glBindVertexArray(0);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -108,13 +122,13 @@ void GaussPainter::createShader( void ) {
 	if (_shader_ptr == NULL) {
 		vector<string> attribs;
 		attribs.push_back("vVertex");
-		attribs.push_back("vDepth");
-		attribs.push_back("vWeight");
 		vector<string> unis;
 		unis.push_back("MVP");
 		unis.push_back("sideFactor");
 		unis.push_back("gaussTexture");
-		unis.push_back("desiredDepth");
+		unis.push_back("width");
+		unis.push_back("height");
+		unis.push_back("pointTexture");
 	
 		_shader_ptr = new GLSLShader(attribs, unis, "shaders/gaussRenderer/gaussShader.vert",
 		"shaders/gaussRenderer/gaussShader.frag", "shaders/gaussRenderer/gaussShader.gem");
@@ -147,14 +161,36 @@ void GaussPainter::initVao(GLuint vbo) {
 	glBindVertexArray(0);
 }
 
-void GaussPainter::initPointVao( void ) {
+void GaussPainter::initPointVao() {
 	glGenVertexArrays(1, &_pointVao);
 	glGenBuffers(1, &_pointVbo);
+
+
+	int wQuads = ceil((float)_width / (float)EX_QUAD_SIDE);
+	int hQuads = ceil((float)_height / (float)EX_QUAD_SIDE);
+	_exQuads = wQuads * hQuads;
+
+	float* initPoints = new float[_exQuads * 2];
+
+	int i = 0;
+	for (int y = 0; y < hQuads; y++) {
+		for (int x = 0; x < wQuads; x++) {
+			initPoints[i] = x * EX_QUAD_SIDE;
+			initPoints[i+1] = y * EX_QUAD_SIDE;
+			i+=2;
+		}
+	}
+
+	glBindBuffer (GL_ARRAY_BUFFER, _pointVbo);
+		glBufferData (GL_ARRAY_BUFFER, (_exQuads * 2 * sizeof(float)), &initPoints[0], GL_STATIC_DRAW);
+	glBindBuffer (GL_ARRAY_BUFFER, 0);
 
 	glBindVertexArray(_pointVao);	 
 		glBindBuffer(GL_ARRAY_BUFFER, _pointVbo);
 			glEnableVertexAttribArray(_shader_ptr->getAttributeLocation("vVertex"));
-		//	glVertexAttribPointer (_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, sizeof(rectangles),  0);
+			glVertexAttribPointer(_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, 0,  0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	delete initPoints;
 }
