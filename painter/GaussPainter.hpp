@@ -8,7 +8,7 @@
 #include "ISplitablePainter.hpp"
 #include "../helper/FrameBufferContainer.hpp"
 
-#define EX_QUAD_SIDE 8
+#define EX_QUAD_SIDE 6
 
 class GaussPainter : public ISplitablePainter {
 
