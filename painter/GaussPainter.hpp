@@ -43,21 +43,21 @@ class GaussPainter : public ISplitablePainter {
 
 		int _width;
 		int _height;
-		int _offWidth;
-		int _offHeight;
 		GLuint _pointTexture;
 
 		FrameBufferContainer* _fbc;
 		FrameBufferContainer* _fbcPoint;
 
-		GLuint _pointVao;
-		GLuint _pointVbo;
+		static int _offWidth;
+		static int _offHeight;
+		static GLuint _pointVao;
+		static GLuint _pointVbo;
 				
 		glm::mat4 _MVP;
 		float _quadSideLength;
 		int _nodeDepth;
 
-		int _exQuads;
+		static int _exQuads;
 
 
 		GLuint _vao;
