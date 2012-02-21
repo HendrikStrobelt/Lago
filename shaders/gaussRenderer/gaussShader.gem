@@ -2,7 +2,7 @@
 #extension GL_EXT_geometry_shader4: enable
 
 layout(points) in;
-layout(triangle_strip, max_vertices = 256) out;
+layout(triangle_strip, max_vertices = 144) out;
 
 uniform float sideFactor;
 uniform mat4 MVP;
@@ -19,8 +19,8 @@ void main(void)
 {
 	int k = 0;
 
-	for (int y = 0; y < 8; y++) {
-		for (int x = 0; x < 8; x++) {
+	for (int y = 0; y < 6; y++) {
+		for (int x = 0; x < 6; x++) {
 
 
 			vec2 texCoord = gl_PositionIn[k].xy + vec2(0.5f,0.5f) + vec2(x,y);
