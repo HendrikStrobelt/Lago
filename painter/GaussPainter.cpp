@@ -10,6 +10,13 @@ GLuint GaussPainter::_gaussTex = -1;
 GLSLShader* GaussPainter::_shader_ptr = NULL;
 GLSLShader* GaussPainter::_point_shader_ptr = NULL;
 
+int GaussPainter::_offWidth = 0;
+int GaussPainter::_offHeight = 0;
+int GaussPainter::_exQuads = 0;
+GLuint GaussPainter::_pointVao = -1;
+GLuint GaussPainter::_pointVbo = -1;
+
+
 GaussPainter::GaussPainter(GLuint nodeVBO, int width, int height, int elementCount) {	
 	_elementCount = elementCount;
 	_fbc = new FrameBufferContainer(width, height, GL_LINEAR);
@@ -26,8 +33,6 @@ GaussPainter::~GaussPainter( void ) {
 	delete _fbc;
 	delete _fbcPoint;
 	glDeleteVertexArrays(1, &_vao);
-	glDeleteVertexArrays(1, &_pointVao);
-	glDeleteBuffers(1, &_pointVbo);
 	glDeleteTextures(1, &_pointTexture);
 }
 
@@ -36,6 +41,8 @@ void  GaussPainter::cleanUp( void ) {
 	delete _shader_ptr;
 	delete _point_shader_ptr;
 	glDeleteTextures(1, &_gaussTex);
+	glDeleteVertexArrays(1, &_pointVao);
+	glDeleteBuffers(1, &_pointVbo);
 }
 
 //interface methods
@@ -54,10 +61,13 @@ void GaussPainter::setBaseVars(glm::mat4 MVP, float quadSideLength, int pixelQua
 	_quadSideLength = quadSideLength;
 	_nodeDepth = nodeDepth;
 
-	_offWidth = _width + 2.0 * pixelQuad;
-	_offHeight = _height + 2.0 * pixelQuad;
+	if (_offWidth != _width + 2.0 * pixelQuad || _offHeight != _height + 2.0 * pixelQuad) {
+		_offWidth = _width + 2.0 * pixelQuad;
+		_offHeight =  _height + 2.0 * pixelQuad;
+		initPointVao();
+	}
+
 	_fbcPoint = new FrameBufferContainer(_offWidth, _offHeight);//nearest
-	initPointVao();
 }
 
 GLuint GaussPainter::getWorkingTexture( void ) {
@@ -173,6 +183,9 @@ void GaussPainter::initVao(GLuint vbo) {
 }
 
 void GaussPainter::initPointVao() {
+	glDeleteVertexArrays(1, &_pointVao);
+	glDeleteBuffers(1, &_pointVbo);
+
 	glGenVertexArrays(1, &_pointVao);
 	glGenBuffers(1, &_pointVbo);
 
