@@ -6,6 +6,7 @@
 #include "../Node.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include "../helper/EnvironmentHelper.hpp"
 
 Renderer::Renderer( void ) {
 	_currentData = new RenderData;
@@ -185,6 +186,8 @@ void Renderer::render( void ) {
 
 	float maxVals[3] = {1,1,1};
 	renderTexture(tex, maxVals);
+
+	envHelper::writeTexture2TGA(tex, "D://test.tga");
 
 	glDeleteTextures(1, &tex);
 }

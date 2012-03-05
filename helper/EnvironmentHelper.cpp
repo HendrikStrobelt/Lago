@@ -103,6 +103,49 @@ namespace envHelper {
 	}
 
 
+	void writeTexture2TGA(GLuint texID, string fileName) {
+		int w,h;
+		context::getWindowSize(&w, &h);
+		RGB_t* pPixelsRGB = new RGB_t[w*h];
+
+		glBindTexture(GL_TEXTURE_2D, texID);
+			glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, pPixelsRGB);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		
+		//write data
+		ofstream tgafile(fileName.c_str(), ios::binary);
+
+		//The image header
+		byte header[ 18 ] = { 0 };
+		header[  2 ] = 1;  // truecolor
+		header[ 12 ] =  w        & 0xFF;
+		header[ 13 ] = (w  >> 8) & 0xFF;
+		header[ 14 ] =  h       & 0xFF;
+		header[ 15 ] = (h >> 8) & 0xFF;
+		header[ 16 ] = 24;  // bits per pixel
+
+		tgafile.write( (const char*)header, 18 );
+
+		// The image data is stored bottom-to-top, left-to-right
+		for (int y = 0; y < h; y++) {
+			for (int x = 0; x < w; x++) {
+				tgafile.put( (char)pPixelsRGB[ (y * w) + x ].blue  );
+				tgafile.put( (char)pPixelsRGB[ (y * w) + x ].green );
+				tgafile.put( (char)pPixelsRGB[ (y * w) + x ].red   );
+			}
+		}
+
+		// The file footer. This part is totally optional.
+		static const char footer[ 26 ] =
+			"\0\0\0\0"  // no extension area
+			"\0\0\0\0"  // no developer directory
+			"TRUEVISION-XFILE"  // yep, this is a TGA file
+			".";
+		tgafile.write( footer, 26 );
+
+		tgafile.close();
+	}
+
 
 	//activate opengl stuff
 	void initGL( void ) {
