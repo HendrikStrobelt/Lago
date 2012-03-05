@@ -3,6 +3,7 @@
 
 #include "../IRenderState.hpp"
 #include "../../painter/VisPainter.hpp"
+#include "../RenderBlendData.hpp"
 
 class Renderer;
 
@@ -37,6 +38,12 @@ class VisAdjusting : public IRenderState {
 		float _process;
 		double _animationStart;
 		VisPainter* _visPainter;
+
+		RenderBlendData* _workBlendData;
+		IRenderData* _workRData;
+		int _workBars;
+		float _workProcess;
+		bool _workEnd;
 };
 
 

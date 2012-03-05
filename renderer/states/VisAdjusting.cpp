@@ -1,51 +1,38 @@
 #include "VisAdjusting.hpp"
 #include "../Renderer.hpp"
-#include "../RenderBlendData.hpp"
 #include "../../context/Context.hpp"
 
 VisAdjusting::VisAdjusting(Renderer* renderer) {
 	_r = renderer;
 	_visPainter = NULL;
+	_workBlendData = NULL;
 }
 
 VisAdjusting::~VisAdjusting( void ) {
 	delete _visPainter;
+	delete _workBlendData;
 }
 
 
 //Interface methods
 
 void VisAdjusting::render( void ) {
-	IRenderData* rData;
-	RenderBlendData blendData(_r->_newData);		
-	float process = -1.0f;
-	int bars = 0;
 
-	if (context::_options._animation && _process < 1.0f) {
-		float max[3];
-
-		mixMaxVals(max, _r->_currentData->getNodeMaxAll(), _r->_newData->getNodeMaxAll(), _process);
-		blendData.setNodeMax(max);
-		mixMaxVals(max, _r->_currentData->getEdgeMaxAll(), _r->_newData->getEdgeMaxAll(), _process);
-		blendData.setEdgeMax(max);
-		
-		_visPainter->renderVis(&blendData, _r->_hasEdges, true, _r->_currentData, _r->getStandardMVP(), _process);
-		blendData.setVis(_visPainter->detachResult());
-		process = _process;
-		bars = 1;
-
-		rData = &blendData;
-	} else {
-		rData = _r->_newData;
+	if (_workBlendData == NULL) {
+		work();
 	}
 
-	float maxVals[2];
-	maxVals[0] = rData->getNodeMax();
-	maxVals[1] = rData->getEdgeMax();
+	if (!_workEnd) {
+		float maxVals[2];
+		maxVals[0] = _workRData->getNodeMax();
+		maxVals[1] = _workRData->getEdgeMax();
 
-	_r->renderGraph(rData);
-	_r->renderHUD(process, bars, maxVals);
-	_r->renderLabelSelection(_r->_newData);
+		_r->renderGraph(_workRData);
+		cout << _workProcess << " " << _workBars << "\n";
+		_r->renderHUD(_workProcess, _workBars, maxVals);
+		_r->renderLabelSelection(_r->_newData);
+	}
+
 }
 
 void VisAdjusting::renderGauss( void ) { /* nothing to do */ }
@@ -55,9 +42,36 @@ void VisAdjusting::renderLineField( void ) { /* nothing to do */ }
 void VisAdjusting::work( void ) {
 	if (context::_options._animation && _process < 1.0f) {
 		_process = (context::getTime() - _animationStart) / context::_options._aniDuration;
+
+		delete _workBlendData;
+		_workBlendData = new RenderBlendData(_r->_newData);		
+		_workProcess = -1.0f;
+		_workBars = 0;
+	
+		if (context::_options._animation && _process < 1.0f) {
+			float max[3];
+
+			mixMaxVals(max, _r->_currentData->getNodeMaxAll(), _r->_newData->getNodeMaxAll(), _process);
+			_workBlendData->setNodeMax(max);
+			mixMaxVals(max, _r->_currentData->getEdgeMaxAll(), _r->_newData->getEdgeMaxAll(), _process);
+			_workBlendData->setEdgeMax(max);
+		
+			_visPainter->renderVis(_workBlendData, _r->_hasEdges, true, _r->_currentData, _r->getStandardMVP(), _process);
+			_workBlendData->setVis(_visPainter->detachResult());
+			_workProcess = _process;
+			_workBars = 1;
+
+			_workRData = _workBlendData;
+		} else {
+			_workRData = _r->_newData;
+		}
+		_workEnd = false;
 	} else {
 		//done
 		swap();
+		delete _workBlendData;
+		_workBlendData = NULL;
+		_workEnd = true;
 		_r->setState(_r->_idle);
 	}
 }

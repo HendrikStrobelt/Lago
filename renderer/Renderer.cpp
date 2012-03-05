@@ -172,7 +172,21 @@ void Renderer::calculateMaxValues(float result[], GLuint texture, int textureWid
 
 //state methods
 void Renderer::render( void ) {
-	_state->render();
+	int w,h;
+	context::getWindowSize(&w,&h);
+	FrameBufferContainer fb(w,h,GL_NEAREST,GL_RGBA,GL_INT);
+	glBindFramebuffer(GL_FRAMEBUFFER, fb._fbo);
+		glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		_state->render();
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	GLuint tex = fb.detachTexture();
+
+	float maxVals[3] = {1,1,1};
+	renderTexture(tex, maxVals);
+
+	glDeleteTextures(1, &tex);
 }
 
 void Renderer::renderGauss( void ) {
