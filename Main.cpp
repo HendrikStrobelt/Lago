@@ -84,9 +84,11 @@ void render( void ) {
 	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	
-	context::_renderer->work();
+	double before = glfwGetTime();
+		context::_renderer->work();
+	double workTime = glfwGetTime() - before;
 
-	_cinPtr->run();
+	_cinPtr->run(workTime);
 
 	switch(_mode) {
 		case GRAPH:			context::_renderer->render();				break;
@@ -95,6 +97,7 @@ void render( void ) {
 		case LINE_FIELD:	context::_renderer->renderLineField();		break;
 	}
 
+	_cinPtr->rendered();
 
 	static double lastSync;
 	if (glfwGetTime() > lastSync + 0.25) {

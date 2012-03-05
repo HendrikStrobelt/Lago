@@ -117,7 +117,7 @@ namespace envHelper {
 
 		//The image header
 		byte header[ 18 ] = { 0 };
-		header[  2 ] = 1;  // truecolor
+		header[  2 ] = 2;  // truecolor
 		header[ 12 ] =  w        & 0xFF;
 		header[ 13 ] = (w  >> 8) & 0xFF;
 		header[ 14 ] =  h       & 0xFF;

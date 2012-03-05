@@ -10,6 +10,7 @@ namespace testScript1 {
 		cinema->addPressedMovement(10,12,179,-301);
 		cinema->addPanning(12,-647.93, -355.312);
 		cinema->addZoomChange(13,2);
+		cinema->addEmptyEvent(18);
 	}
 
 };

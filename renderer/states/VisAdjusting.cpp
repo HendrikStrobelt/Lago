@@ -1,6 +1,7 @@
 #include "VisAdjusting.hpp"
 #include "../Renderer.hpp"
 #include "../../context/Context.hpp"
+#include "../Cinema.hpp"
 
 VisAdjusting::VisAdjusting(Renderer* renderer) {
 	_r = renderer;
@@ -23,7 +24,6 @@ void VisAdjusting::render( void ) {
 	maxVals[1] = _workRData->getEdgeMax();
 
 	_r->renderGraph(_workRData);
-	cout << _workProcess << " " << _workBars << "\n";
 	_r->renderHUD(_workProcess, _workBars, maxVals);
 	_r->renderLabelSelection(_r->_newData);
 
@@ -35,7 +35,12 @@ void VisAdjusting::renderLineField( void ) { /* nothing to do */ }
 
 void VisAdjusting::work( void ) {
 	if (context::_options._animation && _process < 1.0f) {
-		_process = (context::getTime() - _animationStart) / context::_options._aniDuration;
+
+		if (Cinema::_captureTime != -1.0) {
+			_process = (Cinema::_captureTime - _animationStart) / context::_options._aniDuration;
+		} else {
+			_process = (context::getTime() - _animationStart) / context::_options._aniDuration;
+		}
 
 		delete _workBlendData;
 		_workBlendData = new RenderBlendData(_r->_newData);		
@@ -124,9 +129,17 @@ void VisAdjusting::takeOver( void ) {
 		_process = 1.0f;
 	}
 
-	_workRData = _r->_currentData;
-	_animationStart = context::getTime();
+	if (_process < 1.0f) {
+		_workRData = _r->_currentData;
+	} else {
+		_workRData = _r->_newData;
+	}
 
+	if (Cinema::_captureTime != -1.0) {
+		_animationStart = Cinema::_captureTime;	
+	} else {
+		_animationStart = context::getTime();
+	}
 }
 
 void VisAdjusting::changePanning(int xMouseMove, int yMouseMove) {

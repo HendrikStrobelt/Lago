@@ -6,8 +6,10 @@
 using namespace std;
 
 
+#define CAPTURE_MODE true
+#define FRAME_TIME (1.0/30.0)
 
-enum TYPE {MOVE_PRESSED, PAN, SIDE_EXP, ZOOM_EXP};
+enum TYPE {MOVE_PRESSED, PAN, SIDE_EXP, ZOOM_EXP, EMPTY};
 
 struct RenderCommand {
 	TYPE type;
@@ -25,7 +27,8 @@ class Cinema : public IContextListener {
 		Cinema( void );
 		~Cinema( void );
 		
-		void run( void );
+		void run(double workTime);
+		void rendered( void );
 
 		//handler
 		void keyEvent(int key, int action);
@@ -35,6 +38,8 @@ class Cinema : public IContextListener {
 		void addPanning(float time, float worldDistX, float worldDistY);
 		void addSideChange(float time, int newSideExp);
 		void addZoomChange(float time, int newZoomExp);
+		void addEmptyEvent(float time);
+		static double _captureTime;
 
 	private:
 
@@ -45,6 +50,8 @@ class Cinema : public IContextListener {
 
 		bool _runCinema;
 		double _runStart;
+		double _lastFrameTime;
+		int _imageID;
 		vector<RenderCommand> _cmds;
 
 };

@@ -2,9 +2,11 @@
 #include "../context/Context.hpp"
 #include "../helper/MouseHandler.hpp"
 #include "../helper/CameraHelper.hpp"
+#include "../helper/EnvironmentHelper.hpp"
 #include <iostream>
+#include <sstream>
 
-
+double Cinema::_captureTime = -1.0;
 
 Cinema::Cinema( void ) {
 	context::addKeyEventListener(this);
@@ -16,18 +18,45 @@ Cinema::~Cinema( void ) {
 }
 
 
-void Cinema::run( void ) {
+void Cinema::run(double workTime) {
 	if (_runCinema) {
 
-		double runTime = glfwGetTime() - _runStart;
+		double runTime;
+
+		if (CAPTURE_MODE) { 
+			double currentTime = _lastFrameTime;	
+
+			do {
+				stringstream ss;
+				ss << "D://film//";
+				ss << _imageID;
+				ss << ".tga";
+				_imageID++;
+
+				envHelper::writeTexture2TGA(Renderer::_tex, ss.str());
+				currentTime += FRAME_TIME;
+				cout << currentTime << "\n";
+			} while ((_lastFrameTime + workTime) > currentTime);
+
+			_lastFrameTime = currentTime;
+			runTime = currentTime;
+			_captureTime = runTime;
+		} else {
+			runTime = glfwGetTime() - _runStart;
+		}
 		
+		bool foundOne = false;
 		for (int i = 0; i < _cmds.size(); i++) {
+
+			if (_cmds[i].valid) {
+				foundOne = true;
+			}
+
 
 			if (_cmds[i].startTime <= runTime && _cmds[i].valid) {
 				if (_cmds[i].type == MOVE_PRESSED) {
-					if (runTime >= _cmds[i].endTime) {
+					if (runTime > _cmds[i].endTime) {
 						_cmds[i].valid = false;
-						setPressedMovement(0,0);
 					} else {
 						float percent = (runTime - _cmds[i].startTime) / (_cmds[i].endTime - _cmds[i].startTime);
 						setPressedMovement(_cmds[i].intParas[0] * percent, _cmds[i].intParas[1] * percent);
@@ -44,10 +73,24 @@ void Cinema::run( void ) {
 				if (_cmds[i].type == ZOOM_EXP) {
 					_cmds[i].valid = false;
 					setZoomExponent(_cmds[i].intParas[0]);
+				} else
+				if (_cmds[i].type == EMPTY) {
+					_cmds[i].valid = false;
 				}
 			}
 		}
+
+		if (!foundOne) {
+			//all invalid
+			_runCinema = false;
+			_captureTime = -1.0;
+		}
 	}
+}
+
+
+void Cinema::rendered( void ) {
+	setPressedMovement(0,0);
 }
 
 void Cinema::keyEvent(int key, int action) {
@@ -64,8 +107,14 @@ void Cinema::keyEvent(int key, int action) {
 			for (int i = 0; i < _cmds.size(); i++) {
 				_cmds[i].valid = true;
 			}
+			_imageID = 1;
 			_runCinema = true;
 			_runStart = glfwGetTime();
+			_lastFrameTime = 0;
+
+			if (CAPTURE_MODE) {
+				_captureTime = 0.0;
+			}
 		}
 	}
 
@@ -97,6 +146,11 @@ void Cinema::addSideChange(float time, int newSideExp) {
 	_cmds.push_back(rc);
 }
 
+void Cinema::addEmptyEvent(float time) {
+	RenderCommand rc(EMPTY, time);
+
+	_cmds.push_back(rc);
+}
 
 void Cinema::addZoomChange(float time, int newZoomExp) {
 	RenderCommand rc(ZOOM_EXP, time);

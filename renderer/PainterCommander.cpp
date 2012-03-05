@@ -54,7 +54,8 @@ float PainterCommander::renderNextPart( void ) {
 		_currentIndex += _currentStep;
 		_renderTime += (end - start);
 		double timePerElement = (_renderTime / _currentIndex);		
-		_currentStep = (ceil((double)TARGET_RENDER_TIME / timePerElement) * 1.5f);
+		
+		//_currentStep = (ceil((double)TARGET_RENDER_TIME / timePerElement) * 1.5f);    FIX CURRENT STEP FOR CINEMA
 	
 		if (_currentStep > _painter->getElementCount() / 2) {
 			_currentStep = (int)ceil((float)_painter->getElementCount() / 2.0f);  //show always a bar
