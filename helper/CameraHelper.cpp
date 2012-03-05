@@ -84,4 +84,13 @@ void mouseDist2WorldDist(float* distX, float* distY, int mouseDistX, int mouseDi
 	*distY = (float)mouseDistY * context::_pixelSize * -1.0f; //invert y
 }
 
+//cinema
+void worldDist2MouseDist(int* mouseDistX, int* mouseDistY, float distX, float distY) {
+	int w,h;
+	context::getWindowSize(&w, &h);
+	
+	*mouseDistX = (int)floor(0.5f + (distX / context::_pixelSize));
+	*mouseDistY = (int)floor(0.5f + (distY / context::_pixelSize)) * -1; //invert y
+}
+
 };

@@ -17,6 +17,8 @@ namespace mouseHandler {
 	//lock
 	void setLock(float bottom, float left, float up, float right, float xShift);
 
+	//cinema
+	void setMove(int xMovement, int yMovement);
 };
 
 

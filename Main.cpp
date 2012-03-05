@@ -14,7 +14,7 @@
 
 //#include <vld.h>
 
-
+#include "renderer\Cinema.hpp"
 #include "GlobalConstants.hpp"
 #include "helper\EnvironmentHelper.hpp"
 #include "context\Context.hpp"
@@ -34,8 +34,12 @@ vector<string> split(string line);
 enum RENDER_MODE {GRAPH, DENSITY_FIELD, EVAL_FIELD, LINE_FIELD};
 RENDER_MODE _mode;
 
+Cinema* _cinPtr;
 context::DummyContextListener _contextListener;
 Connection _syncConnection;
+
+
+#include "renderer\cinemaScripts\TestScript1.hpp"
 
 int main( int argc, const char* argv[] ) {
 	//load parameters
@@ -54,6 +58,8 @@ int main( int argc, const char* argv[] ) {
 	glfwSetTime(0);	
 	glfwSetMouseWheel(0);
 	context::_run = true;
+	_cinPtr = new Cinema();
+	testScript1::setScript(_cinPtr);
 
 	while (context::_run) {
 		render();
@@ -68,6 +74,7 @@ void cleanUp( void ) {
 	mouseHandler::cleanUp();
 	context::cleanUp();
 	envHelper::cleanUp();
+	delete _cinPtr;
 }
 
 void render( void ) {
@@ -78,6 +85,8 @@ void render( void ) {
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	context::_renderer->work();
+
+	_cinPtr->run();
 
 	switch(_mode) {
 		case GRAPH:			context::_renderer->render();				break;

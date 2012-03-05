@@ -14,6 +14,8 @@ namespace cameraHelper {
 
 	void mouseDist2StandardVolDist(float* distX, float* distY, int mouseDistX, int mouseDistY);
 	void mouseDist2WorldDist(float* distX, float* distY, int mouseDistX, int mouseDistY);
+	//cinema mode
+	void worldDist2MouseDist(int* mouseDistX, int* mouseDistY, float distX, float distY);
 };
 
 

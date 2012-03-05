@@ -28,6 +28,8 @@ namespace mouseHandler {
 	int _xPressStart;
 	int _yPressStart;
 
+	int cinXMove;
+	int cinYMove;
 
 	//private methods
 	bool testClick(float x, float y);
@@ -66,6 +68,18 @@ namespace mouseHandler {
 			*xMove = 0;
 			*yMove = 0;
 		 }
+
+		 //cinema
+		 if (cinXMove != 0 || cinYMove != 0) {
+			 *xMove = cinXMove;
+			 *yMove = cinYMove;
+		 }
+	}
+
+	//cinema
+	void setMove(int xMovement, int yMovement) {
+		cinXMove = xMovement;
+		cinYMove = yMovement;
 	}
 
 	//private
