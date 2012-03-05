@@ -43,7 +43,7 @@ class VisAdjusting : public IRenderState {
 		IRenderData* _workRData;
 		int _workBars;
 		float _workProcess;
-		bool _workEnd;
+		bool _endPossible;
 };
 
 

@@ -59,6 +59,8 @@ class Renderer : public IRenderState {
 		int _meassureCount;
 		double _time;
 		double _timeSum;
+
+		static GLuint _tex;
 	private:
 
 		DataCache _dCache;

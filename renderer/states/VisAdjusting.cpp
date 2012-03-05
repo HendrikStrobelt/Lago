@@ -18,20 +18,14 @@ VisAdjusting::~VisAdjusting( void ) {
 
 void VisAdjusting::render( void ) {
 
-	if (_workBlendData == NULL) {
-		work();
-	}
+	float maxVals[2];
+	maxVals[0] = _workRData->getNodeMax();
+	maxVals[1] = _workRData->getEdgeMax();
 
-	if (!_workEnd) {
-		float maxVals[2];
-		maxVals[0] = _workRData->getNodeMax();
-		maxVals[1] = _workRData->getEdgeMax();
-
-		_r->renderGraph(_workRData);
-		cout << _workProcess << " " << _workBars << "\n";
-		_r->renderHUD(_workProcess, _workBars, maxVals);
-		_r->renderLabelSelection(_r->_newData);
-	}
+	_r->renderGraph(_workRData);
+	cout << _workProcess << " " << _workBars << "\n";
+	_r->renderHUD(_workProcess, _workBars, maxVals);
+	_r->renderLabelSelection(_r->_newData);
 
 }
 
@@ -65,13 +59,11 @@ void VisAdjusting::work( void ) {
 		} else {
 			_workRData = _r->_newData;
 		}
-		_workEnd = false;
 	} else {
 		//done
 		swap();
 		delete _workBlendData;
 		_workBlendData = NULL;
-		_workEnd = true;
 		_r->setState(_r->_idle);
 	}
 }
@@ -132,7 +124,9 @@ void VisAdjusting::takeOver( void ) {
 		_process = 1.0f;
 	}
 
+	_workRData = _r->_currentData;
 	_animationStart = context::getTime();
+
 }
 
 void VisAdjusting::changePanning(int xMouseMove, int yMouseMove) {

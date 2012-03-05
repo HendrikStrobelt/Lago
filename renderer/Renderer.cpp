@@ -6,7 +6,8 @@
 #include "../Node.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
-#include "../helper/EnvironmentHelper.hpp"
+
+GLuint Renderer::_tex  = -1;
 
 Renderer::Renderer( void ) {
 	_currentData = new RenderData;
@@ -173,8 +174,11 @@ void Renderer::calculateMaxValues(float result[], GLuint texture, int textureWid
 
 //state methods
 void Renderer::render( void ) {
+	glDeleteTextures(1, &_tex);
+
 	int w,h;
 	context::getWindowSize(&w,&h);
+	
 	FrameBufferContainer fb(w,h,GL_NEAREST,GL_RGBA,GL_INT);
 	glBindFramebuffer(GL_FRAMEBUFFER, fb._fbo);
 		glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
@@ -182,14 +186,12 @@ void Renderer::render( void ) {
 		_state->render();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	GLuint tex = fb.detachTexture();
+	_tex = fb.detachTexture();
 
 	float maxVals[3] = {1,1,1};
-	renderTexture(tex, maxVals);
+	renderTexture(_tex, maxVals);
 
-	envHelper::writeTexture2TGA(tex, "D://test.tga");
 
-	glDeleteTextures(1, &tex);
 }
 
 void Renderer::renderGauss( void ) {
