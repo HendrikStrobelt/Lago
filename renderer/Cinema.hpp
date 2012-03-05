@@ -9,7 +9,7 @@ using namespace std;
 #define CAPTURE_MODE true
 #define FRAME_TIME (1.0/30.0)
 
-enum TYPE {MOVE_PRESSED, PAN, SIDE_EXP, ZOOM_EXP, EMPTY};
+enum TYPE {MOVE_PRESSED_M, MOVE_PRESSED, PAN, PAN_M, SIDE_EXP, ZOOM_EXP, EMPTY};
 
 struct RenderCommand {
 	TYPE type;
@@ -17,7 +17,7 @@ struct RenderCommand {
 	float startTime;
 	float endTime; //optional except for move pressed
 	vector<int> intParas;
-	vector<int> floatParas;
+	vector<float> floatParas;
 	RenderCommand(TYPE ptype, float pStartTime) : type(ptype), valid(true), startTime(pStartTime) {};
 };
 
@@ -34,8 +34,10 @@ class Cinema : public IContextListener {
 		void keyEvent(int key, int action);
 
 		//cin cmds
-		void addPressedMovement(float startTime, float endTime, int targetMouseX, int targetMouseY);
+		void addPressedMovement(float startTime, float endTime, float targetX, float targetY);
+		void addPressedMovementM(float startTime, float endTime, int targetMouseX, int targetMouseY);
 		void addPanning(float time, float worldDistX, float worldDistY);
+		void addPanningM(float time, int mouseX, int mouseY);
 		void addSideChange(float time, int newSideExp);
 		void addZoomChange(float time, int newZoomExp);
 		void addEmptyEvent(float time);
@@ -44,7 +46,7 @@ class Cinema : public IContextListener {
 	private:
 
 		void setPressedMovement(int mouseX, int mouseY);
-		void setPanning(float worldDistX, float worldDistY);
+		void setPanning(int mouseX, int mouseY);
 		void setSideExponent(int exp);
 		void setZoomExponent(int exp);
 

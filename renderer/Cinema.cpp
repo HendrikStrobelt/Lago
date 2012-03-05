@@ -54,17 +54,39 @@ void Cinema::run(double workTime) {
 
 
 			if (_cmds[i].startTime <= runTime && _cmds[i].valid) {
-				if (_cmds[i].type == MOVE_PRESSED) {
+				if (_cmds[i].type == MOVE_PRESSED_M) {
 					if (runTime > _cmds[i].endTime) {
 						_cmds[i].valid = false;
 					} else {
 						float percent = (runTime - _cmds[i].startTime) / (_cmds[i].endTime - _cmds[i].startTime);
 						setPressedMovement(_cmds[i].intParas[0] * percent, _cmds[i].intParas[1] * percent);
 					}
+				} else
+				if (_cmds[i].type == MOVE_PRESSED) {
+					if (runTime > _cmds[i].endTime) {
+						_cmds[i].valid = false;
+					} else {
+						float xWorldDist = _cmds[i].floatParas[0] - context::_worldTransX;
+						float yWorldDist = _cmds[i].floatParas[1] - context::_worldTransY;
+						int xMouse = floor(xWorldDist / context::_pixelSize) + 0.5;
+						int yMouse = (floor(yWorldDist / context::_pixelSize) + 0.5)  * -1; 
+
+						float percent = (runTime - _cmds[i].startTime) / (_cmds[i].endTime - _cmds[i].startTime);
+						setPressedMovement(xMouse * percent, yMouse * percent);
+					}
 				} else 
 				if (_cmds[i].type == PAN) {
 					_cmds[i].valid = false;
-					setPanning(_cmds[i].floatParas[0] - context::_worldTransX, _cmds[i].floatParas[1] - context::_worldTransY);
+					float distX = _cmds[i].floatParas[0] - context::_worldTransX;
+					float distY = _cmds[i].floatParas[1] - context::_worldTransY;
+
+					int x,y;
+					cameraHelper::worldDist2MouseDist(&x, &y, distX, distY);
+					setPanning(x, y);
+				} else 
+				if (_cmds[i].type == PAN_M) {
+					_cmds[i].valid = false;
+					setPanning(_cmds[i].intParas[0], _cmds[i].intParas[1]);
 				} else 
 				if (_cmds[i].type == SIDE_EXP) {
 					_cmds[i].valid = false;
@@ -120,9 +142,17 @@ void Cinema::keyEvent(int key, int action) {
 
 }
 
-
-void Cinema::addPressedMovement(float startTime, float endTime, int targetMouseX, int targetMouseY) {
+void Cinema::addPressedMovement(float startTime, float endTime, float targetX, float targetY) {
 	RenderCommand rc(MOVE_PRESSED, startTime);
+	rc.endTime = endTime;
+	rc.floatParas.push_back(targetX);
+	rc.floatParas.push_back(targetY);
+
+	_cmds.push_back(rc);
+}
+
+void Cinema::addPressedMovementM(float startTime, float endTime, int targetMouseX, int targetMouseY) {
+	RenderCommand rc(MOVE_PRESSED_M, startTime);
 	rc.endTime = endTime;
 	rc.intParas.push_back(targetMouseX);
 	rc.intParas.push_back(targetMouseY);
@@ -138,6 +168,13 @@ void Cinema::addPanning(float time, float worldX, float worldY) {
 	_cmds.push_back(rc);
 }
 
+void Cinema::addPanningM(float time, int mouseX, int mouseY) {
+	RenderCommand rc(PAN_M, time);
+	rc.intParas.push_back(mouseX);
+	rc.intParas.push_back(mouseY);
+
+	_cmds.push_back(rc);
+}
 
 void Cinema::addSideChange(float time, int newSideExp) {
 	RenderCommand rc(SIDE_EXP, time);
@@ -164,10 +201,8 @@ void Cinema::setPressedMovement(int mouseX, int mouseY) {
 	mouseHandler::setMove(mouseX, mouseY);
 }
 
-void Cinema::setPanning(float worldDistX, float worldDistY) {
-	int x,y;
-	cameraHelper::worldDist2MouseDist(&x, &y, worldDistX, worldDistY);
-	context::updateWorldTranslate(x,y);
+void Cinema::setPanning(int mouseX, int mouseY) {
+	context::updateWorldTranslate(mouseX, mouseY);
 }
 
 void Cinema::setSideExponent(int exp) {
