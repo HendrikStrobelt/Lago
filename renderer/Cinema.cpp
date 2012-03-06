@@ -96,7 +96,25 @@ void Cinema::run(double workTime) {
 					_cmds[i].valid = false;
 					setZoomExponent(_cmds[i].intParas[0]);
 				} else
+				if (_cmds[i].type == EMPTY_CLICK) {
+					_cmds[i].valid = false;
+					triggerEmptyClick();
+				} else 
+				if (_cmds[i].type == RIGHT_CLICK) {
+					_cmds[i].valid = false;
+					triggerRightClick(_cmds[i].intParas[0], _cmds[i].intParas[1]);
+				} else 
+				if (_cmds[i].type == LABEL_CLICK) {
+					_cmds[i].valid = false;
+					triggerLabelClick((bool)_cmds[i].intParas[0], _cmds[i].intParas[1]);
+				} else 
 				if (_cmds[i].type == EMPTY) {
+					_cmds[i].valid = false;
+				} else
+				if (_cmds[i].type == STOPP) {
+					cout << "sleep for " << _cmds[i].floatParas[0] << "\n";
+					glfwSleep(_cmds[i].floatParas[0]); //allows to manipulate the java gui
+					_runStart += _cmds[i].floatParas[0];
 					_cmds[i].valid = false;
 				}
 			}
@@ -141,6 +159,10 @@ void Cinema::keyEvent(int key, int action) {
 	}
 
 }
+
+
+
+//ADD EVENTS 
 
 void Cinema::addPressedMovement(float startTime, float endTime, float targetX, float targetY) {
 	RenderCommand rc(MOVE_PRESSED, startTime);
@@ -196,6 +218,37 @@ void Cinema::addZoomChange(float time, int newZoomExp) {
 	_cmds.push_back(rc);
 }
 
+void Cinema::addEmptyClick(float time) {
+	RenderCommand rc(EMPTY_CLICK, time);
+
+	_cmds.push_back(rc);
+}
+
+void Cinema::addRightClickM(float time, int x, int y) {
+	RenderCommand rc(RIGHT_CLICK, time);
+	rc.intParas.push_back(x);
+	rc.intParas.push_back(y);
+
+	_cmds.push_back(rc);
+}
+
+void Cinema::addLabelClick(float time, bool add, int id) {
+	RenderCommand rc(LABEL_CLICK, time);
+	rc.intParas.push_back((int)add);
+	rc.intParas.push_back(id);
+
+	_cmds.push_back(rc);
+}
+
+
+void Cinema::addStopEvent(float time, float duration) {
+	RenderCommand rc(STOPP, time);
+	rc.floatParas.push_back(duration);
+
+	_cmds.push_back(rc);
+}
+
+//CONTEXT COMMUNICATION
 
 void Cinema::setPressedMovement(int mouseX, int mouseY) {
 	mouseHandler::setMove(mouseX, mouseY);
@@ -211,4 +264,16 @@ void Cinema::setSideExponent(int exp) {
 
 void Cinema::setZoomExponent(int exp) {
 	context::setZoomExponent(exp);
+}
+
+void Cinema::triggerEmptyClick( void ) {
+	context::emptyClick();
+}
+
+void Cinema::triggerRightClick(int mouseX, int mouseY) {
+	context::rightClick(mouseX, mouseY);
+}
+
+void Cinema::triggerLabelClick(bool add, int id) {
+	context::labelClick(add, id);
 }

@@ -96,14 +96,20 @@ namespace context {
 
 	void emptyClick( void ) {
 		_renderer->emptyClick();
+		//cinema
+		cout << "empty click" << "\n";
 	}
 
 	void rightClick(int x, int y) {
 		_renderer->rightClick(x, y);
+		//cinema
+		cout << "right click x: " << x << " y: " << y << "\n";
 	}
 
 	void labelClick(bool add, int id) {
 		_renderer->labelClick(add, id);
+		//cinema
+		cout << "label click add: " << add << " id: " << id << "\n";
 	}
 
 	void lockClick( void ) {

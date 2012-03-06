@@ -17,9 +17,6 @@ namespace testScript2 {
 		cinema->addPanning(15.5,-2.92389,-1.92491);
 		cinema->addSideChange(16.0,1);
 
-
-		//little cheat
-
 		cinema->addEmptyEvent(20);
 	}
 
