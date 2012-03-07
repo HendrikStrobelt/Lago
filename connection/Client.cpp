@@ -82,7 +82,7 @@ bool Client::connectSocket(SOCKET server, addrinfo* addr_ptr) {
 	iResult = connect(server, addr_ptr->ai_addr, (int)addr_ptr->ai_addrlen);
 
 	if (iResult == SOCKET_ERROR) {
-		cerr << "error while connecting " << "\n";
+	//	cerr << "error while connecting " << "\n";
 		closesocket(server);
 		WSACleanup();
 		return false;

@@ -115,10 +115,13 @@ namespace envHelper {
 	void prepareEnvironment(int width, int height) {
 		cout << "preparing the environment at least OpenGL 3.3 is needed" << "\n";
 
+		bool error = false;
+
 		//Initialize GLFW
 		if (!glfwInit()) {
 			std::cerr << "Error: initializing GLFW failed";
-			exit(EXIT_FAILURE);
+			error = true;
+		//	exit(EXIT_FAILURE);
 		}
 
 		//set up additional parameters for the window
@@ -129,7 +132,8 @@ namespace envHelper {
 		if (!glfwOpenWindow(width, height, 0, 0, 0, 0, 0, 0, GLFW_WINDOW)) {
 			std::cerr << "Error: opening of the GLFW window fialed";
 			glfwTerminate();
-			exit(EXIT_FAILURE);
+			error = true;
+		//	exit(EXIT_FAILURE);
 		}
 
 		cout << "created OpenGL Context";
@@ -147,7 +151,11 @@ namespace envHelper {
 		if (GLEW_OK != err)	{
 			std::cerr << "Error: " << glewGetErrorString(err) << "\n";
 			glfwTerminate();
+			error = true;
 		}
+
+		while (error) {};
+
 	}
 
 
