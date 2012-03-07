@@ -9,15 +9,10 @@
 GLuint GaussPainter::_gaussTex = -1;
 GLSLShader* GaussPainter::_shader_ptr = NULL;
 GLSLShader* GaussPainter::_point_shader_ptr = NULL;
-
-int GaussPainter::_offWidth = 0;
-int GaussPainter::_offHeight = 0;
-int GaussPainter::_exQuads = 0;
-GLuint GaussPainter::_pointVao = -1;
-GLuint GaussPainter::_pointVbo = -1;
+ExaminerGeometry GaussPainter::_exGeometry[2];
 
 
-GaussPainter::GaussPainter(GLuint nodeVBO, int width, int height, int elementCount) {	
+GaussPainter::GaussPainter(GLuint nodeVBO, int width, int height, int elementCount, EXAMINER_GEM fieldType) {	
 	_elementCount = elementCount;
 	_fbc = new FrameBufferContainer(width, height, GL_LINEAR);
 	createShader();
@@ -26,7 +21,7 @@ GaussPainter::GaussPainter(GLuint nodeVBO, int width, int height, int elementCou
 
 	_width = width;
 	_height = height;
-
+	_fieldType = fieldType;
 }
 
 GaussPainter::~GaussPainter( void ) {
@@ -41,13 +36,15 @@ void  GaussPainter::cleanUp( void ) {
 	delete _shader_ptr;
 	delete _point_shader_ptr;
 	glDeleteTextures(1, &_gaussTex);
-	glDeleteVertexArrays(1, &_pointVao);
-	glDeleteBuffers(1, &_pointVbo);
+	glDeleteVertexArrays(1, &GaussPainter::_exGeometry[OFF_FIELD]._pointVao);
+	glDeleteVertexArrays(1, &GaussPainter::_exGeometry[VIEW_FIELD]._pointVao);
+	glDeleteBuffers(1, &GaussPainter::_exGeometry[OFF_FIELD]._pointVbo);
+	glDeleteBuffers(1, &GaussPainter::_exGeometry[VIEW_FIELD]._pointVbo);
 }
 
 //interface methods
 int GaussPainter::getElementCount( void ) {
-	return _exQuads;
+	return GaussPainter::_exGeometry[_fieldType]._exQuads;
 }
 
 void GaussPainter::processElements(int start, int count) {
@@ -61,13 +58,14 @@ void GaussPainter::setBaseVars(glm::mat4 MVP, float quadSideLength, int pixelQua
 	_quadSideLength = quadSideLength;
 	_nodeDepth = nodeDepth;
 
-	if (_offWidth != _width + 2.0 * pixelQuad || _offHeight != _height + 2.0 * pixelQuad) {
-		_offWidth = _width + 2.0 * pixelQuad;
-		_offHeight =  _height + 2.0 * pixelQuad;
+	if (GaussPainter::_exGeometry[_fieldType]._offWidth != _width + 2.0 * pixelQuad ||
+		GaussPainter::_exGeometry[_fieldType]._offHeight != _height + 2.0 * pixelQuad) {
+		GaussPainter::_exGeometry[_fieldType]._offWidth = _width + 2.0 * pixelQuad;
+		GaussPainter::_exGeometry[_fieldType]._offHeight =  _height + 2.0 * pixelQuad;
 		initPointVao();
 	}
 
-	_fbcPoint = new FrameBufferContainer(_offWidth, _offHeight);//nearest
+	_fbcPoint = new FrameBufferContainer(GaussPainter::_exGeometry[_fieldType]._offWidth, GaussPainter::_exGeometry[_fieldType]._offHeight);//nearest
 }
 
 GLuint GaussPainter::getWorkingTexture( void ) {
@@ -79,8 +77,8 @@ GLuint GaussPainter::detachTexture( void ) {
 }
 
 void GaussPainter::preRenderGauss( void ) {
-	float scaleX = (float)_width / (float)_offWidth;
-	float scaleY = (float)_height / (float)_offHeight;
+	float scaleX = (float)_width / (float)GaussPainter::_exGeometry[_fieldType]._offWidth;
+	float scaleY = (float)_height / (float)GaussPainter::_exGeometry[_fieldType]._offHeight;
 
 	glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(scaleX,scaleY,1));
 	glm::mat4 MVP2 = S * _MVP;
@@ -104,6 +102,8 @@ void GaussPainter::preRenderGauss( void ) {
 
 void GaussPainter::renderGauss(int start, int count) {
 
+	ExaminerGeometry* eg = &GaussPainter::_exGeometry[_fieldType];
+
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbc->_fbo);
 		glBlendFunc(GL_ONE, GL_ONE);
 		if ((start + count) > getElementCount()) {
@@ -114,12 +114,12 @@ void GaussPainter::renderGauss(int start, int count) {
 		glBindTexture(GL_TEXTURE_2D, _gaussTex);
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, _pointTexture);
-				glBindVertexArray(_pointVao);
+				glBindVertexArray(eg->_pointVao);
 					_shader_ptr->use();			
 						glUniform1i(_shader_ptr->getUniformLocation("gaussTexture"), 0);
 						glUniform1i(_shader_ptr->getUniformLocation("pointTexture"), 1);
-						glUniform1i(_shader_ptr->getUniformLocation("width"), _offWidth);
-						glUniform1i(_shader_ptr->getUniformLocation("height"), _offHeight);
+						glUniform1i(_shader_ptr->getUniformLocation("width"), eg->_offWidth);
+						glUniform1i(_shader_ptr->getUniformLocation("height"), eg->_offHeight);
  						glUniformMatrix4fv(_shader_ptr->getUniformLocation("MVP"), 1, GL_FALSE, glm::value_ptr(_MVP));
 						glUniform1f(_shader_ptr->getUniformLocation("sideFactor"), _quadSideLength); 
 						glDrawArrays(GL_POINTS, start, count);
@@ -183,18 +183,21 @@ void GaussPainter::initVao(GLuint vbo) {
 }
 
 void GaussPainter::initPointVao() {
-	glDeleteVertexArrays(1, &_pointVao);
-	glDeleteBuffers(1, &_pointVbo);
 
-	glGenVertexArrays(1, &_pointVao);
-	glGenBuffers(1, &_pointVbo);
+	ExaminerGeometry* eg = &GaussPainter::_exGeometry[_fieldType];
+
+	glDeleteVertexArrays(1, &eg->_pointVao);
+	glDeleteBuffers(1, &eg->_pointVbo);
+
+	glGenVertexArrays(1, &eg->_pointVao);
+	glGenBuffers(1, &eg->_pointVbo);
 
 
-	int wQuads = ceil((float)_offWidth / (float)EX_QUAD_SIDE);
-	int hQuads = ceil((float)_offHeight / (float)EX_QUAD_SIDE);
-	_exQuads = wQuads * hQuads;
+	int wQuads = ceil((float)eg->_offWidth / (float)EX_QUAD_SIDE);
+	int hQuads = ceil((float)eg->_offHeight / (float)EX_QUAD_SIDE);
+	eg->_exQuads = wQuads * hQuads;
 
-	float* initPoints = new float[_exQuads * 2];
+	float* initPoints = new float[eg->_exQuads * 2];
 
 	int i = 0;
 	for (int y = 0; y < hQuads; y++) {
@@ -205,12 +208,12 @@ void GaussPainter::initPointVao() {
 		}
 	}
 
-	glBindBuffer (GL_ARRAY_BUFFER, _pointVbo);
-		glBufferData (GL_ARRAY_BUFFER, (_exQuads * 2 * sizeof(float)), &initPoints[0], GL_STATIC_DRAW);
+	glBindBuffer (GL_ARRAY_BUFFER, eg->_pointVbo);
+		glBufferData (GL_ARRAY_BUFFER, (eg->_exQuads * 2 * sizeof(float)), &initPoints[0], GL_STATIC_DRAW);
 	glBindBuffer (GL_ARRAY_BUFFER, 0);
 
-	glBindVertexArray(_pointVao);	 
-		glBindBuffer(GL_ARRAY_BUFFER, _pointVbo);
+	glBindVertexArray(eg->_pointVao);	 
+		glBindBuffer(GL_ARRAY_BUFFER, eg->_pointVbo);
 			glEnableVertexAttribArray(_shader_ptr->getAttributeLocation("vVertex"));
 			glVertexAttribPointer(_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, 0,  0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);

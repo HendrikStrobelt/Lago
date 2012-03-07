@@ -101,7 +101,7 @@ void WorkStateHelper::takeOver( void ) {
 		pixel = 64;
 	}
 
-	_gaussPainter[VIEW] = new GaussPainter(_r->_nodeVBO, _r->_windowWidth, _r->_windowHeight, nodeElements);
+	_gaussPainter[VIEW] = new GaussPainter(_r->_nodeVBO, _r->_windowWidth, _r->_windowHeight, nodeElements, VIEW_FIELD);
 	_gaussPainter[VIEW]->setBaseVars(MVP, sideLength, pixel, joinDepth);
 	
 	//field eval
@@ -119,7 +119,7 @@ void WorkStateHelper::takeOver( void ) {
 		glm::mat4 P2 = cameraHelper::calculateProjection(_r->_dCache.getNodeStructureInfo(), context::_zoomFactor / (OFF_ZOOM * OFF_SHRINK));
 		glm::mat4 MVP2 = glm::translate(P2, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
 
-		_gaussPainter[OFF] = new GaussPainter(_r->_nodeVBO, (_r->_windowWidth / OFF_SHRINK), (_r->_windowHeight / OFF_SHRINK), nodeElements);
+		_gaussPainter[OFF] = new GaussPainter(_r->_nodeVBO, (_r->_windowWidth / OFF_SHRINK), (_r->_windowHeight / OFF_SHRINK), nodeElements, OFF_FIELD);
 		_gaussPainter[OFF]->setBaseVars(MVP2, sideLength, pixel, joinDepth);
 		_gaussPainter[OFF]->preRenderGauss();
 
