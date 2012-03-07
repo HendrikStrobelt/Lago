@@ -12,6 +12,9 @@ extern int WINDOW_HEIGHT;
 extern bool EDGE_HIERARCHY_FLAT;   //EdgeHierarchy may have a defect with aggregated edges of a level
 								   //may also be just a visual effect not sure
 
+extern std::string STANDARD_NODE;
+extern std::string STANDARD_EDGE;
+
 //min and max values for coordinates
 extern int MIN_COORD;
 extern int MAX_COORD;

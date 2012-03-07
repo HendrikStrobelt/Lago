@@ -246,13 +246,32 @@ void Options::keyEvent(int key, int action) {
 			dataChanged("_Data//LineNode.out");
 		} else 
 		if (key == '2') {
-			dataChanged("_Data//GridNode.out", "_Data//GridEdge.out");
+			dataChanged("_Data//GermanyNode.out");
 		} else 
 		if (key == '3') {
-			dataChanged("_Data//WorkNode.out", "_Data//WorkEdge.out");
+			dataChanged("_Data//AirWeightedNode.out", "_Data//AirEdge.out");
+			context::_worldTransX = 81.6152;
+			context::_worldTransY = 17.2064;
+			context::setZoomExponent(6);
+			context::setSideExponent(16);
+			cout << " < adjusting zoom" << "\n";
+			cout << " < adjusting bandwidth" << "\n";
+			cout << " < adjusting position" << "\n";
 		} else 
 		if (key == '4') {
-			dataChanged("_Data//GermanyNode.out");
+			dataChanged("_Data//net50SFDP_Node.out","_Data//net50SFDP_Edge.out");
+			context::_worldTransX = 4.20849;
+			context::_worldTransY = 4.30918;
+			context::setSideExponent(10);
+			context::setZoomExponent(3);
+			context::_scaleOptions[1]._exponent = 0.15;
+			cout << " < adjusting zoom" << "\n";
+			cout << " < adjusting bandwidth" << "\n";
+			cout << " < adjusting position" << "\n";
+			cout << " < adjusting edge scaling" << "\n";
+		}
+		if (key == '5') {
+			dataChanged(STANDARD_NODE, STANDARD_EDGE);
 		}
 	}
 }

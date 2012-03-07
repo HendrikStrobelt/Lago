@@ -113,6 +113,8 @@ namespace envHelper {
 
 	//initialize GLFW and GLEW writes errors to std::cerr
 	void prepareEnvironment(int width, int height) {
+		cout << "preparing the environment at least OpenGL 3.3 is needed" << "\n";
+
 		//Initialize GLFW
 		if (!glfwInit()) {
 			std::cerr << "Error: initializing GLFW failed";
@@ -145,7 +147,6 @@ namespace envHelper {
 		if (GLEW_OK != err)	{
 			std::cerr << "Error: " << glewGetErrorString(err) << "\n";
 			glfwTerminate();
-			exit(EXIT_FAILURE);
 		}
 	}
 

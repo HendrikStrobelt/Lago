@@ -81,25 +81,8 @@ void WorkStateHelper::takeOver( void ) {
 	int joinDepth = _r->_dCache.getNodeStructureInfo()->getJoinDepth(context::_pixelSize);
 	int nodeElements = _r->_dCache.getNodeStructureInfo()->getAllNodes(joinDepth);
 
-
-	float sideLength;
-	int pixel;
-	if (context::_sideExponent == 8) {
-		sideLength = context::_pixelSize * 8;
-		pixel = 8;
-	} else 
-	if (context::_sideExponent == 9) {
-		sideLength = context::_pixelSize * 16;
-		pixel = 16;
-	} else 
-	if (context::_sideExponent == 10) {
-		sideLength = context::_pixelSize * 32;
-		pixel = 32;
-	} else 
-	if (context::_sideExponent == 11) {
-		sideLength = context::_pixelSize * 64;
-		pixel = 64;
-	}
+	float sideLength = context::_pixelSize * pow(SIDE_BASE, context::_sideExponent);
+	int pixel = pow(SIDE_BASE, context::_sideExponent);
 
 	_gaussPainter[VIEW] = new GaussPainter(_r->_nodeVBO, _r->_windowWidth, _r->_windowHeight, nodeElements, VIEW_FIELD);
 	_gaussPainter[VIEW]->setBaseVars(MVP, sideLength, pixel, joinDepth);
