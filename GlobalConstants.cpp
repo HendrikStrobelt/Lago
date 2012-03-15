@@ -3,7 +3,7 @@
 
 //startoptions
 int WINDOW_WIDTH = 1530;
-int WINDOW_HEIGHT = 1530;
+int WINDOW_HEIGHT = 765;
 
 //deactivate the cration of the EDGE_HIERARCHY
 //less storage consumption theoretical increase in speed but

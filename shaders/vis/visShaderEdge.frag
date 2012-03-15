@@ -55,14 +55,14 @@ vec4 getColor(vec2 texCoordCenter, vec2 texCoord, float stepX , float stepY) {
 
 
 	//Pattern pseudo euklid
-	int rad = 4;
+	int rad = 3;
 
-	for (int y = -rad; y <= rad; y++) {
-		for (int x = -rad; x <= rad; x++) {
+	for (int y = -rad; y < rad; y++) {
+		for (int x = -rad; x < rad; x++) {
 
 			vec2 otherPosCenter = (texCoordCenter + vec2(x*stepX, y*stepY));
 
-			float len = length((texCoord - otherPosCenter) * vec2(width, height));
+			float len = 0; //length((texCoord - otherPosCenter) * vec2(width, height));
 			float val = scale(texture(lineField, otherPosCenter).g / maxValue);
 
 			if ((x < 0) || (x == 0 && y <= 0)) {
