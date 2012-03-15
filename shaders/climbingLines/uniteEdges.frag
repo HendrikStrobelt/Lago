@@ -14,7 +14,7 @@ void main(void)
 	float max;
 
 	max = texture(assembleTex, fTexCoord).g;
-/*
+
 	if (colAngle.r > max) {
 		max = colAngle.r;
 	}
@@ -27,8 +27,6 @@ void main(void)
 	if (colAngle.a > max) {
 		max = colAngle.a;
 	}
-*/
-	float sum = max + colAngle.a + colAngle.b + colAngle.r + colAngle.g;
 
-	fragColor = vec4(0.0f, sum, 0.0f, 1.0f);
+	fragColor = vec4(0.0f, max, 0.0f, 1.0f);
 }
