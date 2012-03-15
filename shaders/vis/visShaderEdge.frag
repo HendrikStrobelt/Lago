@@ -55,7 +55,7 @@ vec4 getColor(vec2 texCoordCenter, vec2 texCoord, float stepX , float stepY) {
 
 
 	//Pattern pseudo euklid
-	int rad = 2;
+	int rad = 4;
 
 	for (int y = -rad; y <= rad; y++) {
 		for (int x = -rad; x <= rad; x++) {
@@ -87,13 +87,14 @@ vec4 getColor(vec2 texCoordCenter, vec2 texCoord, float stepX , float stepY) {
 		vec3 oldResult = texture(gaussTex, texCoordCenter).rgb;
 		
 		//with influence mix them
-		vec3 col =  mix(oldResult, influence.rgb, influence.a);
+		vec3 col =  influence.rgb;//mix(oldResult, influence.rgb, influence.a);
 		
 		return vec4(col, 1.0f);
 	} else {
 		
 		//no influence simply return the result so far
-		return vec4(texture(gaussTex, texCoordCenter).rgb, 1.0f);
+		//return vec4(texture(gaussTex, texCoordCenter).rgb, 1.0f);
+		return vec4(1,1,1,1);
 	}
 }
 

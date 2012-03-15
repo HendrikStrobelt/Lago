@@ -143,11 +143,11 @@ void Renderer::renderGraph(IRenderData* rData, int xMove, int yMove) {
 
 void Renderer::renderHUD(float progress, int pBars, float maxVals[]) {
 	if (progress >= 0.0f) {
-		_progressBar.renderBar(progress, pBars);
+	//	_progressBar.renderBar(progress, pBars);
 	}
 
 	if (maxVals[0] > 0.0f) {
-		_scalingBars.renderScaleBars(maxVals, _hasEdges);
+	//	_scalingBars.renderScaleBars(maxVals, _hasEdges);
 	}
 }
 

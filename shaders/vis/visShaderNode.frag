@@ -66,6 +66,7 @@ vec3 getColor(float texValue) {
 
 	if (scaled < 0.0001f) { //background
 		scaled = 0.0f;
+		//return vec3(255.0,255.0,255.0);
 	}
 
 	return texture(colorScheme, vec2(scaled, 0.5f)).rgb;

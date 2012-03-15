@@ -246,7 +246,7 @@ void Options::keyEvent(int key, int action) {
 			dataChanged("_Data//LineNode.out");
 		} else 
 		if (key == '2') {
-			dataChanged("_Data//GridNode.out", "_Data//GridEdge.out");
+			dataChanged("_Data//net50SFDP_Node.out", "_Data//net50SFDP_Edge.out");
 		} else 
 		if (key == '3') {
 			dataChanged("_Data//WorkNode.out", "_Data//WorkEdge.out");
