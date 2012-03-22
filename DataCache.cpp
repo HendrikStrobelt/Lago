@@ -2,7 +2,9 @@
 #include "helper\Dumping.hpp"
 #include "dataAccess\DataReader.hpp"
 #include "dataAccess\QuadTree.hpp"
+#include "dataAccess\FlatNodeContainer.hpp"
 #include "dataAccess\EdgeHierarchy.hpp"
+#include "dataAccess\FlatEdgeContainer.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -129,11 +131,11 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 	}
 
 	cout << " (total of " << nodes.size() << " nodes)" << "\n";
-	cout << "     creating QuadTree";
-	QuadTree qt(&nodes);
+//	cout << "     creating QuadTree";
+	FlatNodeContainer fc(&nodes);
 
-	_nodeStructureInfo = qt.getNodeStructureInfoContainer(); //fast
-	cout << " (tree height " << _nodeStructureInfo->getMaxDepth() << ")" << "\n";
+	_nodeStructureInfo = fc.getNodeStructureInfoContainer(); //fast
+//	cout << " (tree height " << _nodeStructureInfo->getMaxDepth() << ")" << "\n";
 
 	bool writeEdges = false;
 	if (!edgeFile.empty()) {
@@ -157,13 +159,13 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 		}
 
 		cout << " (total of " << edges.size() << " edges)" << "\n";
-		cout << "     creating EdgeHierarchy";
-		EdgeHierarchy eh(&edges, &qt);
+//		cout << "     creating EdgeHierarchy";
+		FlatEdgeContainer ec(&edges);
 
-		_edgeStructureInfo = eh.getEdgeStructureInfoContainer(); //fast
-		cout << " (hierarchy height " << _edgeStructureInfo->getMaxDepth() << ")" << "\n";
+		_edgeStructureInfo = ec.getEdgeStructureInfoContainer(); //fast
+		//cout << " (hierarchy height " << _edgeStructureInfo->getMaxDepth() << ")" << "\n";
 		cout << "     extracting needed edge informations" << "\n";
-		_packedEdges = eh.getPackedHierarchy(&_eCount);
+		_packedEdges = ec.getPackedContainer(&_eCount);
 
 
 		if (dr.hasNodeLabels() && !dr.hasNodeLabelWeights()) {
@@ -179,7 +181,7 @@ void DataCache::loadFromFiles(string nodeFile, string edgeFile) {
 	}
 
 	cout << "     extracting needed node informations" << "\n";
-	_packedNodes = qt.getPackedTree(&_nCount);
+	_packedNodes = fc.getPackedContainer(&_nCount);
 
 	bool writeLabels = false;
 	if (dr.hasNodeLabels()) {
