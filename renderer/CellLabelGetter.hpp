@@ -21,8 +21,11 @@ class CellLabelGetter {
 		static void cleanUp( void );
 	private:
 
+		enum VBO {VERTEX, TEX};
+
 		static void createShader( void );
 		static GLSLShader* _shader_ptr;
+		static GLSLShader* _eval_shader_ptr;
 
 		void initVao(GLuint vbo);
 		
@@ -32,6 +35,9 @@ class CellLabelGetter {
 		GLuint _capturedVBO;
 
 		GLuint _vbo;
+
+		GLuint _evalVAO;
+		GLuint _evalVBO[2];
 
 };
 
