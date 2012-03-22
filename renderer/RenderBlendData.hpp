@@ -17,6 +17,7 @@ class RenderBlendData : public IRenderData {
 		GLuint getGaussTex( void );
 		GLuint getEvalField( void );
 		GLuint getLineField( void );
+		GLuint getSeedField( void );
 		GLuint getVis( void );
 		float getNodeMax( void );
 		float getEdgeMax( void );

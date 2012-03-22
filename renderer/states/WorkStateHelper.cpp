@@ -26,7 +26,6 @@ WorkStateHelper::~WorkStateHelper( void ) {
 	resetAll();
 }
 
-
 bool WorkStateHelper::isDone( void ) {
 	if (_r->_hasEdges) {
 		return (_pc[GAUSS_VIEW]->isDone() &&
@@ -52,9 +51,9 @@ void WorkStateHelper::work( void ) {
 		} else 
 		if (!(_fieldEvaluator[VIEW]->isDone() && _fieldEvaluator[OFF]->isDone())) {
 			//evaluate both fields
-			_fieldEvaluator[VIEW]->evaluate(_pc[GAUSS_VIEW]->getWorkingTexture());
+			_fieldEvaluator[VIEW]->evaluate(_pc[GAUSS_VIEW]->getWorkingTexture(), _gaussPainter[VIEW]->getSeedTexture(), _quadPixel);
 			glViewport(0,0, (GLsizei) (_r->_windowWidth / OFF_SHRINK), (GLsizei) (_r->_windowHeight / OFF_SHRINK));
-				_fieldEvaluator[OFF]->evaluate(_pc[GAUSS_OFF]->getWorkingTexture());
+			_fieldEvaluator[OFF]->evaluate(_pc[GAUSS_OFF]->getWorkingTexture(), _gaussPainter[OFF]->getSeedTexture(), _quadPixel);
 			glViewport(0,0, _r->_windowWidth, (GLsizei) _r->_windowHeight);
 		} else 
 		if (!_pc[DIVIDED_LINES]->isDone()) {
@@ -68,7 +67,7 @@ void WorkStateHelper::work( void ) {
 		if (!_pc[GAUSS_VIEW]->isDone()) {
 			_progress = _pc[GAUSS_VIEW]->renderNextPart();
 		} else {
-			_fieldEvaluator[VIEW]->evaluate(_pc[GAUSS_VIEW]->getWorkingTexture());
+			_fieldEvaluator[VIEW]->evaluate(_pc[GAUSS_VIEW]->getWorkingTexture(), _gaussPainter[VIEW]->getSeedTexture(), _quadPixel);
 		}
 	}
 }
@@ -81,11 +80,14 @@ void WorkStateHelper::takeOver( void ) {
 	int joinDepth = _r->_dCache.getNodeStructureInfo()->getJoinDepth(context::_pixelSize);
 	int nodeElements = _r->_dCache.getNodeStructureInfo()->getAllNodes(joinDepth);
 
+
 	float sideLength = context::_pixelSize * pow(SIDE_BASE, context::_sideExponent);
-	int pixel = pow(SIDE_BASE, context::_sideExponent);
+	_quadPixel = pow(SIDE_BASE, context::_sideExponent);
+
 
 	_gaussPainter[VIEW] = new GaussPainter(_r->_nodeVBO, _r->_windowWidth, _r->_windowHeight, nodeElements, VIEW_FIELD);
-	_gaussPainter[VIEW]->setBaseVars(MVP, sideLength, pixel, joinDepth);
+	_gaussPainter[VIEW]->setBaseVars(MVP, sideLength, _quadPixel, joinDepth);
+
 	
 	//field eval
 	_fieldEvaluator[VIEW] = new FieldEvaluation(_r->_windowWidth, _r->_windowHeight);
@@ -103,7 +105,8 @@ void WorkStateHelper::takeOver( void ) {
 		glm::mat4 MVP2 = glm::translate(P2, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
 
 		_gaussPainter[OFF] = new GaussPainter(_r->_nodeVBO, (_r->_windowWidth / OFF_SHRINK), (_r->_windowHeight / OFF_SHRINK), nodeElements, OFF_FIELD);
-		_gaussPainter[OFF]->setBaseVars(MVP2, sideLength, pixel, joinDepth);
+		_gaussPainter[OFF]->setBaseVars(MVP2, sideLength, _quadPixel, joinDepth);
+
 		_gaussPainter[OFF]->preRenderGauss();
 
 		_pc[GAUSS_OFF] = new PainterCommander(_gaussPainter[OFF], POINT_INIT_STEP);
