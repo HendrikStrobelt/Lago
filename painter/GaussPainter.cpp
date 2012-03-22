@@ -58,7 +58,6 @@ void GaussPainter::processElements(int start, int count) {
 }
 
 //public
-#include <iostream>
 
 void GaussPainter::setBaseVars(glm::mat4 MVP, float quadSideLength, int pixelQuad, int nodeDepth) {
 	_MVP = MVP;
@@ -88,7 +87,7 @@ GLuint GaussPainter::getSeedTexture( void ) {
 
 GLuint GaussPainter::detachSeedTexture( void ) {
 	GLuint ret = _pointTexture;
-	GLuint _pointTexture = -1;
+	_pointTexture = -1;
 
 	return ret;
 }

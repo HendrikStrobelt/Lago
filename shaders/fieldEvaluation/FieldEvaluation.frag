@@ -105,5 +105,4 @@ void main(void)
 	vec2 screen = texPos * 2.0 - 1.0;
 
 	fragColor = vec4(screen.x, screen.y, currentVal, 1.0f);
-	//fragColor = vec4(0, 0, currentVal, 1.0f);
 }
