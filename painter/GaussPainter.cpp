@@ -98,7 +98,7 @@ void GaussPainter::preRenderGauss( void ) {
 	glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(scaleX,scaleY,1));
 	glm::mat4 MVP2 = S * _MVP;
 
-	glViewport(0,0, (GLsizei) _offWidth, (GLsizei) _offHeight);
+	glViewport(0,0, (GLsizei) _exGeometry[_fieldType]._offWidth, (GLsizei) _exGeometry[_fieldType]._offHeight);
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbcPoint->_fbo);
 	glBlendFunc(GL_ONE, GL_ONE);
 		glBindVertexArray(_vao);
