@@ -11,7 +11,7 @@ uniform int height;
 
 void main(void)
 {
-/*
+
 	float stepX = 1.0f / width;
 	float stepY = 1.0f / height;
 
@@ -93,6 +93,5 @@ void main(void)
 	} else {
 		fragColor = texture(evalTexture, fTexCoord);
 	}
-*/
-	fragColor = texture(evalTexture, fTexCoord);
+
 }
