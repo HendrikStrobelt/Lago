@@ -18,6 +18,7 @@ class RenderData : public IRenderData {
 		GLuint getGaussTex( void );
 		GLuint getEvalField( void );
 		GLuint getLineField( void );
+		GLuint getSeedField( void );
 		GLuint getVis( void );
 		float getNodeMax( void );
 		float getEdgeMax( void );
@@ -32,6 +33,7 @@ class RenderData : public IRenderData {
 		void setGaussTex(GLuint tex);
 		void setEvalField(GLuint tex);
 		void setLineField(GLuint tex);
+		void setSeedField(GLuint tex);
 		void setVis(GLuint tex);
 		void setNodeMax(float max[]);
 		void setEdgeMax(float max[]);
@@ -42,6 +44,7 @@ class RenderData : public IRenderData {
 		GLuint _gaussTex;
 		GLuint _evalField;
 		GLuint _lineField;
+		GLuint _seedField;
 		GLuint _vis;
 
 		float _maxValuesN[3];

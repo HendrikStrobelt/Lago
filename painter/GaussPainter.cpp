@@ -33,7 +33,10 @@ GaussPainter::~GaussPainter( void ) {
 	delete _fbc;
 	delete _fbcPoint;
 	glDeleteVertexArrays(1, &_vao);
-	glDeleteTextures(1, &_pointTexture);
+	
+	if (_pointTexture != -1) {
+		glDeleteTextures(1, &_pointTexture);
+	}
 }
 
 //static clean up
@@ -55,6 +58,7 @@ void GaussPainter::processElements(int start, int count) {
 }
 
 //public
+#include <iostream>
 
 void GaussPainter::setBaseVars(glm::mat4 MVP, float quadSideLength, int pixelQuad, int nodeDepth) {
 	_MVP = MVP;
@@ -78,6 +82,18 @@ GLuint GaussPainter::detachTexture( void ) {
 	return _fbc->detachTexture();
 }
 
+GLuint GaussPainter::getSeedTexture( void ) {
+	return _pointTexture;
+}
+
+GLuint GaussPainter::detachSeedTexture( void ) {
+	GLuint ret = _pointTexture;
+	GLuint _pointTexture = -1;
+
+	return ret;
+}
+
+
 void GaussPainter::preRenderGauss( void ) {
 	float scaleX = (float)_width / (float)_offWidth;
 	float scaleY = (float)_height / (float)_offHeight;
@@ -85,6 +101,7 @@ void GaussPainter::preRenderGauss( void ) {
 	glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(scaleX,scaleY,1));
 	glm::mat4 MVP2 = S * _MVP;
 
+	glViewport(0,0, (GLsizei) _offWidth, (GLsizei) _offHeight);
 	glBindFramebuffer(GL_FRAMEBUFFER, _fbcPoint->_fbo);
 	glBlendFunc(GL_ONE, GL_ONE);
 		glBindVertexArray(_vao);
@@ -95,6 +112,7 @@ void GaussPainter::preRenderGauss( void ) {
 			_point_shader_ptr->unUse();
 		glBindVertexArray(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0,0, (GLsizei) _width, (GLsizei) _height);
 
 	_pointTexture = _fbcPoint->detachTexture();
 }

@@ -38,6 +38,7 @@ void InitialWork::work( void ) {
 		_r->_newData->setGaussTex(_worker->_pc[GAUSS_VIEW]->detachResult());
 		_r->_newData->setEvalField(_worker->_fieldEvaluator[VIEW]->detachResultTexture());
 		_r->_newData->setSideLength(context::_pixelSize * pow(SIDE_BASE, context::_sideExponent));
+		_r->_newData->setSeedField(_worker->_gaussPainter[VIEW]->detachSeedTexture());
 
 		glm::mat4 MVPI = glm::inverse(_r->getStandardMVP());
 		glm::vec4 leftLow = MVPI * glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f);

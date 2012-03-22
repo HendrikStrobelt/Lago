@@ -12,7 +12,7 @@ class FieldEvaluation {
 		FieldEvaluation(int width, int height);
 		~FieldEvaluation();
 
-		void evaluate(GLuint texHandel);
+		void evaluate(GLuint texHandel, GLuint seedHandel, int pixelQuad);
 		GLuint getWorkingTexture( void );
 		GLuint detachResultTexture( void );
 

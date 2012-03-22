@@ -40,6 +40,10 @@ GLuint RenderBlendData::getLineField( void ) {
 	return _rData->getLineField();
 }
 
+GLuint RenderBlendData::getSeedField( void ) {
+	return _rData->getSeedField();
+}
+
 float* RenderBlendData::getBox( void ) {
 	return _rData->getBox();
 }

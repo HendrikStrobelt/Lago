@@ -26,6 +26,9 @@ class GaussPainter : public ISplitablePainter {
 		GLuint getWorkingTexture( void );
 		GLuint detachTexture( void );
 
+		GLuint detachSeedTexture( void );
+		GLuint getSeedTexture( void );
+
 		//static clean up
 		static void cleanUp( void );
 
@@ -58,7 +61,6 @@ class GaussPainter : public ISplitablePainter {
 		int _nodeDepth;
 
 		static int _exQuads;
-
 
 		GLuint _vao;
 };
