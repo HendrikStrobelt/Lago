@@ -67,7 +67,7 @@ void Renderer::lockClick( void ) {
 }
 
 void Renderer::rightClick(int x, int y) {
-	vector<int>* ids = _cellLabelGetter->getLabelIndices(x, y, _currentData->getEvalField(), getStandardMVP());
+	vector<int>* ids = _cellLabelGetter->getLabelIndices(x, y, _currentData->getEvalField(), _currentData->getGaussTex(), getStandardMVP());
 	_labelSelectionPainter.setData(ids, _dCache.getIndexedLabels(), x, y);
 }
 
