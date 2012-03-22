@@ -15,7 +15,7 @@ class CellLabelGetter {
 		CellLabelGetter(GLuint nodeVbo, int size);
 		~CellLabelGetter( void );
 
-		vector<int>* getLabelIndices(int mouseX, int mouseY, GLuint fieldTex, glm::mat4 MVP);
+		vector<int>* getLabelIndices(int mouseX, int mouseY, GLuint fieldTex, GLuint gaussTex, glm::mat4 MVP);
 
 		//static clean up
 		static void cleanUp( void );

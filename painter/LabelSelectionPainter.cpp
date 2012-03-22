@@ -145,7 +145,7 @@ void LabelSelectionPainter::renderSelection(glm::mat4 MVP, GLuint evalTex, int x
 			glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);
 
-		//cellBorder
+/*		//cellBorder
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBindVertexArray(_vao[CELL_BORDER]);
 			glActiveTexture(GL_TEXTURE0);	
@@ -166,7 +166,7 @@ void LabelSelectionPainter::renderSelection(glm::mat4 MVP, GLuint evalTex, int x
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);
-
+*/
 		glm::mat4 MVP_1(1.0f);
 
 		//box
