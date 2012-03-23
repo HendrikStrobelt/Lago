@@ -30,12 +30,18 @@ void Idle::renderEvalField( void ) {
 	_r->renderTexture(_r->_currentData->getEvalField(), maxVals);
 }
 
+#include "../../context/Context.hpp"
 void Idle::renderLineField( void ) {
-	if (_r->_hasEdges) {
+/*	if (_r->_hasEdges) {
 		float maxVals[3];
 		_r->calculateMaxValues(maxVals, _r->_currentData->getLineField(), _r->_windowWidth, _r->_windowHeight);
 		_r->renderTexture(_r->_currentData->getLineField(), maxVals);
-	}
+	}*/
+
+			float maxVals[3];
+			_r->calculateMaxValues(maxVals, context::_textureTestHook, _r->_windowWidth, _r->_windowHeight);
+		_r->renderTexture(context::_textureTestHook, maxVals);
+
 }
 
 void Idle::work( void ) { /*nothing to do*/ }

@@ -60,10 +60,10 @@ vector<int>* CellLabelGetter::getLabelIndices(int mouseX, int mouseY, GLuint fie
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	GLuint evalField = evalFBC->detachTexture();
-	delete evalFBC;
 	//test againt mouse
 
-	glEnable(GL_RASTERIZER_DISCARD);		
+	glEnable(GL_RASTERIZER_DISCARD);	
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, evalField);
 				glBindVertexArray(_dataVAO);
 					_shader_ptr->use();		
@@ -100,7 +100,10 @@ vector<int>* CellLabelGetter::getLabelIndices(int mouseX, int mouseY, GLuint fie
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	glDeleteTextures(1, &evalField);
+	delete evalFBC;
+//	glDeleteTextures(1, &evalField);
+
+	context::_textureTestHook = evalField;
 
 	return ret;
 }
@@ -183,11 +186,11 @@ void CellLabelGetter::initVao(GLuint vbo) {
 	
 	glBindVertexArray(_evalVAO);	 
 		glBindBuffer(GL_ARRAY_BUFFER, _evalVBO[VERTEX]);
-			glEnableVertexAttribArray(_shader_ptr->getAttributeLocation("vVertex"));
-			glVertexAttribPointer (_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, 0, 0);	
+			glEnableVertexAttribArray(_eval_shader_ptr->getAttributeLocation("vVertex"));
+			glVertexAttribPointer (_eval_shader_ptr->getAttributeLocation("vVertex"), 2, GL_FLOAT, GL_FALSE, 0, 0);	
 		glBindBuffer(GL_ARRAY_BUFFER, _evalVBO[TEX]);
-			glEnableVertexAttribArray(_shader_ptr->getAttributeLocation("vTex"));
-			glVertexAttribPointer (_shader_ptr->getAttributeLocation("vTex"), 2, GL_FLOAT, GL_FALSE, 0, 0);
+			glEnableVertexAttribArray(_eval_shader_ptr->getAttributeLocation("vTex"));
+			glVertexAttribPointer (_eval_shader_ptr->getAttributeLocation("vTex"), 2, GL_FLOAT, GL_FALSE, 0, 0);
 		glBindBuffer (GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
