@@ -6,7 +6,7 @@
 using namespace std;
 
 
-#define CAPTURE_MODE true
+#define CAPTURE_MODE false
 #define FRAME_TIME (1.0/30.0)
 
 enum TYPE {MOVE_PRESSED_M, MOVE_PRESSED, PAN, PAN_M, SIDE_EXP, ZOOM_EXP, EMPTY, STOPP, EMPTY_CLICK, LABEL_CLICK, RIGHT_CLICK};

@@ -39,7 +39,7 @@ context::DummyContextListener _contextListener;
 Connection _syncConnection;
 
 
-#include "renderer\cinemaScripts\TestScript3.hpp"
+#include "renderer\cinemaScripts\Europe.hpp"
 
 int main( int argc, const char* argv[] ) {
 	//load parameters
@@ -59,7 +59,7 @@ int main( int argc, const char* argv[] ) {
 	glfwSetMouseWheel(0);
 	context::_run = true;
 	_cinPtr = new Cinema();
-	testScript3::setScript(_cinPtr);
+	EuropeScript::setScript(_cinPtr);
 
 	while (context::_run) {
 		render();
