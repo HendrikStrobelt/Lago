@@ -15,14 +15,17 @@ class CellLabelGetter {
 		CellLabelGetter(GLuint nodeVbo, int size);
 		~CellLabelGetter( void );
 
-		vector<int>* getLabelIndices(int mouseX, int mouseY, GLuint fieldTex, glm::mat4 MVP);
+		vector<int>* getLabelIndices(int mouseX, int mouseY, GLuint fieldTex, GLuint gaussTex, glm::mat4 MVP);
 
 		//static clean up
 		static void cleanUp( void );
 	private:
 
+		enum VBO {VERTEX, TEX};
+
 		static void createShader( void );
 		static GLSLShader* _shader_ptr;
+		static GLSLShader* _eval_shader_ptr;
 
 		void initVao(GLuint vbo);
 		
@@ -32,6 +35,9 @@ class CellLabelGetter {
 		GLuint _capturedVBO;
 
 		GLuint _vbo;
+
+		GLuint _evalVAO;
+		GLuint _evalVBO[2];
 
 };
 

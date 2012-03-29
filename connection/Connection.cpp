@@ -27,7 +27,7 @@ void Connection::connect( void ) {
 	} else {
 		_con.connect2Server();
 		if (!_con.isConnectionAlive()) {
-			cout << "oops couldn't connect to the server" << "\n";
+		//	cout << "oops couldn't connect to the server" << "\n";
 		}	
 	}
 }

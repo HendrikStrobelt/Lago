@@ -22,7 +22,7 @@ namespace context {
 		extern float _pixelSize;
 		extern Options _options;
 		extern ScaleOptions _scaleOptions[];
-
+		extern GLuint _textureTestHook;
 	//pull
 		extern Renderer* _renderer;	
 		extern float _sideRatio;

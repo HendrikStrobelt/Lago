@@ -1,5 +1,5 @@
 #include "GlobalConstants.hpp"
-#include <string>
+
 
 //startoptions
 int WINDOW_WIDTH = 1500;
@@ -13,6 +13,10 @@ bool EDGE_HIERARCHY_FLAT = true;
 //min and max values for coordinates
 int MIN_COORD = -10000000;
 int MAX_COORD = 10000000;
+
+std::string STANDARD_NODE("_Data//LineNode.out");
+std::string STANDARD_EDGE("");
+
 
 //gauss textures consts
 double GAUSS_TEXTURE_PI = 3.1415926535897;

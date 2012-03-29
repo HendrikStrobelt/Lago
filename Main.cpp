@@ -112,31 +112,8 @@ void render( void ) {
 void keyEnv(int key, int action) {
 
 	if (action == GLFW_RELEASE) {
-		if (key == GLFW_KEY_DEL) {
-			context::_renderer->_meassureCount = 0;
-			context::_renderer->_meassuring = 0;
-			context::_renderer->_time = 0;
-			context::_renderer->_timeSum = 0;
-		} else
-		if (key == GLFW_KEY_SPACE) {
-			context::_renderer->_meassuring = true;
-			context::_renderer->_time = glfwGetTime();
-			context::_renderer->changeZoom();
-		} else 
 		if (key == GLFW_KEY_ESC) {
 			context::_run = false;
-		} else 
-		if (key == '5') {
-			GLuint tex, vao, vbo, fbo;
-			glGenTextures(1, &tex);
-			glGenVertexArrays(1, &vao);
-			glGenBuffers(1, &vbo);
-			glGenFramebuffers(1, &fbo);
-				cout << "tex " << tex << " ,vao " << vao << " ,vbo " << vbo << " ,fbo " << fbo << "\n";
-			glDeleteTextures(1, &tex);
-			glDeleteVertexArrays(1, &vao);
-			glDeleteBuffers(1, &vbo);
-			glDeleteFramebuffers(1, &fbo);
 		} else 
 		if (key == GLFW_KEY_KP_ADD) {
 			context::setSideExponent(context::_sideExponent + 1);
@@ -179,68 +156,10 @@ void initGlobalConstants( void ) {
 				WINDOW_WIDTH = atoi(parameter[1].c_str());
 			} else if (parameter[0] == "WINDOW_HEIGHT") {
 				WINDOW_HEIGHT = atoi(parameter[1].c_str());
-			} else if (parameter[0] == "EDGE_HIERARCHY_FLAT") {
-				EDGE_HIERARCHY_FLAT = atoi(parameter[1].c_str());
-			} else if (parameter[0] == "MIN_COORD") {
-				MIN_COORD = atoi(parameter[1].c_str());
-			} else if (parameter[0] == "MAX_COORD") {
-				MAX_COORD = atoi(parameter[1].c_str());
-			} else if (parameter[0] == "GAUSS_TEXTURE_PI") {
-				GAUSS_TEXTURE_PI = atof(parameter[1].c_str());
-			} else if (parameter[0] == "POINT_INIT_STEP") {
-				POINT_INIT_STEP = atoi(parameter[1].c_str());
-			} else if (parameter[0] == "PARTS_INIT_STEP") {
-				PARTS_INIT_STEP = atoi(parameter[1].c_str());
-			} else if (parameter[0] == "TE_KERNEL_SIZE") {
-				TE_KERNEL_SIZE = atoi(parameter[1].c_str());
-			} else if (parameter[0] == "TE_MAX_ITERATIONS") {
-				TE_MAX_ITERATIONS = atoi(parameter[1].c_str());
-			} else if (parameter[0] == "ZOOM_BASE") {
-				ZOOM_BASE = atof(parameter[1].c_str());
-			} else if (parameter[0] == "SIDE_BASE") {
-				SIDE_BASE = atof(parameter[1].c_str());
-			} else if (parameter[0] == "ANGLE_STEP") {
-				ANGLE_STEP = atoi(parameter[1].c_str());
-			} else if (parameter[0] == "OFF_ZOOM") {
-				OFF_ZOOM = atoi(parameter[1].c_str());
-			} else if (parameter[0] == "OFF_SHRINK") {
-				OFF_SHRINK = atoi(parameter[1].c_str());
-			} else if (parameter[0] == "START_MAX_LABELS") {
-				START_MAX_LABELS = atoi(parameter[1].c_str());
-			} else if (parameter[0] == "ORDER_LABELS") {
-				ORDER_LABELS = atoi(parameter[1].c_str());
-			} else if (parameter[0] == "OL_START") {
-				OL_START = parameter[1];
-			} else if (parameter[0] == "OL_PARAM") {
-				OL_PARAM = parameter[1];
-			} else if (parameter[0] == "OL_BOX_IDENTIFIER_START") {
-				OL_BOX_IDENTIFIER_START = parameter[1];
-			} else if (parameter[0] == "OL_BOX_IDENTIFIER_END") {
-				OL_BOX_IDENTIFIER_END = parameter[1];
-			} else if (parameter[0] == "OL_BOX_CENTER_START") {
-				OL_BOX_CENTER_START = parameter[1];
-			} else if (parameter[0] == "OL_BOX_CENTER_DELIM") {
-				OL_BOX_CENTER_DELIM = parameter[1];
-			} else if (parameter[0] == "OL_BOX_CENTER_END") {
-				OL_BOX_CENTER_END = parameter[1];
-			} else if (parameter[0] == "OL_BOX_WIDTH_START") {
-				OL_BOX_WIDTH_START = parameter[1];
-			} else if (parameter[0] == "OL_BOX_WIDTH_END") {
-				OL_BOX_WIDTH_END = parameter[1];
-			} else if (parameter[0] == "OL_BOX_HEIGHT_START") {
-				OL_BOX_HEIGHT_START = parameter[1];
-			} else if (parameter[0] == "OL_BOX_HEIGHT_END") {
-				OL_BOX_HEIGHT_END = parameter[1];
-			} else if (parameter[0] == "OL_ADDITIONAL_BOX_PARAMETERS") {
-				OL_ADDITIONAL_BOX_PARAMETERS = parameter[1];
-			} else if (parameter[0] == "OL_END") {
-				OL_END = parameter[1];
-			} else if (parameter[0] == "OL_RETURN_START") {
-				OL_RETURN_START = parameter[1];
-			} else if (parameter[0] == "ORDERING_TOOL_PATH") {
-				ORDERING_TOOL_PATH = parameter[1];
-			} else if (parameter[0] == "ORDERING_TOOL_PARAMETERS") {
-				ORDERING_TOOL_PARAMETERS = parameter[1];
+			} else if (parameter[0] == "NODE_FILE_5") {
+				STANDARD_NODE = parameter[1].c_str();
+			} else if (parameter[0] == "EDGE_FILE_5") {
+				STANDARD_EDGE = parameter[1].c_str();
 			}
 		}
     }

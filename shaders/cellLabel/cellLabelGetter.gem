@@ -17,19 +17,6 @@ vec2 getTexCoordinates(vec2 screenCoordinates) {
 	return ((screenCoordinates + 1.0) / 2.0);
 }
 
-bool borderTest(vec2 screenCoords) {
-	float stepX = 2.0f / width;
-	float stepY = 2.0f / height;
-	
-	if (screenCoords.x > (1.0f - stepX) || screenCoords.x < (-1.0f + stepX) || 
-		screenCoords.y > (1.0f - stepY) || screenCoords.y < (-1.0f + stepY)) {
-		//failed border pos
-		return false;
-	} else {
-		return true;
-	}
-}
-
 void main(void) 
 {
 	int i = 0;

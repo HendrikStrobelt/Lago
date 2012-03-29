@@ -15,6 +15,7 @@ namespace context {
 	float _pixelSize;
 	Options _options;
 	ScaleOptions _scaleOptions[3];
+	GLuint _textureTestHook;
 
 	//pull
 	float _zoomFactor;

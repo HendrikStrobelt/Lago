@@ -25,6 +25,7 @@ void RenderData::weakCopyData(RenderData* target) {
 	target->_gaussTex = _gaussTex;
 	target->_evalField = _evalField;
 	target->_lineField = _lineField;
+	target->_seedField = _seedField;
 	target->_vis = _vis;
 
 	target->_foreignTextures = true;
@@ -44,12 +45,16 @@ void RenderData::clear( void ) {
 		if (_vis != -1) {
 			glDeleteTextures(1, &_vis);
 		}
+		if (_seedField != -1) {
+			glDeleteTextures(1, &_seedField);
+		}
 	}
 	_foreignTextures = false;
 
 	 _gaussTex = -1;
 	 _evalField = -1;
 	 _lineField = -1;
+	 _seedField = -1;
 	 _vis = -1;
 
 	 _maxValuesN[0] = -1;
@@ -79,6 +84,10 @@ GLuint RenderData::getEvalField( void ) {
 
 GLuint RenderData::getLineField( void ) {
 	return _lineField;
+}
+
+GLuint RenderData::getSeedField( void ) {
+	return _seedField;
 }
 
 GLuint RenderData::getVis( void ) {
@@ -122,6 +131,10 @@ void RenderData::setEvalField(GLuint tex) {
 
 void RenderData::setLineField(GLuint tex) {
 	_lineField = tex;
+}
+
+void RenderData::setSeedField(GLuint tex) {
+	_seedField = tex;
 }
 
 void RenderData::setVis(GLuint tex) {

@@ -37,23 +37,40 @@ bool FieldEvaluation::isDone( void ) {
 	return _done;
 }
 
-void FieldEvaluation::evaluate(GLuint texHandel) {
+
+#include <iostream>
+void FieldEvaluation::evaluate(GLuint texHandel, GLuint seedHandel, int pixelQuad) {
+
+	int seedWidth = _width + 2.0 * pixelQuad;
+	int seedHeight =  _height + 2.0 * pixelQuad;
+
+
 	glBindFramebuffer(GL_FRAMEBUFFER, _evalFBC->_fbo);
 		glClearColor(0, 0, 0, 0);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texHandel);
-			glBindVertexArray(_vao);
-				_shader_ptr->use();			
-					glUniform1i(_shader_ptr->getUniformLocation("srcTexture"), 0);
-					glUniform1i(_shader_ptr->getUniformLocation("width"), _width);
-					glUniform1i(_shader_ptr->getUniformLocation("height"), _height);
-					glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); 
-				_shader_ptr->unUse();
-			glBindVertexArray(0);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, seedHandel);
+				glBindVertexArray(_vao);
+					_shader_ptr->use();			
+						glUniform1i(_shader_ptr->getUniformLocation("srcTexture"), 0);
+						glUniform1i(_shader_ptr->getUniformLocation("seedTexture"), 1);
+						glUniform1i(_shader_ptr->getUniformLocation("pixelQuad"), pixelQuad);
+						glUniform1i(_shader_ptr->getUniformLocation("seedWidth"), seedWidth);
+						glUniform1i(_shader_ptr->getUniformLocation("seedHeight"), seedHeight);						
+						glUniform1i(_shader_ptr->getUniformLocation("width"), _width);
+						glUniform1i(_shader_ptr->getUniformLocation("height"), _height);
+						glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); 
+					_shader_ptr->unUse();
+				glBindVertexArray(0);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D,  0);
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D,  0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	
+
 	_done = true;
 }
 
@@ -70,6 +87,10 @@ void FieldEvaluation::createShader( void ) {
 		unis.push_back("width");
 		unis.push_back("height");
 		unis.push_back("srcTexture");
+		unis.push_back("seedTexture");
+		unis.push_back("seedWidth");
+		unis.push_back("seedHeight");
+		unis.push_back("pixelQuad");
 
 		_shader_ptr = new GLSLShader(attribs, unis, "shaders/fieldEvaluation/FieldEvaluation.vert", "shaders/fieldEvaluation/FieldEvaluation.frag");
 	}

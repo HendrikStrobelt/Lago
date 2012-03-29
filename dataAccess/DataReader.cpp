@@ -47,13 +47,19 @@ void DataReader::setNodeFile(string filePath) {
 	fopen_s(&_nodeFile, filePath.c_str(), "r");
 	if (_nodeFile) {
 		fgets(_line, sizeof(_line), _nodeFile); //read first line
+		//remove \n and \r at the end
+		char* c = strrchr(_line, '\r');
+		if (c) {*c = '\0';}
+		c = strrchr(_line, '\n');
+		if (c) { *c = '\0';}
+
 		bool foundX = false;
 		bool foundY = false;
 		
 		int i = 0;
-		char* token = strtok(_line,",");
+		char* token = strtok(_line,",\r\n");
 		while (token != NULL) {
-			if (strcmp(token, "X") == 0) {
+  			if (strcmp(token, "X") == 0) {
 				_nodeCols[X] = i;
 				foundX = true;
 			} else 
@@ -111,6 +117,12 @@ void DataReader::setEdgeFile(string filePath) {
 	fopen_s(&_edgeFile, filePath.c_str(), "r");
 	if (_edgeFile) {
 		fgets(_line, sizeof(_line), _edgeFile); //read first line
+		//remove \n and \r at the end
+		char* c = strrchr(_line, '\r');
+		if (c) {*c = '\0';}
+		c = strrchr(_line, '\n');
+		if (c) { *c = '\0';}
+
 		bool foundN1 = false;
 		bool foundN2 = false;
 		

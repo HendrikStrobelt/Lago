@@ -26,6 +26,8 @@ class WorkStateHelper {
 		FieldEvaluation* _fieldEvaluator[2];
 		DividedLinePainter* _linePainter;
 
+		int _quadPixel;
+
 	private:
 		bool _edgesPreprocessed;
 		Renderer* _r;

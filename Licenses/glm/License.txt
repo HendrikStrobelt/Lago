@@ -1,6 +1,4 @@
 According to the homepage under MIT license.
-But the link is on the glm page is broken. However following the MIT License.
-
 
 Copyright (c) <year> <copyright holders>
 

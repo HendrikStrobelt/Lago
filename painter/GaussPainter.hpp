@@ -10,10 +10,21 @@
 
 #define EX_QUAD_SIDE 6
 
+enum EXAMINER_GEM {VIEW_FIELD, OFF_FIELD};
+
+struct ExaminerGeometry {
+	int _exQuads;
+	int _offWidth;
+	int _offHeight;
+	GLuint _pointVao;
+	GLuint _pointVbo;
+	ExaminerGeometry() : _exQuads(0), _offWidth(0), _offHeight(0), _pointVao(-1), _pointVbo(-1){};
+};
+
 class GaussPainter : public ISplitablePainter {
 
 	public:
-		GaussPainter(GLuint nodeVBO, int width, int height, int elementCount);
+		GaussPainter(GLuint nodeVBO, int width, int height, int elementCount, EXAMINER_GEM fieldType);
 		~GaussPainter( void );
 	
 		void setBaseVars(glm::mat4 MVP, float quadSideLength, int pixelQuad, int nodeDepth);
@@ -26,6 +37,9 @@ class GaussPainter : public ISplitablePainter {
 		GLuint getWorkingTexture( void );
 		GLuint detachTexture( void );
 
+		GLuint detachSeedTexture( void );
+		GLuint getSeedTexture( void );
+
 		//static clean up
 		static void cleanUp( void );
 
@@ -36,6 +50,8 @@ class GaussPainter : public ISplitablePainter {
 		static void createShader( void );
 		static void loadTexturesOnce( void );
 		
+		static ExaminerGeometry _exGeometry[2];
+
 		void renderGauss(int start, int count);
 		void initVao(GLuint vbo);
 		void initPointVao( void );
@@ -47,18 +63,11 @@ class GaussPainter : public ISplitablePainter {
 
 		FrameBufferContainer* _fbc;
 		FrameBufferContainer* _fbcPoint;
-
-		static int _offWidth;
-		static int _offHeight;
-		static GLuint _pointVao;
-		static GLuint _pointVbo;
 				
 		glm::mat4 _MVP;
 		float _quadSideLength;
 		int _nodeDepth;
-
-		static int _exQuads;
-
+		EXAMINER_GEM _fieldType;
 
 		GLuint _vao;
 };
