@@ -197,6 +197,8 @@ namespace envHelper {
 			error = true;
 		}
 
+		glfwSetWindowTitle("LaGO");
+
 		while (error) {};
 
 	}

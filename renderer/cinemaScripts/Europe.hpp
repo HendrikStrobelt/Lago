@@ -5,6 +5,7 @@ namespace EuropeScript {
 	void setScript(Cinema* cinema) {
 
 		double time = 0;
+
 		cinema->addPanning(time, -7.97673, 8.74045);
 		cinema->addSideChange(time, 11);
 		cinema->addZoomChange(time, 3);
