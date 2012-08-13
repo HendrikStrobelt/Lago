@@ -39,7 +39,7 @@ context::DummyContextListener _contextListener;
 Connection _syncConnection;
 
 
-#include "renderer\cinemaScripts\Smile.hpp"
+#include "renderer\cinemaScripts\TestScript1.hpp"
 
 int main( int argc, const char* argv[] ) {
 	//load parameters
@@ -59,7 +59,7 @@ int main( int argc, const char* argv[] ) {
 	glfwSetMouseWheel(0);
 	context::_run = true;
 	_cinPtr = new Cinema();
-	SmileScript::setScript(_cinPtr);
+	testScript1::setScript(_cinPtr);
 
 	while (context::_run) {
 		render();
