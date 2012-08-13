@@ -1,0 +1,68 @@
+#version 330
+#extension GL_EXT_geometry_shader4: enable
+
+layout(points) in;
+layout(triangle_strip, max_vertices = 144) out;
+
+uniform float sideFactor;
+uniform mat4 MVP;
+
+uniform sampler2D pointTexture;
+uniform int width;
+uniform int height;
+
+flat out float fWeight;
+out vec2 vTexCoord;
+
+
+void main(void) 
+{
+	int k = 0;
+
+	for (int y = 0; y < 6; y++) {
+		for (int x = 0; x < 6; x++) {
+
+
+			vec2 texCoord = gl_PositionIn[k].xy + vec2(0.5f,0.5f) + vec2(x,y);
+			texCoord = texCoord / vec2(width, height);
+
+			vec3 posWeight = texture(pointTexture, texCoord).rgb;
+			float weight = posWeight.b;
+			vec2 worldPos = posWeight.rg / vec2(weight, weight);
+
+			if (weight > 0.0f && texCoord.x <= 1.0f && texCoord.y <= 1.0f) {
+
+				vec4 sides = MVP * vec4(sideFactor, sideFactor, 0.0, 0.0);
+				vec4 pos = MVP * vec4(worldPos, 0, 1);
+
+				//left upper
+				gl_Position = pos + vec4(-sides.x, sides.y, 0.0, 0.0);
+				vTexCoord = vec2(0.0, 0.0);
+				fWeight = weight;
+				EmitVertex();
+
+				//left lower
+				gl_Position = pos + vec4(-sides.x, -sides.y, 0.0, 0.0);
+				vTexCoord = vec2(0.0, 1.0);
+				fWeight = weight;
+				EmitVertex();
+
+				//right upper
+				gl_Position = pos + vec4(sides.x, sides.y, 0.0, 0.0);
+				vTexCoord = vec2(1.0, 0.0);
+				fWeight = weight;
+				EmitVertex();
+
+				//right lower
+				gl_Position = pos + vec4(sides.x, -sides.y, 0.0, 0.0);
+				vTexCoord = vec2(1.0, 1.0);
+				fWeight = weight;
+				EmitVertex();
+
+				//finish
+				EndPrimitive();
+
+			}
+		}
+	}
+}

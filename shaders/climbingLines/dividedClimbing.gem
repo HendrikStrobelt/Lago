@@ -1,0 +1,49 @@
+#version 330
+#extension GL_EXT_geometry_shader4: enable
+
+layout(points) in;
+layout(line_strip, max_vertices = 2) out;
+
+in vec4 gVertex2[];
+in int gAlpha[];
+in float gWeight[];
+
+uniform float lowerBorder;
+uniform float stepWidth;
+
+flat out float fWeight;
+flat out int fPos;
+
+void main(void) 
+{
+	int i = 0;
+
+    if (gAlpha[i] >= lowerBorder && gAlpha[i] < (lowerBorder + 4 * stepWidth)) {
+	
+		int pos;
+		if (gAlpha[i] < (lowerBorder + stepWidth)) {
+			pos = 0;
+		} else
+		if (gAlpha[i] < (lowerBorder + 2 * stepWidth)) {
+			pos = 1;
+		} else 
+		if (gAlpha[i] < (lowerBorder + 3 * stepWidth)) {
+			pos = 2;
+		} else {
+			pos = 3;
+		}
+
+		gl_Position = gl_PositionIn[i];
+		fWeight = gWeight[i];
+		fPos = pos;
+		EmitVertex();
+
+		gl_Position = gVertex2[i];
+		fWeight = gWeight[i];
+		fPos = pos;
+		EmitVertex();
+
+		//finish
+		EndPrimitive();
+	}
+}

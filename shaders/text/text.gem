@@ -1,0 +1,86 @@
+#version 330
+#extension GL_EXT_geometry_shader4: enable
+
+layout(points) in;
+layout(triangle_strip, max_vertices = 4) out;
+
+in vec4 gCoord1[];
+in vec4 gCoord2[];
+in vec4 gTexCoord1[];
+in vec4 gTexCoord2[];
+in float gWeight[];
+
+uniform mat4 S;
+uniform vec2 pixelShift;
+
+uniform bool linearMode;
+uniform vec4 pointsX;
+uniform vec4 pointsY;
+uniform float exponent;
+
+out float fWeight;
+out vec2 fTexCoord;
+
+float scale(float normedVal) {
+	if (linearMode) {
+		//linear mode
+		
+		if (normedVal == 1.0f) {
+			//avoid 0 division
+			return 1.0f;
+		} else {
+			if (normedVal >= pointsX.a) {
+				return mix(pointsY.a, 1.0, ((normedVal - pointsX.a) / (1.0f - pointsX.a)));
+			} else 
+			if (normedVal >= pointsX.b) {
+				return mix(pointsY.b, pointsY.a, ((normedVal - pointsX.b) / (pointsX.a - pointsX.b)));
+			} else 
+			if (normedVal >= pointsX.g) {
+				return mix(pointsY.g, pointsY.b, ((normedVal - pointsX.g) / (pointsX.b - pointsX.g)));
+			} else 
+			if (normedVal >= pointsX.r) {
+				return mix(pointsY.r, pointsY.g, ((normedVal - pointsX.r) / (pointsX.g - pointsX.r)));
+			} else {
+				return mix(0.0f, pointsY.r, (normedVal / pointsX.r));
+			}
+		}
+	} else {
+		//exponential mode
+		return pow(normedVal, exponent); 	
+	}
+}
+
+
+
+void main(void) 
+{
+		int i = 0;
+
+		float weight = scale(gWeight[i]);
+
+		//v1
+		gl_Position = S * vec4(gCoord1[i].xy + pixelShift,0,1);
+		fWeight = weight;
+		fTexCoord = gTexCoord1[i].xy;
+		EmitVertex();
+
+		//v2
+		gl_Position = S * vec4(gCoord1[i].zw + pixelShift,0,1);
+		fWeight = weight;
+		fTexCoord = gTexCoord1[i].zw;
+		EmitVertex();
+
+		//v3
+		gl_Position = S * vec4(gCoord2[i].xy + pixelShift,0,1);
+		fWeight = weight;
+		fTexCoord = gTexCoord2[i].xy;
+		EmitVertex();
+
+		//v4
+		gl_Position = S * vec4(gCoord2[i].zw + pixelShift,0,1);
+		fWeight = weight;
+		fTexCoord = gTexCoord2[i].zw;
+		EmitVertex();
+
+		EndPrimitive();
+}
