@@ -43,7 +43,7 @@ namespace context {
 
 		void setSideExponent(int newSideExponent);
 		void setZoomExponent(int newZoomExponent);
-		void setDataSet(string nodeFile, string edgeFile="");
+		void setNewData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges, vector<Label>* nodeLabels, bool withNodeWeights);
 		void visParameterChange( void );
 
 		void updateWorldTranslate(int xMouseMove, int yMouseMove);

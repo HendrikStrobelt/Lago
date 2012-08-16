@@ -77,8 +77,8 @@ void WorkStateHelper::takeOver( void ) {
 	resetAll();
 	glm::mat4 MVP = _r->getStandardMVP();
 
-	int joinDepth = _r->_dCache.getNodeStructureInfo()->getJoinDepth(context::_pixelSize);
-	int nodeElements = _r->_dCache.getNodeStructureInfo()->getAllNodes(joinDepth);
+	int joinDepth = _r->_dStore.getNodeStructureInfo()->getJoinDepth(context::_pixelSize);
+	int nodeElements = _r->_dStore.getNodeStructureInfo()->getAllNodes(joinDepth);
 
 
 	float sideLength = context::_pixelSize * pow(SIDE_BASE, context::_sideExponent);
@@ -98,10 +98,10 @@ void WorkStateHelper::takeOver( void ) {
 
 	if (_r->_hasEdges) {
 		_edgesPreprocessed = false;
-		int edgeElements = _r->_dCache.getEdgeStructureInfo()->getAllEdges(joinDepth);
+		int edgeElements = _r->_dStore.getEdgeStructureInfo()->getAllEdges(joinDepth);
 		
 		//gauss off
-		glm::mat4 P2 = cameraHelper::calculateProjection(_r->_dCache.getNodeStructureInfo(), context::_zoomFactor / (OFF_ZOOM * OFF_SHRINK));
+		glm::mat4 P2 = cameraHelper::calculateProjection(_r->_dStore.getNodeStructureInfo(), context::_zoomFactor / (OFF_ZOOM * OFF_SHRINK));
 		glm::mat4 MVP2 = glm::translate(P2, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
 
 		_gaussPainter[OFF] = new GaussPainter(_r->_nodeVBO, (_r->_windowWidth / OFF_SHRINK), (_r->_windowHeight / OFF_SHRINK), nodeElements, OFF_FIELD);

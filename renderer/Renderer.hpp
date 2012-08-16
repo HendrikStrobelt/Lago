@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include <GL/glfw.h>
 
-#include "..\DataCache.hpp"
+#include "..\DataStore.hpp"
 #include "RenderData.hpp"
 #include "IRenderData.hpp"
 #include "IRenderState.hpp"
@@ -48,11 +48,12 @@ class Renderer : public IRenderState {
 		void takeOver( void );
 		void changePanning(int xMouseMove, int yMouseMove);
 		void changeZoom( void );
-		void changeData(string nodeFile, string edgeFile="");
+		void changeData( void );
 		void changeSideLength( void );
 		void changeWindow( void );
 		void changeVisParameter( void );
 
+		void setNewData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges, vector<Label>* nodeLabels, bool withNodeWeights, bool silent = false);
 		bool _hasEdges;
 
 		bool _meassuring;
@@ -61,7 +62,7 @@ class Renderer : public IRenderState {
 		double _timeSum;
 	private:
 
-		DataCache _dCache;
+		DataStore _dStore;
 
 		RenderData* _currentData;
 		RenderData* _newData;
@@ -80,6 +81,7 @@ class Renderer : public IRenderState {
 		InitialWork* _initalWork;
 		Working* _working;
 		VisAdjusting* _visAdjust;
+		vector<Node>* _initNodes;
 
 		//Painter
 		ProgressbarPainter _progressBar;
@@ -91,7 +93,6 @@ class Renderer : public IRenderState {
 		LabelPainter _labelPainter;
 		//
 
-		void setNewData(string nodeFile, string edgeFile="");
 		glm::mat4 getStandardMVP( void );
 
 		void setState(IRenderState* state);

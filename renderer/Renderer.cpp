@@ -18,8 +18,13 @@ Renderer::Renderer( void ) {
 	context::getWindowSize(&_windowWidth, &_windowHeight);
 
 	//load initial data
-	setNewData("_Data/LineNode.out");
-	context::_pixelSize = cameraHelper::getPixelSize(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+	_initNodes = new vector<Node>();
+	_initNodes->push_back(Node(0,0,1));
+	_initNodes->push_back(Node(2,0,1));
+	_initNodes->push_back(Node(1,1,1));
+	_initNodes->push_back(Node(1,-1,1));
+	setNewData(_initNodes, NULL, NULL, false, true);
+	context::_pixelSize = cameraHelper::getPixelSize(_dStore.getNodeStructureInfo(), context::_zoomFactor);
 
 	_mouseMoveX = 0;
 	_mouseMoveY = 0;
@@ -43,6 +48,7 @@ Renderer::~Renderer( void ) {
 	glDeleteBuffers(1, &_edgeVBO);
 	glDeleteBuffers(1, &_edgeProcessedVBO);
 
+	delete _initNodes;
 	delete _currentData;
 	delete _newData;
 	delete _idle;
@@ -68,11 +74,11 @@ void Renderer::lockClick( void ) {
 
 void Renderer::rightClick(int x, int y) {
 	vector<int>* ids = _cellLabelGetter->getLabelIndices(x, y, _currentData->getEvalField(), _currentData->getGaussTex(), getStandardMVP());
-	_labelSelectionPainter.setData(ids, _dCache.getIndexedLabels(), x, y);
+	_labelSelectionPainter.setData(ids, _dStore.getIndexedLabels(), x, y);
 }
 
 void Renderer::labelClick(bool add, int id) {
-	Label l = _dCache.getIndexedLabels()->at(id);
+	Label l = _dStore.getIndexedLabels()->at(id);
 	if (add) {
 		_labelPainter.addLabel(getStandardMVP(), l);
 	} else {
@@ -88,21 +94,20 @@ void Renderer::setState(IRenderState* state) {
 	_state->takeOver();
 }
 
-void Renderer::setNewData(string nodeFile, string edgeFile) {
-	_dCache.loadDataSet(nodeFile, edgeFile);
+void Renderer::setNewData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges, vector<Label>* nodeLabels, bool withNodeWeights, bool silent) {
+	_dStore.setData(nodes, refEdges, nodeLabels, withNodeWeights);
 
 	delete _cellLabelGetter;
-
 	int nodeCount;
-	const PackedNode* packedNodes = _dCache.getPackedNodes(&nodeCount);
+	const PackedNode* packedNodes = _dStore.getPackedNodes(&nodeCount);
 	glBindBuffer(GL_ARRAY_BUFFER, _nodeVBO);
 		glBufferData(GL_ARRAY_BUFFER, nodeCount * sizeof(PackedNode), packedNodes, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	if (!edgeFile.empty()) {
+	if (_dStore.hasEdges()) {
 		_hasEdges = true;
 		int edgeCount;
-		const PackedEdge* packedEdges = _dCache.getPackedEdges(&edgeCount);
+		const PackedEdge* packedEdges = _dStore.getPackedEdges(&edgeCount);
 		glBindBuffer(GL_ARRAY_BUFFER, _edgeVBO);
 			glBufferData(GL_ARRAY_BUFFER, edgeCount * sizeof(PackedEdge), packedEdges, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, _edgeProcessedVBO);
@@ -113,12 +118,16 @@ void Renderer::setNewData(string nodeFile, string edgeFile) {
 		_hasEdges = false;
 	}
 
-	_cellLabelGetter = new CellLabelGetter(_nodeVBO, _dCache.getNodeStructureInfo()->getAllNodes(_dCache.getNodeStructureInfo()->getMaxDepth()));
+	_cellLabelGetter = new CellLabelGetter(_nodeVBO, _dStore.getNodeStructureInfo()->getAllNodes(_dStore.getNodeStructureInfo()->getMaxDepth()));
+
+	if (!silent) {
+		changeData();
+	}
 }	
 
 
 glm::mat4 Renderer::getStandardMVP( void ) {
-	glm::mat4 P = cameraHelper::calculateProjection(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+	glm::mat4 P = cameraHelper::calculateProjection(_dStore.getNodeStructureInfo(), context::_zoomFactor);
 	glm::mat4 MVP = glm::translate(P, glm::vec3(context::_worldTransX, context::_worldTransY, 0.0f));
 
 	return MVP;
@@ -156,7 +165,7 @@ void Renderer::renderLabelSelection(IRenderData* rData, int xMove, int yMove) {
 }
 
 void Renderer::renderLabels(IRenderData* rData, int xMove, int yMove) {
-	if (_dCache.hasLabels() && 	context::_options._showLabels)  {
+	if (_dStore.hasLabels() && 	context::_options._showLabels)  {
 		_labelPainter.renderLabels(xMove, yMove);
 	}
 }
@@ -200,18 +209,17 @@ void Renderer::changePanning(int xMouseMove, int yMouseMove) {
 }
 
 void Renderer::changeZoom( void ) {
- 	context::_pixelSize = cameraHelper::getPixelSize(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+ 	context::_pixelSize = cameraHelper::getPixelSize(_dStore.getNodeStructureInfo(), context::_zoomFactor);
 	_labelSelectionPainter.clear();
 	_state->changeZoom();
 }
 
-void Renderer::changeData(string nodeFile, string edgeFile) {
-	setNewData(nodeFile, edgeFile);
-	context::_pixelSize = cameraHelper::getPixelSize(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+void Renderer::changeData( void ) {
+	context::_pixelSize = cameraHelper::getPixelSize(_dStore.getNodeStructureInfo(), context::_zoomFactor);
 	context::_options._lock = false;
 	_labelSelectionPainter.clear();
 	_labelPainter.clear();
-	_state->changeData(nodeFile, edgeFile);
+	_state->changeData();
 }
 
 void Renderer::changeSideLength( void ) {
@@ -221,7 +229,7 @@ void Renderer::changeSideLength( void ) {
 
 void Renderer::changeWindow( void ) {
 	context::getWindowSize(&_windowWidth, &_windowHeight);
-	context::_pixelSize = cameraHelper::getPixelSize(_dCache.getNodeStructureInfo(), context::_zoomFactor);
+	context::_pixelSize = cameraHelper::getPixelSize(_dStore.getNodeStructureInfo(), context::_zoomFactor);
 	_labelSelectionPainter.resize(_windowWidth, _windowHeight);
 	_labelSelectionPainter.clear();
 	_state->changeWindow();

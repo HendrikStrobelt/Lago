@@ -48,7 +48,6 @@ namespace context {
 
 	void init() {
 		clearRenderVariables();
-		addKeyEventListener(&_options);
 		_options.init();
 		_renderer = new Renderer;
 	}
@@ -143,9 +142,9 @@ namespace context {
 		_renderer->changeZoom();
 	}
 
-	void setDataSet(string nodeFile, string edgeFile) {
+	void setNewData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges, vector<Label>* nodeLabels, bool withNodeWeights) {
 		clearRenderVariables();
-		_renderer->changeData(nodeFile, edgeFile);
+		_renderer->setNewData(nodes, refEdges, nodeLabels, withNodeWeights);
 	}
 
 	void visParameterChange( void ) {

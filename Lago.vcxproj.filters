@@ -1,0 +1,398 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Quelldateien">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Headerdateien">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Ressourcendateien">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Headerdateien\connection">
+      <UniqueIdentifier>{9c4e0d87-e67b-4903-a188-d587f35fe455}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\connection">
+      <UniqueIdentifier>{ca3ceaaf-730e-4c62-9f38-b6e5b72757c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\context">
+      <UniqueIdentifier>{904de5d0-397c-4f14-a880-4cb8b296144a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\context">
+      <UniqueIdentifier>{91819b92-268f-4c43-8334-eb33d5f67a03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\dataAccess">
+      <UniqueIdentifier>{946ed035-ff41-4a35-bc12-7841ace5120a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\dataAccess">
+      <UniqueIdentifier>{a16a2477-0437-4873-9430-8844d2eae595}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\helper">
+      <UniqueIdentifier>{79e23393-b54e-45ae-885c-933890ab6083}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\helper">
+      <UniqueIdentifier>{544a9c0c-9417-4ea1-a919-d6b63e9332fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\helper\execStream">
+      <UniqueIdentifier>{8724b391-e36b-403e-a196-5235f578a0f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\helper\execStream">
+      <UniqueIdentifier>{4625aeb9-6574-4689-8475-1d11270434e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\painter">
+      <UniqueIdentifier>{f35b015e-658b-4358-a23a-01bb6d436d09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\painter">
+      <UniqueIdentifier>{1802696e-f7c6-46de-878a-d396b5e75b37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\renderer">
+      <UniqueIdentifier>{c96d8890-ebe8-4839-8e7d-967eb22dd70b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\renderer">
+      <UniqueIdentifier>{d56353e2-1718-4b57-8222-22655a47f93c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\renderer\states">
+      <UniqueIdentifier>{5e5f6608-ae71-4db2-a327-54a7b3d9391a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\renderer\states">
+      <UniqueIdentifier>{0ff0d7ee-8a55-4fb2-b58f-734236583ab3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\text">
+      <UniqueIdentifier>{cf13f11a-7519-4197-87f2-80d206536ab9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\text">
+      <UniqueIdentifier>{87600789-1f4a-47e9-bb60-1b42512ce027}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ressourcendateien\gaussRenderer">
+      <UniqueIdentifier>{827ae6bf-4c24-4694-9202-2b88fea3d7af}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GlobalConstants.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="connection\Connection.cpp">
+      <Filter>Quelldateien\connection</Filter>
+    </ClCompile>
+    <ClCompile Include="connection\ServerClient.cpp">
+      <Filter>Quelldateien\connection</Filter>
+    </ClCompile>
+    <ClCompile Include="context\Context.cpp">
+      <Filter>Quelldateien\context</Filter>
+    </ClCompile>
+    <ClCompile Include="context\Options.cpp">
+      <Filter>Quelldateien\context</Filter>
+    </ClCompile>
+    <ClCompile Include="context\ScaleOptions.cpp">
+      <Filter>Quelldateien\context</Filter>
+    </ClCompile>
+    <ClCompile Include="dataAccess\DataReader.cpp">
+      <Filter>Quelldateien\dataAccess</Filter>
+    </ClCompile>
+    <ClCompile Include="dataAccess\EdgeHierarchy.cpp">
+      <Filter>Quelldateien\dataAccess</Filter>
+    </ClCompile>
+    <ClCompile Include="dataAccess\EdgeStructureInfoContainer.cpp">
+      <Filter>Quelldateien\dataAccess</Filter>
+    </ClCompile>
+    <ClCompile Include="dataAccess\NodeStructureInfoContainer.cpp">
+      <Filter>Quelldateien\dataAccess</Filter>
+    </ClCompile>
+    <ClCompile Include="dataAccess\QuadTree.cpp">
+      <Filter>Quelldateien\dataAccess</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\CameraHelper.cpp">
+      <Filter>Quelldateien\helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\EnvironmentHelper.cpp">
+      <Filter>Quelldateien\helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\FrameBufferContainer.cpp">
+      <Filter>Quelldateien\helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\GLSLShader.cpp">
+      <Filter>Quelldateien\helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\LabelOrderCom.cpp">
+      <Filter>Quelldateien\helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\MouseHandler.cpp">
+      <Filter>Quelldateien\helper</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\execStream\exec-stream.cpp">
+      <Filter>Quelldateien\helper\execStream</Filter>
+    </ClCompile>
+    <ClCompile Include="painter\VisPainter.cpp">
+      <Filter>Quelldateien\painter</Filter>
+    </ClCompile>
+    <ClCompile Include="painter\DisplayConvertPainter.cpp">
+      <Filter>Quelldateien\painter</Filter>
+    </ClCompile>
+    <ClCompile Include="painter\DividedLinePainter.cpp">
+      <Filter>Quelldateien\painter</Filter>
+    </ClCompile>
+    <ClCompile Include="painter\GaussPainter.cpp">
+      <Filter>Quelldateien\painter</Filter>
+    </ClCompile>
+    <ClCompile Include="painter\LabelPainter.cpp">
+      <Filter>Quelldateien\painter</Filter>
+    </ClCompile>
+    <ClCompile Include="painter\LabelSelectionPainter.cpp">
+      <Filter>Quelldateien\painter</Filter>
+    </ClCompile>
+    <ClCompile Include="painter\ProgressbarPainter.cpp">
+      <Filter>Quelldateien\painter</Filter>
+    </ClCompile>
+    <ClCompile Include="painter\ScalingPainter.cpp">
+      <Filter>Quelldateien\painter</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\CellLabelGetter.cpp">
+      <Filter>Quelldateien\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\FieldEvaluation.cpp">
+      <Filter>Quelldateien\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\PainterCommander.cpp">
+      <Filter>Quelldateien\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\RenderBlendData.cpp">
+      <Filter>Quelldateien\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\RenderData.cpp">
+      <Filter>Quelldateien\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\Renderer.cpp">
+      <Filter>Quelldateien\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\TextureExaminer.cpp">
+      <Filter>Quelldateien\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\states\Idle.cpp">
+      <Filter>Quelldateien\renderer\states</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\states\InitialWork.cpp">
+      <Filter>Quelldateien\renderer\states</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\states\VisAdjusting.cpp">
+      <Filter>Quelldateien\renderer\states</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\states\Working.cpp">
+      <Filter>Quelldateien\renderer\states</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\states\WorkStateHelper.cpp">
+      <Filter>Quelldateien\renderer\states</Filter>
+    </ClCompile>
+    <ClCompile Include="text\PreparedText.cpp">
+      <Filter>Quelldateien\text</Filter>
+    </ClCompile>
+    <ClCompile Include="text\RenderedGlyph.cpp">
+      <Filter>Quelldateien\text</Filter>
+    </ClCompile>
+    <ClCompile Include="text\TextRenderer.cpp">
+      <Filter>Quelldateien\text</Filter>
+    </ClCompile>
+    <ClCompile Include="dataAccess\FlatNodeContainer.cpp">
+      <Filter>Quelldateien\dataAccess</Filter>
+    </ClCompile>
+    <ClCompile Include="dataAccess\FlatEdgeContainer.cpp">
+      <Filter>Quelldateien\dataAccess</Filter>
+    </ClCompile>
+    <ClCompile Include="connection\Server.cpp">
+      <Filter>Quelldateien\connection</Filter>
+    </ClCompile>
+    <ClCompile Include="DataStore.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Edge.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalConstants.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Label.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Node.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="context\Context.hpp">
+      <Filter>Headerdateien\context</Filter>
+    </ClInclude>
+    <ClInclude Include="context\IContextListener.hpp">
+      <Filter>Headerdateien\context</Filter>
+    </ClInclude>
+    <ClInclude Include="context\Options.hpp">
+      <Filter>Headerdateien\context</Filter>
+    </ClInclude>
+    <ClInclude Include="context\ScaleOptions.hpp">
+      <Filter>Headerdateien\context</Filter>
+    </ClInclude>
+    <ClInclude Include="dataAccess\DataReader.hpp">
+      <Filter>Headerdateien\dataAccess</Filter>
+    </ClInclude>
+    <ClInclude Include="dataAccess\EdgeHierarchy.hpp">
+      <Filter>Headerdateien\dataAccess</Filter>
+    </ClInclude>
+    <ClInclude Include="dataAccess\EdgeStructureInfoContainer.hpp">
+      <Filter>Headerdateien\dataAccess</Filter>
+    </ClInclude>
+    <ClInclude Include="dataAccess\FlatEdgeContainer.hpp">
+      <Filter>Headerdateien\dataAccess</Filter>
+    </ClInclude>
+    <ClInclude Include="dataAccess\FlatNodeContainer.hpp">
+      <Filter>Headerdateien\dataAccess</Filter>
+    </ClInclude>
+    <ClInclude Include="dataAccess\NodeStructureInfoContainer.hpp">
+      <Filter>Headerdateien\dataAccess</Filter>
+    </ClInclude>
+    <ClInclude Include="dataAccess\QuadTree.hpp">
+      <Filter>Headerdateien\dataAccess</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\CameraHelper.hpp">
+      <Filter>Headerdateien\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\Dumping.hpp">
+      <Filter>Headerdateien\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\EnvironmentHelper.hpp">
+      <Filter>Headerdateien\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\FrameBufferContainer.hpp">
+      <Filter>Headerdateien\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\GLSLShader.hpp">
+      <Filter>Headerdateien\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\LabelOrderCom.hpp">
+      <Filter>Headerdateien\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\MouseHandler.hpp">
+      <Filter>Headerdateien\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\execStream\exec-stream.h">
+      <Filter>Headerdateien\helper\execStream</Filter>
+    </ClInclude>
+    <ClInclude Include="painter\VisPainter.hpp">
+      <Filter>Headerdateien\painter</Filter>
+    </ClInclude>
+    <ClInclude Include="painter\DisplayConvertPainter.hpp">
+      <Filter>Headerdateien\painter</Filter>
+    </ClInclude>
+    <ClInclude Include="painter\DividedLinePainter.hpp">
+      <Filter>Headerdateien\painter</Filter>
+    </ClInclude>
+    <ClInclude Include="painter\GaussPainter.hpp">
+      <Filter>Headerdateien\painter</Filter>
+    </ClInclude>
+    <ClInclude Include="painter\ISplitablePainter.hpp">
+      <Filter>Headerdateien\painter</Filter>
+    </ClInclude>
+    <ClInclude Include="painter\LabelPainter.hpp">
+      <Filter>Headerdateien\painter</Filter>
+    </ClInclude>
+    <ClInclude Include="painter\LabelSelectionPainter.hpp">
+      <Filter>Headerdateien\painter</Filter>
+    </ClInclude>
+    <ClInclude Include="painter\ProgressbarPainter.hpp">
+      <Filter>Headerdateien\painter</Filter>
+    </ClInclude>
+    <ClInclude Include="painter\ScalingPainter.hpp">
+      <Filter>Headerdateien\painter</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\CellLabelGetter.hpp">
+      <Filter>Headerdateien\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\FieldEvaluation.hpp">
+      <Filter>Headerdateien\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\IRenderData.hpp">
+      <Filter>Headerdateien\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\IRenderState.hpp">
+      <Filter>Headerdateien\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\PainterCommander.hpp">
+      <Filter>Headerdateien\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\RenderBlendData.hpp">
+      <Filter>Headerdateien\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\RenderData.hpp">
+      <Filter>Headerdateien\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\Renderer.hpp">
+      <Filter>Headerdateien\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\TextureExaminer.hpp">
+      <Filter>Headerdateien\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\states\Idle.hpp">
+      <Filter>Headerdateien\renderer\states</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\states\InitialWork.hpp">
+      <Filter>Headerdateien\renderer\states</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\states\VisAdjusting.hpp">
+      <Filter>Headerdateien\renderer\states</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\states\Working.hpp">
+      <Filter>Headerdateien\renderer\states</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\states\WorkStateHelper.hpp">
+      <Filter>Headerdateien\renderer\states</Filter>
+    </ClInclude>
+    <ClInclude Include="text\PreparedText.hpp">
+      <Filter>Headerdateien\text</Filter>
+    </ClInclude>
+    <ClInclude Include="text\RenderedGlyph.hpp">
+      <Filter>Headerdateien\text</Filter>
+    </ClInclude>
+    <ClInclude Include="text\TextRenderer.hpp">
+      <Filter>Headerdateien\text</Filter>
+    </ClInclude>
+    <ClInclude Include="connection\Client.hpp">
+      <Filter>Headerdateien\connection</Filter>
+    </ClInclude>
+    <ClInclude Include="connection\Connection.hpp">
+      <Filter>Headerdateien\connection</Filter>
+    </ClInclude>
+    <ClInclude Include="connection\ServerClient.hpp">
+      <Filter>Headerdateien\connection</Filter>
+    </ClInclude>
+    <ClInclude Include="connection\Server.hpp">
+      <Filter>Headerdateien\connection</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStore.hpp">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\gaussRenderer\gaussPointShader.frag">
+      <Filter>Ressourcendateien\gaussRenderer</Filter>
+    </None>
+    <None Include="shaders\gaussRenderer\gaussPointShader.gem">
+      <Filter>Ressourcendateien\gaussRenderer</Filter>
+    </None>
+    <None Include="shaders\gaussRenderer\gaussPointShader.vert">
+      <Filter>Ressourcendateien\gaussRenderer</Filter>
+    </None>
+    <None Include="shaders\gaussRenderer\gaussShader.frag">
+      <Filter>Ressourcendateien\gaussRenderer</Filter>
+    </None>
+    <None Include="shaders\gaussRenderer\gaussShader.gem">
+      <Filter>Ressourcendateien\gaussRenderer</Filter>
+    </None>
+    <None Include="shaders\gaussRenderer\gaussShader.vert">
+      <Filter>Ressourcendateien\gaussRenderer</Filter>
+    </None>
+  </ItemGroup>
+</Project>

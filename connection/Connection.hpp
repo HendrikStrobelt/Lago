@@ -1,7 +1,7 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include "Client.hpp"
+#include "Server.hpp"
 #include <string>
 #include <vector>
 #include <map>
@@ -12,14 +12,16 @@ class Connection {
 		Connection( void );
 		~Connection( void );
 
+		bool isConnected();
 		bool sync( void );
-		void Connection::connect( void ); //connects / reconnects to the server
+		void waitForClient( void );
+		void loadData( void );
 
 	private:
 		map<string, string> extractData(string input);
 		string extractCommand(string input);
 		
-		Client _con;
+		Server _server;
 
 };
 

@@ -443,7 +443,7 @@ RenderedGlyph* TextRenderer::renderGlyph(char c) {
 
 
 void TextRenderer::fillAlphabet( void ) {
-	_CHARS = 75;
+	_CHARS = 74;
 	_ALPHABET = new char[_CHARS];
 
 	int i = 0;

@@ -21,7 +21,7 @@ class Working : public IRenderState {
 		void takeOver( void );
 		void changePanning(int xMouseMove, int yMouseMove);
 		void changeZoom( void );
-		void changeData(string nodeFile, string edgeFile="");
+		void changeData( void );
 		void changeSideLength( void );
 		void changeWindow( void );
 		void changeVisParameter( void );

@@ -1,0 +1,238 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C7C7C884-5EE4-42AF-8CA8-FD5C5F21605B}</ProjectGuid>
+    <RootNamespace>Lago</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meinsFreeType\freetype-2.4.8\include;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_VisualLeakDetector\include;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_glm-0.9.2.0\glm-0.9.2.0;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_glfw2.7\include;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_glew1.6\include;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_boost_filesystem_1.47\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LibraryPath>C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meinsFreeType\freetype-2.4.8\_lib\win32;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_VisualLeakDetector\lib\Win32;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_glfw2.7\lib-msvc100\release;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_glew1.6\lib;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_boost_filesystem_1.47\lib32;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_glm-0.9.2.0\glm-0.9.2.0;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_glfw64_2.7.2\include;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meinsFreeType\freetype-2.4.8\include;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_VisualLeakDetector\include;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_glew64_1.7\glew-1.7.0\include;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_boost_filesystem_1.47\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LibraryPath>C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meinsFreeType\freetype-2.4.8\_lib\x64;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_VisualLeakDetector\lib\Win64;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_glfw64_2.7.2\lib\Release;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_glew64_1.7\glew-1.7.0\lib;C:\Program Files %28x86%29\Microsoft Visual Studio 10.0\_meineLibs\_meins_boost_filesystem_1.47\lib64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>OpenGL32.lib;GLFW.lib;glew32.lib;freetype248_D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>OpenGL32.lib;glew32.lib;freetype248_D.lib;glfw.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="connection\Connection.cpp" />
+    <ClCompile Include="connection\Server.cpp" />
+    <ClCompile Include="connection\ServerClient.cpp" />
+    <ClCompile Include="context\Context.cpp" />
+    <ClCompile Include="context\Options.cpp" />
+    <ClCompile Include="context\ScaleOptions.cpp" />
+    <ClCompile Include="dataAccess\DataReader.cpp" />
+    <ClCompile Include="dataAccess\EdgeHierarchy.cpp" />
+    <ClCompile Include="dataAccess\EdgeStructureInfoContainer.cpp" />
+    <ClCompile Include="dataAccess\FlatEdgeContainer.cpp" />
+    <ClCompile Include="dataAccess\FlatNodeContainer.cpp" />
+    <ClCompile Include="dataAccess\NodeStructureInfoContainer.cpp" />
+    <ClCompile Include="dataAccess\QuadTree.cpp" />
+    <ClCompile Include="DataStore.cpp" />
+    <ClCompile Include="GlobalConstants.cpp" />
+    <ClCompile Include="helper\CameraHelper.cpp" />
+    <ClCompile Include="helper\EnvironmentHelper.cpp" />
+    <ClCompile Include="helper\execStream\exec-stream.cpp" />
+    <ClCompile Include="helper\FrameBufferContainer.cpp" />
+    <ClCompile Include="helper\GLSLShader.cpp" />
+    <ClCompile Include="helper\LabelOrderCom.cpp" />
+    <ClCompile Include="helper\MouseHandler.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="painter\DisplayConvertPainter.cpp" />
+    <ClCompile Include="painter\DividedLinePainter.cpp" />
+    <ClCompile Include="painter\GaussPainter.cpp" />
+    <ClCompile Include="painter\LabelPainter.cpp" />
+    <ClCompile Include="painter\LabelSelectionPainter.cpp" />
+    <ClCompile Include="painter\ProgressbarPainter.cpp" />
+    <ClCompile Include="painter\ScalingPainter.cpp" />
+    <ClCompile Include="painter\VisPainter.cpp" />
+    <ClCompile Include="renderer\CellLabelGetter.cpp" />
+    <ClCompile Include="renderer\FieldEvaluation.cpp" />
+    <ClCompile Include="renderer\PainterCommander.cpp" />
+    <ClCompile Include="renderer\RenderBlendData.cpp" />
+    <ClCompile Include="renderer\RenderData.cpp" />
+    <ClCompile Include="renderer\Renderer.cpp" />
+    <ClCompile Include="renderer\states\Idle.cpp" />
+    <ClCompile Include="renderer\states\InitialWork.cpp" />
+    <ClCompile Include="renderer\states\VisAdjusting.cpp" />
+    <ClCompile Include="renderer\states\Working.cpp" />
+    <ClCompile Include="renderer\states\WorkStateHelper.cpp" />
+    <ClCompile Include="renderer\TextureExaminer.cpp" />
+    <ClCompile Include="text\PreparedText.cpp" />
+    <ClCompile Include="text\RenderedGlyph.cpp" />
+    <ClCompile Include="text\TextRenderer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="connection\Connection.hpp" />
+    <ClInclude Include="connection\Server.hpp" />
+    <ClInclude Include="connection\ServerClient.hpp" />
+    <ClInclude Include="context\Context.hpp" />
+    <ClInclude Include="context\IContextListener.hpp" />
+    <ClInclude Include="context\Options.hpp" />
+    <ClInclude Include="context\ScaleOptions.hpp" />
+    <ClInclude Include="dataAccess\DataReader.hpp" />
+    <ClInclude Include="dataAccess\EdgeHierarchy.hpp" />
+    <ClInclude Include="dataAccess\EdgeStructureInfoContainer.hpp" />
+    <ClInclude Include="dataAccess\FlatEdgeContainer.hpp" />
+    <ClInclude Include="dataAccess\FlatNodeContainer.hpp" />
+    <ClInclude Include="dataAccess\NodeStructureInfoContainer.hpp" />
+    <ClInclude Include="dataAccess\QuadTree.hpp" />
+    <ClInclude Include="DataStore.hpp" />
+    <ClInclude Include="Edge.hpp" />
+    <ClInclude Include="GlobalConstants.hpp" />
+    <ClInclude Include="helper\CameraHelper.hpp" />
+    <ClInclude Include="helper\Dumping.hpp" />
+    <ClInclude Include="helper\EnvironmentHelper.hpp" />
+    <ClInclude Include="helper\execStream\exec-stream.h" />
+    <ClInclude Include="helper\FrameBufferContainer.hpp" />
+    <ClInclude Include="helper\GLSLShader.hpp" />
+    <ClInclude Include="helper\LabelOrderCom.hpp" />
+    <ClInclude Include="helper\MouseHandler.hpp" />
+    <ClInclude Include="Label.hpp" />
+    <ClInclude Include="Node.hpp" />
+    <ClInclude Include="painter\DisplayConvertPainter.hpp" />
+    <ClInclude Include="painter\DividedLinePainter.hpp" />
+    <ClInclude Include="painter\GaussPainter.hpp" />
+    <ClInclude Include="painter\ISplitablePainter.hpp" />
+    <ClInclude Include="painter\LabelPainter.hpp" />
+    <ClInclude Include="painter\LabelSelectionPainter.hpp" />
+    <ClInclude Include="painter\ProgressbarPainter.hpp" />
+    <ClInclude Include="painter\ScalingPainter.hpp" />
+    <ClInclude Include="painter\VisPainter.hpp" />
+    <ClInclude Include="renderer\CellLabelGetter.hpp" />
+    <ClInclude Include="renderer\FieldEvaluation.hpp" />
+    <ClInclude Include="renderer\IRenderData.hpp" />
+    <ClInclude Include="renderer\IRenderState.hpp" />
+    <ClInclude Include="renderer\PainterCommander.hpp" />
+    <ClInclude Include="renderer\RenderBlendData.hpp" />
+    <ClInclude Include="renderer\RenderData.hpp" />
+    <ClInclude Include="renderer\Renderer.hpp" />
+    <ClInclude Include="renderer\states\Idle.hpp" />
+    <ClInclude Include="renderer\states\InitialWork.hpp" />
+    <ClInclude Include="renderer\states\VisAdjusting.hpp" />
+    <ClInclude Include="renderer\states\Working.hpp" />
+    <ClInclude Include="renderer\states\WorkStateHelper.hpp" />
+    <ClInclude Include="renderer\TextureExaminer.hpp" />
+    <ClInclude Include="text\PreparedText.hpp" />
+    <ClInclude Include="text\RenderedGlyph.hpp" />
+    <ClInclude Include="text\TextRenderer.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\gaussRenderer\gaussPointShader.frag" />
+    <None Include="shaders\gaussRenderer\gaussPointShader.gem" />
+    <None Include="shaders\gaussRenderer\gaussPointShader.vert" />
+    <None Include="shaders\gaussRenderer\gaussShader.frag" />
+    <None Include="shaders\gaussRenderer\gaussShader.gem" />
+    <None Include="shaders\gaussRenderer\gaussShader.vert" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -9,32 +9,37 @@
 using namespace std;
 
 Connection::Connection( void ) :
-	_con("127.0.0.1", "4224")
+	_server("4224")
 {
-	connect();
+	
 }
 
 
 Connection::~Connection( void ) {
-	_con.disconnect();
-	_con.receiveString(); //wait for last words then terminate
+	_server.disconnect();
+	_server.receiveString(); //wait for last words then terminate
 }
 
 
-void Connection::connect( void ) {
-	if (_con.isConnectionAlive()) {
+void Connection::waitForClient( void ) {
+	if (_server.isConnectionAlive()) {
 		cout << "already connected " << "\n";
 	} else {
-		_con.connect2Server();
-		if (!_con.isConnectionAlive()) {
-		//	cout << "oops couldn't connect to the server" << "\n";
-		}	
+		_server.start();
 	}
 }
 
+void Connection::loadData( void ) {
+	if (_server.isConnectionAlive()) {
+		vector<Node>* a = new vector<Node>();
+		a->push_back(Node(0,0,1));
+		a->push_back(Node(2,2,1));
+		context::setNewData(a, NULL, NULL, false);
+	}
+}
 
 bool Connection::sync( void ) {
-	if (_con.isConnectionAlive()) {
+	if (_server.isConnectionAlive()) {
 		float sideLength = context::_pixelSize * pow(SIDE_BASE, context::_sideExponent);
 		
 		if (context::_options._changedLocal) {
@@ -43,16 +48,16 @@ bool Connection::sync( void ) {
 			s << "push# pixelSize$" << context::_pixelSize << " sideLength$" << sideLength;
 			s << context::_options.toCommandString();
 
-			_con.sendString(s.str());
+			_server.sendString(s.str());
 			context::_options._changedLocal = false;
 		} else {
 			//get new option values => pull
 			stringstream s;
 			s << "pull# pixelSize$" << context::_pixelSize << " sideLength$" << sideLength;
-			_con.sendString(s.str());
+			_server.sendString(s.str());
 		
-			if (_con.isConnectionAlive()) {
-				string rec = _con.receiveString();
+			if (_server.isConnectionAlive()) {
+				string rec = _server.receiveString();
 
 				string cmd = extractCommand(rec);
 			
@@ -71,7 +76,7 @@ bool Connection::sync( void ) {
 
 
 
-	return _con.isConnectionAlive();
+	return _server.isConnectionAlive();
 }
 
 
@@ -83,6 +88,9 @@ string Connection::extractCommand(string input) {
 }
 
 
+bool Connection::isConnected() {
+	return _server.isConnectionAlive();
+}
 
 map<string, string> Connection::extractData(string input) {
 	map<string, string> retMap;

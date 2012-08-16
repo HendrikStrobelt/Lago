@@ -64,7 +64,7 @@ void Idle::changeZoom( void ) {
 	_r->setState(_r->_working);
 }
 
-void Idle::changeData(string nodeFile, string edgeFile) {
+void Idle::changeData( void ) {
 	_r->setState(_r->_initalWork);
 }
 

@@ -35,9 +35,10 @@ enum RENDER_MODE {GRAPH, DENSITY_FIELD, EVAL_FIELD, LINE_FIELD};
 RENDER_MODE _mode;
 
 context::DummyContextListener _contextListener;
-Connection _syncConnection;
+Connection _con;
 
 int main( int argc, const char* argv[] ) {
+
 	//load parameters
 	initGlobalConstants();
 	//define an OpenGL context, open a window...
@@ -47,7 +48,6 @@ int main( int argc, const char* argv[] ) {
 	//init context and environment (remember a context needs a valid glfw environment before beeing ready)
 	context::init();
 	mouseHandler::init();
-
 	_contextListener.activate(0,0,0,keyEnv, 0);
 	_mode = GRAPH;
 
@@ -56,7 +56,12 @@ int main( int argc, const char* argv[] ) {
 	context::_run = true;
 
 	while (context::_run) {
-		render();
+		if (_con.isConnected()) {
+			render();
+		} else {
+			_con.waitForClient();
+			_con.loadData();
+		}
 	}
 
 	//Close program and terminate GLFW
@@ -71,6 +76,7 @@ void cleanUp( void ) {
 }
 
 void render( void ) {
+
 	context::tick(); //process possible pending events
 
 	//prepare
@@ -90,7 +96,7 @@ void render( void ) {
 	static double lastSync;
 	if (glfwGetTime() > lastSync + 0.25) {
 		lastSync = glfwGetTime();
-		_syncConnection.sync();
+	//	_con.sync();
 	}
 	
 	glfwSwapBuffers();
@@ -109,10 +115,6 @@ void keyEnv(int key, int action) {
 		if (key == GLFW_KEY_KP_SUBTRACT) {
 			context::setSideExponent(context::_sideExponent - 1);
 		} else
-		if (key == GLFW_KEY_F1) {
-			//reconnect to gui if necessary
-			_syncConnection.connect();
-		} else 
 		if (key == GLFW_KEY_F5) {
 			_mode = GRAPH;
 		} else 

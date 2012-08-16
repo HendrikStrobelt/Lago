@@ -133,7 +133,7 @@ void VisAdjusting::changeZoom( void ) {
 	_r->setState(_r->_working);
 }
 
-void VisAdjusting::changeData(string nodeFile, string edgeFile) {
+void VisAdjusting::changeData( void ) {
 	//double clear no swap necessary
 	_r->setState(_r->_initalWork);
 }

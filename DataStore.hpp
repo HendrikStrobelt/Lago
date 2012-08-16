@@ -10,13 +10,13 @@
 
 using namespace std;
 
-class DataCache {
+class DataStore {
 	
 	public:
-		DataCache( void );
-		~DataCache( void );
+		DataStore( void );
+		~DataStore( void );
 
-		void loadDataSet(string nodeFile, string edgeFile = "");
+		void setData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges, vector<Label>* nodeLabels, bool withNodeWeights);
 
 		const vector<Label>* getIndexedLabels( void );
 		const PackedNode* getPackedNodes(int* size);
@@ -25,12 +25,10 @@ class DataCache {
 		const EdgeStructureInfoContainer* getEdgeStructureInfo( void );
 
 		const bool hasLabels( void );
+		const bool hasEdges( void );
 
 	private:
-		string getDumpName(string nodeFile, string edgeFile);
-		void loadFromFiles(string nodeFile, string edgeFile);
-		void loadFromDump(string dumpName, bool loadEdges);
-		void writeToDump(string dumpName, bool writeEdges, bool writeLabels);
+		void processData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges, vector<Label>* nodeLabels, bool withNodeWeights);
 
 		void clearMembers( void );
 

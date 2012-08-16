@@ -73,7 +73,7 @@ void Working::changeZoom( void ) {
 	takeOver();
 }
 
-void Working::changeData(string nodeFile, string edgeFile) {
+void Working::changeData( void ) {
 	_r->setState(_r->_initalWork);
 }
 

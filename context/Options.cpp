@@ -6,8 +6,6 @@
 using std::boolalpha;
 
 Options::Options( void ) {
-	_nodeFile = "";
-	_edgeFile = "";
 	_colorSchemeNode = "node.tga";
 	_colorSchemeEdge = "edge.tga";
 	_colorSchemeLabel = "label.tga";
@@ -39,8 +37,6 @@ string Options::toCommandString( void ) {
 	stringstream s;
 	s << " antiAlias$" << boolalpha <<  _antiAlias;
 	s << " adaptiveScaleBars$" << boolalpha << _adaptiveScaleBars;
-	s << " nodeFile$" << "f." << _nodeFile;
-	s << " edgeFile$" << "f." << _edgeFile;
 	s << " nodeCS$" << _colorSchemeNode;
 	s << " edgeCS$" << _colorSchemeEdge;
 	s << " labelCS$" << _colorSchemeLabel;
@@ -179,12 +175,6 @@ void Options::update(map<string, string> dataMap) {
 			eFile = it->second.substr(2);
 		}
 
-		if (!nFile.empty() && (nFile != _nodeFile || eFile != _edgeFile)) {
-			_nodeFile = nFile;
-			_edgeFile = eFile;
-			context::setDataSet(_nodeFile, _edgeFile);
-		}
-
 		//COLOR SCHEMES
 		string csNode, csEdge, csLabel;
 		if ((it = dataMap.find("nodeCS")) != dataMap.end()) {
@@ -214,12 +204,6 @@ void Options::update(map<string, string> dataMap) {
 	}
 }
 
-void Options::dataChanged(string nodeFile, string edgeFile) {
-	_nodeFile = nodeFile;
-	_edgeFile = edgeFile;
-	_changedLocal = true;
-	context::setDataSet(_nodeFile, _edgeFile);
-}
 
 void Options::loadTextures( void ) {
 	if (_nodeScheme != -1) {
@@ -238,49 +222,4 @@ void Options::loadTextures( void ) {
 
 	string label = path + _colorSchemeLabel;
 	_labelScheme = envHelper::loadRGBTexture(label);
-}
-
-void Options::keyEvent(int key, int action) {
-	if (action == GLFW_RELEASE) {
-		if (key == '1') {
-			context::_scaleOptions[1]._exponent = 0.333;
-			context::_scaleOptions[1]._linearMode = false;
-			dataChanged("_Data//LineNode.out");
-		} else 
-		if (key == '2') {
-			context::_scaleOptions[1]._exponent = 0.333;
-			context::_scaleOptions[1]._linearMode = false;
-			dataChanged("_Data//GermanyNode.out");
-		} else 
-		if (key == '3') {
-			dataChanged("_Data//AirWeightedNode.out", "_Data//AirEdge.out");
-			context::_worldTransX = 81.6152;
-			context::_worldTransY = 17.2064;
-			context::_scaleOptions[1]._exponent = 0.333;
-			context::_scaleOptions[1]._linearMode = false;
-			context::setZoomExponent(6);
-			context::setSideExponent(16);
-			cout << " < adjusting zoom" << "\n";
-			cout << " < adjusting bandwidth" << "\n";
-			cout << " < adjusting position" << "\n";
-		} else 
-		if (key == '4') {
-			dataChanged("_Data//net50SFDP_Node.out","_Data//net50SFDP_Edge.out");
-			context::_worldTransX = 4.20849;
-			context::_worldTransY = 4.30918;
-			context::setSideExponent(10);
-			context::setZoomExponent(3);
-			context::_scaleOptions[1]._exponent = 0.15;
-			context::_scaleOptions[1]._linearMode = false;
-			cout << " < adjusting zoom" << "\n";
-			cout << " < adjusting bandwidth" << "\n";
-			cout << " < adjusting position" << "\n";
-			cout << " < adjusting edge scaling" << "\n";
-		}
-		if (key == '5') {
-			context::_scaleOptions[1]._exponent = 0.333;
-			context::_scaleOptions[1]._linearMode = false;
-			dataChanged(STANDARD_NODE, STANDARD_EDGE);
-		}
-	}
 }

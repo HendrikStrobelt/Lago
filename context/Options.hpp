@@ -9,7 +9,7 @@
 
 using namespace std;
 
-class Options : public IContextListener {
+class Options {
 
 	public:
 		Options( void );
@@ -19,9 +19,6 @@ class Options : public IContextListener {
 		string toCommandString( void );
 
 		void init( void );
-
-		//implemented IContextListener methods
-		void keyEvent(int key, int action);
 
 		//pull
 		bool _antiAlias;
@@ -44,13 +41,10 @@ class Options : public IContextListener {
 		float _nodeMax;
 
 	private:
-		string _nodeFile;
-		string _edgeFile;
 		string _colorSchemeEdge;
 		string _colorSchemeNode;
 		string _colorSchemeLabel;
 
-		void dataChanged(string nodeFile, string edgeFile="");
 		void loadTextures( void );
 
 

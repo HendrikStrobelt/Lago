@@ -59,7 +59,6 @@ void InitialWork::takeOver( void ) {
 	_r->_newData->clear();
 	_r->_mouseMoveX = 0;
 	_r->_mouseMoveY = 0;
-	
 	_worker->takeOver();
 }
 
@@ -72,7 +71,7 @@ void InitialWork::changeZoom( void ) {
 	takeOver();
 }
 
-void InitialWork::changeData(string nodeFile, string edgeFile) {
+void InitialWork::changeData( void ) {
 	takeOver();
 }
 

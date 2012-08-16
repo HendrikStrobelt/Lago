@@ -1,5 +1,5 @@
-#ifndef CLIENT_H
-#define CLIENT_H
+#ifndef SERVER_H
+#define SERVER_H
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -8,14 +8,14 @@
 
 using namespace std;
 
-//Client class
-class Client {
+//Singel Connection Server Class
+class Server {
 
 	public:
-		Client(char* host, char* port);
-		~Client( void );
+		Server(char* port);
+		~Server( void );
 
-		bool connect2Server( void );
+		bool start( void );
 		void disconnect( void );
 		void sendString(string text);
 		string receiveString( void );
@@ -23,12 +23,13 @@ class Client {
 		bool isConnectionAlive( void );
 
 	private:
-		bool connectSocket(SOCKET server, addrinfo* addr_ptr);
+		bool bindAndListen(SOCKET ListenSocket, addrinfo* addr_ptr);
+		SOCKET acceptConnection(SOCKET ListenSocket);
 
-		SOCKET _serverConn;
+		SOCKET _clientConn;
+		SOCKET _server;
 		bool _connectionAlive;
 		char* _port;
-		char* _host;
 };
 
 #endif
