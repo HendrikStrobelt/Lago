@@ -122,7 +122,6 @@ int DividedLinePainter::getElementCount( void ) {
 
 
 void DividedLinePainter::processElements(int start, int count) {
-
 	if ((start + count) > getElementCount()) {
 		count = getElementCount() - start;
 	}

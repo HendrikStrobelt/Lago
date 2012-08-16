@@ -5,6 +5,9 @@
 #include "../context/Context.hpp"
 #include <iostream>
 #include "../GlobalConstants.hpp"
+#include "../Node.hpp"
+#include "../Edge.hpp"
+#include "../Label.hpp"
 
 using namespace std;
 
@@ -31,10 +34,85 @@ void Connection::waitForClient( void ) {
 
 void Connection::loadData( void ) {
 	if (_server.isConnectionAlive()) {
-		vector<Node>* a = new vector<Node>();
-		a->push_back(Node(0,0,1));
-		a->push_back(Node(2,2,1));
-		context::setNewData(a, NULL, NULL, false);
+		vector<Node>* nodes = new vector<Node>;
+		vector<Label>* nodeLabels = new vector<Label>;
+		vector<ReferenceEdge>* edges = new vector<ReferenceEdge>;
+		bool withNodeWeight = false;
+		bool withLabels = false;
+
+		//start data transmission
+		_server.sendString("getData#");
+		string ans = _server.receiveString();
+		
+		if (extractCommand(ans) == "DataParameters") {
+			//get parameters
+			map<string, string>::iterator it;
+			map<string, string> dataMap = extractData(ans);
+
+			if ((it = dataMap.find("withNodeWeights")) != dataMap.end()) {
+				if (it->second.compare("true") == 0) {
+					withNodeWeight = true;
+				} else {
+					withNodeWeight = false;
+				}
+			}
+
+			if ((it = dataMap.find("withLabels")) != dataMap.end()) {
+				if (it->second.compare("true") == 0) {
+					withLabels = true;
+				} else {
+					withLabels = false;
+				}
+			}
+
+
+			//get data
+			_server.sendString("akk#");
+			ans = _server.receiveString();
+			while (extractCommand(ans) == "Node") {
+				map<string, string> data = extractData(ans);
+
+				Node n(data);
+
+				if (withLabels) {
+					Label l(data);
+					l.x = n.x;
+					l.y = n.y;
+					l.id = nodeLabels->size();
+					n.labelID = nodeLabels->size();
+					nodeLabels->push_back(l);
+				}
+				nodes->push_back(n);	
+
+				_server.sendString("akk#");
+				ans = _server.receiveString();
+			}
+	
+			while (extractCommand(ans) == "Edge") {
+				map<string, string> data = extractData(ans);
+
+				ReferenceEdge e(data);
+				edges->push_back(e);
+
+				_server.sendString("akk#");
+				ans = _server.receiveString();
+			}
+
+
+			//success
+			if (extractCommand(ans) == "DataTransfered" && nodes->size() > 0) {
+				if (nodeLabels->empty()) {
+					delete nodeLabels;
+					nodeLabels = NULL;
+				}
+				if (edges->empty()) {
+					delete edges;
+					edges = NULL;
+				}
+
+				context::setNewData(nodes, edges, nodeLabels, withNodeWeight);
+			}
+		}		
 	}
 }
 
@@ -89,6 +167,9 @@ string Connection::extractCommand(string input) {
 
 
 bool Connection::isConnected() {
+	//temporary
+	_server.sendString("blub");
+	//
 	return _server.isConnectionAlive();
 }
 

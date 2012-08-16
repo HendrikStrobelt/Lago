@@ -3,6 +3,9 @@
 
 #include "GlobalConstants.hpp"
 #include <string>
+#include <map>
+#include <sstream>
+
 using namespace std;
 
 #define MAX_LABEL_LENGTH 30
@@ -15,6 +18,17 @@ struct Label {
 	int id;
 
 	Label( void ) : weight(1.0f) {};
+
+	
+	//network constructor
+	Label(map<string, string> dataMap) {
+			map<string, string>::iterator it;
+			if ((it = dataMap.find("TEXT")) != dataMap.end()) {
+				stringstream(it->second) >> text;
+			}
+			
+			weight = 1.0f;
+	}
 };
 
 #endif

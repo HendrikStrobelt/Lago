@@ -113,7 +113,6 @@ void Renderer::setNewData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges, 
 		glBindBuffer(GL_ARRAY_BUFFER, _edgeProcessedVBO);
 			glBufferData(GL_ARRAY_BUFFER, edgeCount * sizeof(ProcessedEdge), NULL, GL_DYNAMIC_COPY);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 	} else {
 		_hasEdges = false;
 	}

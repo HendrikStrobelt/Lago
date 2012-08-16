@@ -95,10 +95,8 @@ void DataStore::processData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges
 	_nodeStructureInfo = fc.getNodeStructureInfoContainer(); //fast
 //	cout << " (tree height " << _nodeStructureInfo->getMaxDepth() << ")" << "\n";
 
-	bool writeEdges = false;
 	if (refEdges != NULL) {
-		writeEdges = true;
-		
+	
 		//switch to internal format
 		vector<Edge> edges;
 		edges.reserve(refEdges->size());

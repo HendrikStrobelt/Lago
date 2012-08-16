@@ -120,8 +120,8 @@ namespace ServerClient {
 					//more data incomeing
 					read = DEFAULT_BUFLEN;
 				} else {
-					read = iResult - 1; //omit \n
-					
+					read = iResult - 1;//omit \n
+
 					//check last char for \n
 					if (recBuffer[read] != '\n') {
 						success = -10423234;
@@ -131,6 +131,11 @@ namespace ServerClient {
 					run = false; //terminate
 				}
 				
+
+				if (read > 0 && recBuffer[read-1] == '\r') {
+					read -= 1; //if necessary omit \r
+				}
+
 				char* cstr = new char[read + 1];
 				memcpy(cstr, recBuffer, read);
 				cstr[read] = '\0'; //terminate

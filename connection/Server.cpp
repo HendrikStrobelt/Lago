@@ -53,6 +53,7 @@ void Server::sendString(string text) {
 	if (_connectionAlive) {
 		int res  = ServerClient::sendString(_clientConn, text);
 		if (res < 0) {
+			ServerClient::closeAll(_clientConn);
 			_connectionAlive = false;
 		}
 	}
