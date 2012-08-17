@@ -106,9 +106,6 @@ void render( void ) {
 void keyEnv(int key, int action) {
 
 	if (action == GLFW_RELEASE) {
-		if (key == GLFW_KEY_ESC) {
-			context::_run = false;
-		} else 
 		if (key == GLFW_KEY_KP_ADD) {
 			context::setSideExponent(context::_sideExponent + 1);
 		} else 

@@ -173,6 +173,7 @@
     <ClInclude Include="connection\Connection.hpp" />
     <ClInclude Include="connection\Server.hpp" />
     <ClInclude Include="connection\ServerClient.hpp" />
+    <ClInclude Include="connection\ShutdownClient.hpp" />
     <ClInclude Include="context\Context.hpp" />
     <ClInclude Include="context\IContextListener.hpp" />
     <ClInclude Include="context\Options.hpp" />

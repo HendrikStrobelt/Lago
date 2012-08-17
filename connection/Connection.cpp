@@ -43,76 +43,84 @@ void Connection::loadData( void ) {
 		//start data transmission
 		_server.sendString("getData#");
 		string ans = _server.receiveString();
-		
-		if (extractCommand(ans) == "DataParameters") {
-			//get parameters
-			map<string, string>::iterator it;
-			map<string, string> dataMap = extractData(ans);
 
-			if ((it = dataMap.find("withNodeWeights")) != dataMap.end()) {
-				if (it->second.compare("true") == 0) {
-					withNodeWeight = true;
-				} else {
-					withNodeWeight = false;
+
+		//hook for shutdown client
+		if (extractCommand(ans) == "exit") {
+			_server.disconnect();
+			context::_run = false;
+		} else {
+
+			if (extractCommand(ans) == "DataParameters") {
+				//get parameters
+				map<string, string>::iterator it;
+				map<string, string> dataMap = extractData(ans);
+
+				if ((it = dataMap.find("withNodeWeights")) != dataMap.end()) {
+					if (it->second.compare("true") == 0) {
+						withNodeWeight = true;
+					} else {
+						withNodeWeight = false;
+					}
 				}
-			}
 
-			if ((it = dataMap.find("withLabels")) != dataMap.end()) {
-				if (it->second.compare("true") == 0) {
-					withLabels = true;
-				} else {
-					withLabels = false;
+				if ((it = dataMap.find("withLabels")) != dataMap.end()) {
+					if (it->second.compare("true") == 0) {
+						withLabels = true;
+					} else {
+						withLabels = false;
+					}
 				}
-			}
 
 
-			//get data
-			_server.sendString("akk#");
-			ans = _server.receiveString();
-			while (extractCommand(ans) == "Node") {
-				map<string, string> data = extractData(ans);
-
-				Node n(data);
-
-				if (withLabels) {
-					Label l(data);
-					l.x = n.x;
-					l.y = n.y;
-					l.id = nodeLabels->size();
-					n.labelID = nodeLabels->size();
-					nodeLabels->push_back(l);
-				}
-				nodes->push_back(n);	
-
+				//get data
 				_server.sendString("akk#");
 				ans = _server.receiveString();
-			}
+				while (extractCommand(ans) == "Node") {
+					map<string, string> data = extractData(ans);
+
+					Node n(data);
+
+					if (withLabels) {
+						Label l(data);
+						l.x = n.x;
+						l.y = n.y;
+						l.id = nodeLabels->size();
+						n.labelID = nodeLabels->size();
+						nodeLabels->push_back(l);
+					}
+					nodes->push_back(n);	
+
+					_server.sendString("akk#");
+					ans = _server.receiveString();
+				}
 	
-			while (extractCommand(ans) == "Edge") {
-				map<string, string> data = extractData(ans);
+				while (extractCommand(ans) == "Edge") {
+					map<string, string> data = extractData(ans);
 
-				ReferenceEdge e(data);
-				edges->push_back(e);
+					ReferenceEdge e(data);
+					edges->push_back(e);
 
-				_server.sendString("akk#");
-				ans = _server.receiveString();
-			}
-
-
-			//success
-			if (extractCommand(ans) == "DataTransfered" && nodes->size() > 0) {
-				if (nodeLabels->empty()) {
-					delete nodeLabels;
-					nodeLabels = NULL;
-				}
-				if (edges->empty()) {
-					delete edges;
-					edges = NULL;
+					_server.sendString("akk#");
+					ans = _server.receiveString();
 				}
 
-				context::setNewData(nodes, edges, nodeLabels, withNodeWeight);
-			}
-		}		
+				
+				//success
+				if (extractCommand(ans) == "DataTransfered" && nodes->size() > 0) {
+					if (nodeLabels->empty()) {
+						delete nodeLabels;
+						nodeLabels = NULL;
+					}
+					if (edges->empty()) {
+						delete edges;
+						edges = NULL;
+					}
+					
+					context::setNewData(nodes, edges, nodeLabels, withNodeWeight);
+				}
+			}		
+		}
 	}
 }
 

@@ -359,12 +359,6 @@
     <ClInclude Include="text\TextRenderer.hpp">
       <Filter>Headerdateien\text</Filter>
     </ClInclude>
-    <ClInclude Include="connection\Client.hpp">
-      <Filter>Headerdateien\connection</Filter>
-    </ClInclude>
-    <ClInclude Include="connection\Connection.hpp">
-      <Filter>Headerdateien\connection</Filter>
-    </ClInclude>
     <ClInclude Include="connection\ServerClient.hpp">
       <Filter>Headerdateien\connection</Filter>
     </ClInclude>
@@ -373,6 +367,12 @@
     </ClInclude>
     <ClInclude Include="DataStore.hpp">
       <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="connection\ShutdownClient.hpp">
+      <Filter>Headerdateien\connection</Filter>
+    </ClInclude>
+    <ClInclude Include="connection\Connection.hpp">
+      <Filter>Headerdateien\connection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

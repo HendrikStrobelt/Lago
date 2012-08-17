@@ -47,8 +47,6 @@ Renderer::~Renderer( void ) {
 	glDeleteBuffers(1, &_nodeVBO);
 	glDeleteBuffers(1, &_edgeVBO);
 	glDeleteBuffers(1, &_edgeProcessedVBO);
-
-	delete _initNodes;
 	delete _currentData;
 	delete _newData;
 	delete _idle;
