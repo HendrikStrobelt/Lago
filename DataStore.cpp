@@ -80,6 +80,7 @@ const bool DataStore::hasEdges( void ) {
 }
 
 void DataStore::setData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges, vector<Label>* nodeLabels, bool withNodeWeights) {
+	clearMembers();
 	processData(nodes,refEdges, nodeLabels, withNodeWeights);
 }
 
@@ -145,6 +146,10 @@ void DataStore::processData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges
 		
 		_indexedLabels = nodeLabels;
 	}
+
+
+	delete nodes;
+	delete refEdges;
 }
 
 

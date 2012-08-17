@@ -18,7 +18,7 @@ bool Server::start( void ) {
 		bool init = ServerClient::initWinSock();
 		if (init) {
 			struct addrinfo* addr_ptr = NULL;
-		    _server = ServerClient::createSocket("127.0.0.1", _port, &addr_ptr);  
+		    _server = ServerClient::createSocket(NULL, _port, &addr_ptr);  
 		
 			if (_server != INVALID_SOCKET) {
 			    bool activate = bindAndListen(_server, addr_ptr);

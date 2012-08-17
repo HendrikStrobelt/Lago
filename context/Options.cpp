@@ -165,15 +165,6 @@ void Options::update(map<string, string> dataMap) {
 			context::visParameterChange();
 		}
 
-		//DATA SET
-		string nFile, eFile;
-		if ((it = dataMap.find("nodeFile")) != dataMap.end()) {
-			nFile = it->second.substr(2);
-		}
-
-		if ((it = dataMap.find("edgeFile")) != dataMap.end()) {
-			eFile = it->second.substr(2);
-		}
 
 		//COLOR SCHEMES
 		string csNode, csEdge, csLabel;
@@ -211,7 +202,6 @@ void Options::loadTextures( void ) {
 		glDeleteTextures(1, &_edgeScheme);
 		glDeleteTextures(1, &_labelScheme);
 	}
-
 	string path("_Tex//colorSchemes//");
 
 	string node = path + _colorSchemeNode;

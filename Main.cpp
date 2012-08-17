@@ -96,7 +96,7 @@ void render( void ) {
 	static double lastSync;
 	if (glfwGetTime() > lastSync + 0.25) {
 		lastSync = glfwGetTime();
-	//	_con.sync();
+		_con.sync();
 	}
 	
 	glfwSwapBuffers();

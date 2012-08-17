@@ -167,9 +167,6 @@ string Connection::extractCommand(string input) {
 
 
 bool Connection::isConnected() {
-	//temporary
-	_server.sendString("blub");
-	//
 	return _server.isConnectionAlive();
 }
 
