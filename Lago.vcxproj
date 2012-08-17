@@ -148,6 +148,7 @@
     <ClCompile Include="painter\DisplayConvertPainter.cpp" />
     <ClCompile Include="painter\DividedLinePainter.cpp" />
     <ClCompile Include="painter\GaussPainter.cpp" />
+    <ClCompile Include="painter\IdlePainter.cpp" />
     <ClCompile Include="painter\LabelPainter.cpp" />
     <ClCompile Include="painter\LabelSelectionPainter.cpp" />
     <ClCompile Include="painter\ProgressbarPainter.cpp" />
@@ -201,6 +202,7 @@
     <ClInclude Include="painter\DisplayConvertPainter.hpp" />
     <ClInclude Include="painter\DividedLinePainter.hpp" />
     <ClInclude Include="painter\GaussPainter.hpp" />
+    <ClInclude Include="painter\IdlePainter.hpp" />
     <ClInclude Include="painter\ISplitablePainter.hpp" />
     <ClInclude Include="painter\LabelPainter.hpp" />
     <ClInclude Include="painter\LabelSelectionPainter.hpp" />

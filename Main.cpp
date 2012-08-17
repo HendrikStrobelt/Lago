@@ -20,6 +20,7 @@
 #include "context\Context.hpp"
 #include "helper\MouseHandler.hpp"
 #include "connection\Connection.hpp"
+#include "painter\IdlePainter.hpp"
 
 using namespace std;
 
@@ -27,6 +28,7 @@ using namespace std;
 void render( void );
 void keyEnv(int key, int action);
 void cleanUp( void );
+void renderIdle( void );
 void initGlobalConstants( void );
 vector<string> split(string line);
 
@@ -36,6 +38,7 @@ RENDER_MODE _mode;
 
 context::DummyContextListener _contextListener;
 Connection _con;
+IdlePainter* _idlePainter;
 
 int main( int argc, const char* argv[] ) {
 
@@ -51,6 +54,7 @@ int main( int argc, const char* argv[] ) {
 	_contextListener.activate(0,0,0,keyEnv, 0);
 	_mode = GRAPH;
 
+	_idlePainter = new IdlePainter();
 	glfwSetTime(0);	
 	glfwSetMouseWheel(0);
 	context::_run = true;
@@ -59,6 +63,7 @@ int main( int argc, const char* argv[] ) {
 		if (_con.isConnected()) {
 			render();
 		} else {
+			renderIdle();
 			_con.waitForClient();
 			_con.loadData();
 		}
@@ -73,6 +78,16 @@ void cleanUp( void ) {
 	mouseHandler::cleanUp();
 	context::cleanUp();
 	envHelper::cleanUp();
+	delete _idlePainter;
+}
+
+void renderIdle( void ) {
+	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+		_idlePainter->render();
+
+	glfwSwapBuffers();
 }
 
 void render( void ) {

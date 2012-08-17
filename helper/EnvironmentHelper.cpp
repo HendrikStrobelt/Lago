@@ -12,10 +12,10 @@
 #include "../painter/DividedLinePainter.hpp"
 #include "../painter/ScalingPainter.hpp"
 #include "../painter/LabelSelectionPainter.hpp"
+#include "../painter/IdlePainter.hpp"
 #include "../renderer/TextureExaminer.hpp"
 #include "../renderer/FieldEvaluation.hpp"
 #include "../renderer/CellLabelGetter.hpp"
-
 
 #include "../context/Context.hpp"
 
@@ -172,6 +172,7 @@ namespace envHelper {
 		DividedLinePainter::cleanUp();
 		ScalingPainter::cleanUp();
 		LabelSelectionPainter::cleanUp();
+		IdlePainter::cleanUp();
 
 		TextureExaminer::cleanUp();
 		FieldEvaluation::cleanUp();

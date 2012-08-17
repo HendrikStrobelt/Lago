@@ -210,6 +210,9 @@
     <ClCompile Include="DataStore.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="painter\IdlePainter.cpp">
+      <Filter>Quelldateien\painter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Edge.hpp">
@@ -373,6 +376,9 @@
     </ClInclude>
     <ClInclude Include="connection\Connection.hpp">
       <Filter>Headerdateien\connection</Filter>
+    </ClInclude>
+    <ClInclude Include="painter\IdlePainter.hpp">
+      <Filter>Headerdateien\painter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
