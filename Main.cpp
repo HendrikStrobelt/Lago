@@ -158,10 +158,6 @@ void initGlobalConstants( void ) {
 				WINDOW_WIDTH = atoi(parameter[1].c_str());
 			} else if (parameter[0] == "WINDOW_HEIGHT") {
 				WINDOW_HEIGHT = atoi(parameter[1].c_str());
-			} else if (parameter[0] == "NODE_FILE_5") {
-				STANDARD_NODE = parameter[1].c_str();
-			} else if (parameter[0] == "EDGE_FILE_5") {
-				STANDARD_EDGE = parameter[1].c_str();
 			}
 		}
     }

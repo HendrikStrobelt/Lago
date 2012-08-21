@@ -52,6 +52,21 @@ namespace envHelper {
 		return handle;
 	}
 
+	GLuint loadSmoothRGBTexture(string filepath) {
+		GLuint handle;
+
+		glGenTextures(1, &handle);
+		glBindTexture(GL_TEXTURE_2D, handle);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glfwLoadTexture2D(filepath.c_str(), 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return handle;
+	}
+
 
 	GLuint loadFloatGaussTextures(string filenamePrefix, int maxExp) {
 		vector<float *> dataVec;
@@ -153,6 +168,8 @@ namespace envHelper {
 			glfwTerminate();
 			error = true;
 		}
+
+		glfwSetWindowTitle("Large Graph Observer");
 
 		while (error) {};
 

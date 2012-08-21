@@ -5,7 +5,7 @@
 GLSLShader* IdlePainter::_shader_ptr = NULL;
 
 IdlePainter::IdlePainter( void ) {
-	_tex = envHelper::loadRGBTexture("_Tex/IdleLogo.tga");
+	_tex = envHelper::loadSmoothRGBTexture("_Tex/IdleLogo.tga");
 	context::addResizeListener(this);
 
 	createShader();

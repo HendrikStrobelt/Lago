@@ -15,6 +15,7 @@ namespace envHelper {
 	GLSLShader* initShaders(vector<string> attributes, vector<string> uniforms, string vertShader, string fragShader, string gemShader="");
 
 	GLuint loadRGBTexture(string filepath);
+	GLuint loadSmoothRGBTexture(string filepath);
 	GLuint loadFloatGaussTextures(string filenamePrefix, int maxExp);
 	void prepareEnvironment(int width, int height);
 	void initGL( void );
