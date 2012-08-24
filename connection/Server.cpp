@@ -75,6 +75,25 @@ string Server::receiveString( void ) {
 	return ret;
 }
 
+vector<Node>* Server::receiveNodes(int nrNodeBytes) {
+	if (_connectionAlive) {
+		vector<Node>* ret = new vector<Node>(nrNodes);
+
+		//receive X
+		char* data = new char[nrNodes*32];
+		ServerClient::receiveData(_clientConn, , nrNodes);
+
+
+		return ret;
+	} else {
+		return NULL;
+	}
+}
+
+vector<ReferenceEdge>* Server::receiveEdges(int nrEdges, bool withEdgeWeight) {
+
+}
+
 
 
 //try to bind the server with the specified addr_ptr infos

@@ -4,7 +4,10 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <string>
+#include <vector>
 #include "ServerClient.hpp"
+#include "../Edge.hpp"
+#include "../Node.hpp"
 
 using namespace std;
 
@@ -19,6 +22,9 @@ class Server {
 		void disconnect( void );
 		void sendString(string text);
 		string receiveString( void );
+
+		vector<Node>* receiveNodes(int nrNodes, bool withNodeWeight, bool withLabels);
+		vector<ReferenceEdge>* receiveEdges(int nrEdges, bool withEdgeWeight);
 
 		bool isConnectionAlive( void );
 

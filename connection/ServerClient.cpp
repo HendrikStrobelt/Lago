@@ -1,7 +1,7 @@
 #include "ServerClient.hpp"
 #include <iostream>
 
-#define DEFAULT_BUFLEN 512
+#define DEFAULT_BUFLEN 2048
 
 namespace ServerClient {
 
@@ -96,6 +96,48 @@ namespace ServerClient {
 		return success;
 	}
 
+	//receives size bytes from the socket
+	//
+	//return > 0 => everything ok
+	//         0 => other side closed send part of the connection
+	//				nothing to receive any more
+	//       < 0 => error occured connection closed
+	int receiveData(SOCKET socket, char* byteArray, int size) {
+		int iResult;
+		int success = 1;
+		int received = 0;
+
+		bool run = true;
+		do {
+			//read DEFAULT_BUFLEN further
+			iResult = receiveByteData(socket, &byteArray[received]);
+			if (iResult > 0) {
+				//reading data
+				received += iResult;
+
+				if (received == size) {
+					//connection closed
+					run = false;
+				} else 
+				if (iResult <= DEFAULT_BUFLEN) {
+					//not enough data
+					run = false;
+					success = -10423234;
+					closeAll(socket);
+				}
+			} else 
+			if (iResult == 0) {
+				//connection closed
+				run = false;
+			}
+		} while (run == true);
+
+		if (iResult <= 0) {
+			success = iResult;
+		}
+
+		return success;
+	}
 
 	//receives a \n terminated char sequence from the socket
 	//and stores it into the string

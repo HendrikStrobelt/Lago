@@ -1,8 +1,7 @@
 #ifndef EDGE_H
 #define EDGE_H
 
-#include <sstream>
-#include <map>
+
 #include "Node.hpp"
 
 using namespace std;
@@ -12,25 +11,6 @@ struct ReferenceEdge {
 	int n2Ref;
 	float weight;
 	ReferenceEdge( void ) : weight(1.0f) {};
-
-	
-	//network constructor
-	ReferenceEdge(map<string, string> dataMap) {
-			map<string, string>::iterator it;
-			if ((it = dataMap.find("N1")) != dataMap.end()) {
-				stringstream(it->second) >> n1Ref;
-			}
-
-			if ((it = dataMap.find("N2")) != dataMap.end()) {
-				stringstream(it->second) >> n2Ref;
-			}
-
-			if ((it = dataMap.find("W")) != dataMap.end()) {
-				stringstream(it->second) >> weight;
-			} else {
-				weight = 1.0f;
-			}
-	}
 };
 
 struct Edge {
