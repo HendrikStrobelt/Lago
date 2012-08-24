@@ -62,13 +62,18 @@ void Connection::loadData( void ) {
 					stringstream(it->second) >> nodeBytes;				
 				}			
 
+
+				bool nodeSucc = false;
+				bool edgeSucc = false;
+
 				//got all parameters start transmission
 				_server.sendString("akk#");
 				if (nodeBytes > 0) {
-					_server.receiveNodes(nodeBytes);
+					nodeSucc = _server.receiveNodes(nodeBytes);
 				}
 				if (edgeBytes > 0) {
-					//_server.sendString("akk#");
+					_server.sendString("akk#");
+					edgeSucc = _server.receiveEdges(edgeBytes);
 				}
 
 				_server.sendString("akk#");
@@ -76,7 +81,12 @@ void Connection::loadData( void ) {
 								
 				//success
 				if (extractCommand(ans) == "DataTransfered") {
-					//context::setNewData(nodes, edges, nodeLabels, withNodeWeight);
+					if (nodeSucc && edgeSucc) {
+						context::setNewData();
+					} else 
+					if (nodeSucc) {
+						context::setNewData();
+					}
 				}
 			}		
 		}

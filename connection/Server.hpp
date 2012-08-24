@@ -24,6 +24,7 @@ class Server {
 		string receiveString( void );
 
 		bool receiveNodes(int nrNodeBytes);
+		bool receiveEdges(int nrEdgeBytes);
 
 		bool isConnectionAlive( void );
 

@@ -95,6 +95,23 @@ bool Server::receiveNodes(int nrNodeBytes) {
 	}
 }
 
+bool Server::receiveEdges(int nrEdgeBytes) {
+	if (_connectionAlive) {
+
+		//node file
+		char* data = new char[nrEdgeBytes];
+		ServerClient::receiveData(_clientConn, data, nrEdgeBytes);
+
+		string nodeFile = ("_tmpFiles//Edges.out");
+		ofstream nodes(nodeFile, ios::binary);
+		dump::w(&nodes, data, nrEdgeBytes);
+		nodes.close();
+
+		return true;
+	} else {
+		return false;
+	}
+}
 
 
 //try to bind the server with the specified addr_ptr infos

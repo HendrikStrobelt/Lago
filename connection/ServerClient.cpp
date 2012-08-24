@@ -106,7 +106,6 @@ namespace ServerClient {
 		int iResult;
 		int success = 1;
 		int received = 0;
-
 		bool run = true;
 		do {
 			//read DEFAULT_BUFLEN further
@@ -119,7 +118,7 @@ namespace ServerClient {
 					//connection closed
 					run = false;
 				} else 
-				if (iResult <= DEFAULT_BUFLEN) {
+				if (iResult < 0) {
 					//not enough data
 					run = false;
 					success = -10423234;
@@ -132,9 +131,6 @@ namespace ServerClient {
 			}
 		} while (run == true);
 
-		if (iResult <= 0) {
-			success = iResult;
-		}
 
 		return success;
 	}
