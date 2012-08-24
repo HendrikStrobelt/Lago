@@ -142,9 +142,9 @@ namespace context {
 		_renderer->changeZoom();
 	}
 
-	void setNewData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges, vector<Label>* nodeLabels, bool withNodeWeights) {
+	void setNewData(string nodeFile, string edgeFile) {
 		clearRenderVariables();
-		_renderer->setNewData(nodes, refEdges, nodeLabels, withNodeWeights);
+		_renderer->setNewData(nodeFile, edgeFile);
 	}
 
 	void visParameterChange( void ) {

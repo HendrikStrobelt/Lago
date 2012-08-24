@@ -26,6 +26,7 @@ class DataReader {
 
 		bool hasNodeLabels( void );
 		bool hasNodeLabelWeights( void );
+		bool hasNodeWeights( void );
 
 		bool readNextNode(vector<Node>* nodes, vector<Label>* labels=NULL);
 		bool readNextEdge(vector<ReferenceEdge>* edges);

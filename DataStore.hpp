@@ -16,7 +16,7 @@ class DataStore {
 		DataStore( void );
 		~DataStore( void );
 
-		void setData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges, vector<Label>* nodeLabels, bool withNodeWeights);
+		void setData(string nodeFile, string edgeFile="");
 
 		const vector<Label>* getIndexedLabels( void );
 		const PackedNode* getPackedNodes(int* size);
@@ -28,7 +28,7 @@ class DataStore {
 		const bool hasEdges( void );
 
 	private:
-		void processData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges, vector<Label>* nodeLabels, bool withNodeWeights);
+		void processData(string nodeFile, string edgeFile);
 
 		void clearMembers( void );
 

@@ -82,10 +82,10 @@ void Connection::loadData( void ) {
 				//success
 				if (extractCommand(ans) == "DataTransfered") {
 					if (nodeSucc && edgeSucc) {
-						context::setNewData();
+						context::setNewData("_tmpFiles//Nodes.out","_tmpFiles//Edges.out");
 					} else 
 					if (nodeSucc) {
-						context::setNewData();
+						context::setNewData("_tmpFiles//Nodes.out");
 					}
 				}
 			}		

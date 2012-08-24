@@ -25,6 +25,14 @@ bool DataReader::hasNodeLabels( void ) {
 	}
 }
 
+bool DataReader::hasNodeWeights( void ) {
+	if (_nodeCols[N_WEIGHT] != NO_WEIGHTS) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 bool DataReader::hasNodeLabelWeights( void ) {
 	if (_nodeCols[N_LABEL_WEIGHT] != NO_LABEL_WEIGHTS) {
 		return true;

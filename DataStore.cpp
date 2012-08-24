@@ -79,32 +79,56 @@ const bool DataStore::hasEdges( void ) {
 	return (_eCount > 0);
 }
 
-void DataStore::setData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges, vector<Label>* nodeLabels, bool withNodeWeights) {
+void DataStore::setData(string nodeFile, string edgeFile) {
 	clearMembers();
-	processData(nodes,refEdges, nodeLabels, withNodeWeights);
+	processData(nodeFile, edgeFile);
 }
 
 //private
 
 
-void DataStore::processData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges, vector<Label>* nodeLabels, bool withNodeWeights) {
+void DataStore::processData(string nodeFile, string edgeFile) {
+	DataReader dr;
 	
-	cout << " (total of " << nodes->size() << " nodes)" << "\n";
+	//load node data
+	dr.setNodeFile(nodeFile);
+	vector<Node> nodes;
+	vector<Label>* labels = new vector<Label>();
+
+	cout << "loading nodes from " << nodeFile;
+
+	bool read = true;
+	while (read) {
+		read = dr.readNextNode(&nodes, labels);
+	}
+
+
+	cout << " (total of " << nodes.size() << " nodes)" << "\n";
 //	cout << "     creating QuadTree";
-	FlatNodeContainer fc(nodes);
+	FlatNodeContainer fc(&nodes);
 
 	_nodeStructureInfo = fc.getNodeStructureInfoContainer(); //fast
 //	cout << " (tree height " << _nodeStructureInfo->getMaxDepth() << ")" << "\n";
 
-	if (refEdges != NULL) {
-	
+	vector<ReferenceEdge> refEdges;
+
+	if (edgeFile != "") {
+		dr.setEdgeFile(edgeFile);
+
+		cout << "loading edges from " << edgeFile;
+
+		read = true;
+		while (read) {
+			read = dr.readNextEdge(&refEdges);
+		}
+
 		//switch to internal format
 		vector<Edge> edges;
-		edges.reserve(refEdges->size());
+		edges.reserve(refEdges.size());
 		
-		for (int i = 0; i < refEdges->size(); i++) {
-			ReferenceEdge* refEdge = &refEdges->at(i);
-			edges.push_back(Edge(&nodes->at(refEdge->n1Ref), &nodes->at(refEdge->n2Ref), refEdge));
+		for (int i = 0; i < refEdges.size(); i++) {
+			ReferenceEdge* refEdge = &refEdges[i];
+			edges.push_back(Edge(&nodes[refEdge->n1Ref], &nodes[refEdge->n2Ref], refEdge));
 		}
 
 		cout << " (total of " << edges.size() << " edges)" << "\n";
@@ -121,35 +145,32 @@ void DataStore::processData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges
 	_packedNodes = fc.getPackedContainer(&_nCount);
 
 	
-	if (nodeLabels != NULL) {
+	if (dr.hasNodeLabels()) {
 		cout << "preparing labels" << "\n";
 
 		//create own label weights ---  1. node weight | 2. degree  | 3. weight = 1
-		if (withNodeWeights) {
-			for (int i = 0; i < nodeLabels->size(); i++) {
-				nodeLabels->at(i).weight = nodes->at(i).weight;
+		if (dr.hasNodeWeights()) {
+			for (int i = 0; i < labels->size(); i++) {
+				labels->at(i).weight = nodes[i].weight;
 			}
 		} else 
-		if (refEdges != NULL) {
-			for (int i = 0; i < nodeLabels->size(); i++) {
-				nodeLabels->at(i).weight = 0.0f;
+			if (refEdges.size() > 0) {
+			for (int i = 0; i < labels->size(); i++) {
+				labels->at(i).weight = 0.0f;
 			}
-			for (int i = 0; i < refEdges->size(); i++) {
-				nodeLabels->at(refEdges->at(i).n1Ref).weight++;
-				nodeLabels->at(refEdges->at(i).n2Ref).weight++;
+			for (int i = 0; i < refEdges.size(); i++) {
+				labels->at(refEdges[i].n1Ref).weight++;
+				labels->at(refEdges[i].n2Ref).weight++;
 			}
 		} else {
-			for (int i = 0; i < nodeLabels->size(); i++) {
-				nodeLabels->at(i).weight = 1.0f;
+			for (int i = 0; i < labels->size(); i++) {
+				labels->at(i).weight = 1.0f;
 			}
 		}
 		
-		_indexedLabels = nodeLabels;
+		_indexedLabels = labels;
 	}
 
-
-	delete nodes;
-	delete refEdges;
 }
 
 

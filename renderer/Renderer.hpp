@@ -53,7 +53,7 @@ class Renderer : public IRenderState {
 		void changeWindow( void );
 		void changeVisParameter( void );
 
-		void setNewData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges, vector<Label>* nodeLabels, bool withNodeWeights, bool silent = false);
+		void setNewData(string nodeFile, string edgeFile, bool silent=false);
 		bool _hasEdges;
 
 		bool _meassuring;

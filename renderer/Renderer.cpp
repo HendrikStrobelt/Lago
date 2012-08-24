@@ -18,12 +18,7 @@ Renderer::Renderer( void ) {
 	context::getWindowSize(&_windowWidth, &_windowHeight);
 
 	//load initial data
-	_initNodes = new vector<Node>();
-	_initNodes->push_back(Node(0,0,1));
-	_initNodes->push_back(Node(2,0,1));
-	_initNodes->push_back(Node(1,1,1));
-	_initNodes->push_back(Node(1,-1,1));
-	setNewData(_initNodes, NULL, NULL, false, true);
+	setNewData("initNodeData.out", "", true);
 	context::_pixelSize = cameraHelper::getPixelSize(_dStore.getNodeStructureInfo(), context::_zoomFactor);
 
 	_mouseMoveX = 0;
@@ -92,8 +87,8 @@ void Renderer::setState(IRenderState* state) {
 	_state->takeOver();
 }
 
-void Renderer::setNewData(vector<Node>* nodes, vector<ReferenceEdge>* refEdges, vector<Label>* nodeLabels, bool withNodeWeights, bool silent) {
-	_dStore.setData(nodes, refEdges, nodeLabels, withNodeWeights);
+void Renderer::setNewData(string nodeFile, string edgeFile, bool silent) {
+	_dStore.setData(nodeFile, edgeFile);
 
 	delete _cellLabelGetter;
 	int nodeCount;
