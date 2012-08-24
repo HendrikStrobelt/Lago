@@ -1,5 +1,7 @@
 #include "Server.hpp"
 #include <iostream>
+#include "..\helper\Dumping.hpp"
+
 
 
 Server::Server(char* port) {
@@ -75,23 +77,22 @@ string Server::receiveString( void ) {
 	return ret;
 }
 
-vector<Node>* Server::receiveNodes(int nrNodeBytes) {
+bool Server::receiveNodes(int nrNodeBytes) {
 	if (_connectionAlive) {
-		vector<Node>* ret = new vector<Node>(nrNodes);
 
-		//receive X
-		char* data = new char[nrNodes*32];
-		ServerClient::receiveData(_clientConn, , nrNodes);
+		//node file
+		char* data = new char[nrNodeBytes];
+		ServerClient::receiveData(_clientConn, data, nrNodeBytes);
 
+		string nodeFile = ("_tmpFiles//Nodes.out");
+		ofstream nodes(nodeFile, ios::binary);
+		dump::w(&nodes, data, nrNodeBytes);
+		nodes.close();
 
-		return ret;
+		return true;
 	} else {
-		return NULL;
+		return false;
 	}
-}
-
-vector<ReferenceEdge>* Server::receiveEdges(int nrEdges, bool withEdgeWeight) {
-
 }
 
 

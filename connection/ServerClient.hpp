@@ -17,7 +17,7 @@ namespace ServerClient {
 	int sendString(SOCKET socket, string text);
 	int receiveString(SOCKET socket, string* text);
 
-	int receiveData(SOCKET socket, char* byteArray, int size)
+	int receiveData(SOCKET socket, char* byteArray, int size);
 
 	//socket shutdown
 	void closeAll(SOCKET socket);

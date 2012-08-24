@@ -23,8 +23,7 @@ class Server {
 		void sendString(string text);
 		string receiveString( void );
 
-		vector<Node>* receiveNodes(int nrNodes, bool withNodeWeight, bool withLabels);
-		vector<ReferenceEdge>* receiveEdges(int nrEdges, bool withEdgeWeight);
+		bool receiveNodes(int nrNodeBytes);
 
 		bool isConnectionAlive( void );
 

@@ -29,6 +29,10 @@ namespace dump {
 		dataStream->write((const char*) &data, sizeof(bool));
 	}
 
+	inline void w(ofstream* dataStream, char* data, int size) {
+		dataStream->write(data, size);
+	}
+
 	template <class T>
 	inline void w(ofstream* dataStream, vector<T>* data) {
 		int size = data->size();
@@ -64,6 +68,10 @@ namespace dump {
 
 	inline void r(ifstream* dataStream, bool* data) {
 		dataStream->read((char*) data, sizeof(bool));
+	}
+
+	inline void r(ifstream* dataStream, char* data, int size) {
+		dataStream->read(data, size);
 	}
 
 	template <class T>

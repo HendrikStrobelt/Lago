@@ -51,67 +51,32 @@ void Connection::loadData( void ) {
 				map<string, string>::iterator it;
 				map<string, string> dataMap = extractData(ans);
 				
-				vector<Node>* nodes = NULL;
-				vector<Label>* nodeLabels = NULL;
-				vector<ReferenceEdge>* edges = NULL;
-				bool withNodeWeight = false;
-				bool withEdgeWeight = false;
-				bool withLabels = false;
-				int nrNodes;
-				int nrEdges = 0;
+				int nodeBytes = 0;
+				int edgeBytes = 0;
 
-				if ((it = dataMap.find("withNodeWeights")) != dataMap.end()) {
-					if (it->second.compare("true") == 0) {
-						withNodeWeight = true;
-					} else {
-						withNodeWeight = false;
-					}
+				if ((it = dataMap.find("edgeBytes")) != dataMap.end()) {
+					stringstream(it->second) >> edgeBytes;				
 				}
 
-				if ((it = dataMap.find("withEdgeWeights")) != dataMap.end()) {
-					if (it->second.compare("true") == 0) {
-						withNodeWeight = true;
-					} else {
-						withNodeWeight = false;
-					}
-				}
-
-				if ((it = dataMap.find("withLabels")) != dataMap.end()) {
-					if (it->second.compare("true") == 0) {
-						withLabels = true;
-					} else {
-						withLabels = false;
-					}
-				}
-
-				if ((it = dataMap.find("nrEdges")) != dataMap.end()) {
-					stringstream(it->second) >> nrEdges;				
-				}
-
-				if ((it = dataMap.find("nrNodes")) != dataMap.end()) {
-					stringstream(it->second) >> nrNodes;				
+				if ((it = dataMap.find("nodeBytes")) != dataMap.end()) {
+					stringstream(it->second) >> nodeBytes;				
 				}			
 
 				//got all parameters start transmission
 				_server.sendString("akk#");
-				if (nrNodes > 0) {
-					nodes = _server.receiveNodes(nrNodes, withNodeWeight, withLabels);
-
+				if (nodeBytes > 0) {
+					_server.receiveNodes(nodeBytes);
 				}
-				if (withLabels) {
-
-				}
-				if (nrEdges > 0) {
-					_server.sendString("akk#");
-					edges = _server.receiveEdges(nrEdges, withEdgeWeight);
+				if (edgeBytes > 0) {
+					//_server.sendString("akk#");
 				}
 
 				_server.sendString("akk#");
 				ans = _server.receiveString();
 								
 				//success
-				if (extractCommand(ans) == "DataTransfered" && nodes->size() > 0) {
-					context::setNewData(nodes, edges, nodeLabels, withNodeWeight);
+				if (extractCommand(ans) == "DataTransfered") {
+					//context::setNewData(nodes, edges, nodeLabels, withNodeWeight);
 				}
 			}		
 		}
