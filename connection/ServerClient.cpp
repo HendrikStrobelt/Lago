@@ -107,27 +107,32 @@ namespace ServerClient {
 		int success = 1;
 		int received = 0;
 		bool run = true;
+		char recBuffer[DEFAULT_BUFLEN];
 		do {
 			//read DEFAULT_BUFLEN further
-			iResult = receiveByteData(socket, &byteArray[received]);
+			iResult = receiveByteData(socket, recBuffer);
 			if (iResult > 0) {
+				//copying into result
+				std::memcpy(&byteArray[received], recBuffer, iResult);
+				
 				//reading data
 				received += iResult;
 
 				if (received == size) {
 					//connection closed
 					run = false;
-				} else 
-				if (iResult < 0) {
-					//not enough data
-					run = false;
-					success = -10423234;
-					closeAll(socket);
 				}
 			} else 
 			if (iResult == 0) {
 				//connection closed
 				run = false;
+			} else 
+			if 	(iResult < 0) {
+				//error code
+				cout << "received " << received << " of " << size << " bytes" << "\n";
+				run = false;
+				success = -10423234;
+				closeAll(socket);
 			}
 		} while (run == true);
 
