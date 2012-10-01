@@ -17,8 +17,8 @@ struct Edge {
 	float y2;
 	short depth;
 	float weight;
-	Edge( void ) : weight(1.0f) {};
-	Edge(Node* n1, Node* n2, ReferenceEdge* refEdge) : x1(n1->x), y1(n1->y), x2(n2->x), y2(n2->y), weight(refEdge->weight) {};
+	Edge( void ) : weight(1.0f), depth(0) {};
+	Edge(Node* n1, Node* n2, ReferenceEdge* refEdge) : x1(n1->x), y1(n1->y), x2(n2->x), y2(n2->y), weight(refEdge->weight), depth(0) {};
 	Edge(Node* n1, Node* n2, short pdepth, float pweight) : x1(n1->x), y1(n1->y), x2(n2->x), y2(n2->y), depth(pdepth), weight(pweight) {};
 };
 
@@ -30,7 +30,7 @@ struct Edge {
 		float y2;
 		short depth;
 		float weight;
-		PackedEdge( void ) : weight(1.0f) {};
+		PackedEdge( void ) : weight(1.0f), depth(0) {};
 		PackedEdge(Edge e) : x1(e.x1), y1(e.y1), x2(e.x2), y2(e.y2), depth(e.depth), weight(e.weight) {};
 	};
 #pragma pack(pop)
